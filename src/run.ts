@@ -1,4 +1,3 @@
-/* eslint-disable github/no-then */
 import fs from 'node:fs/promises'
 import path from 'path'
 import { contentType } from 'mime-types'

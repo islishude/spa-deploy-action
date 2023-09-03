@@ -40912,7 +40912,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-/* eslint-disable github/no-then */
 const core = __importStar(__nccwpck_require__(42186));
 const run_1 = __nccwpck_require__(7764);
 const bucket = core.getInput('s3-bucket', { required: true });
@@ -41070,7 +41069,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
-/* eslint-disable github/no-then */
 const promises_1 = __importDefault(__nccwpck_require__(93977));
 const path_1 = __importDefault(__nccwpck_require__(71017));
 const mime_types_1 = __nccwpck_require__(43583);

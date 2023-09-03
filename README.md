@@ -1,4 +1,8 @@
-# Deploy your single page application to S3 with correct cache control
+# spa-deploy-action
+
+[![Lint and test](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml/badge.svg)](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml)
+
+Deploy your single page application to S3 with correct cache control
 
 ## Usage
 
