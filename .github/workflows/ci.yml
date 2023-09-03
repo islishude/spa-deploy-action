@@ -14,9 +14,6 @@ jobs:
     services:
       localstack:
         image: localstack/localstack
-        env:
-          SERVICES: s3
-          DEFAULT_REGION: us-east-1
         ports: ['4566:4566']
         options: >-
           --health-cmd "awslocal s3 ls" --health-interval 1s --health-timeout 5s
