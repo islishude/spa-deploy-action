@@ -1,4 +1,3 @@
-/* eslint-disable github/no-then */
 import { run } from './run'
 import * as CacheControl from './cache-control'
 
