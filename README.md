@@ -1,6 +1,7 @@
 # spa-deploy-action
 
 [![Lint and test](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml/badge.svg)](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml)
+![TestCoverage](./badges/coverage.svg)
 
 Deploy your single page application to S3 with correct cache control
 
@@ -10,7 +11,7 @@ Deploy your single page application to S3 with correct cache control
 steps:
   - name: Checkout
     uses: actions/checkout@v3
-  - name: Configure AWS credentials from Test account
+  - name: Configure AWS credentials
     uses: aws-actions/configure-aws-credentials@v3
     with:
       role-to-assume: arn:aws:iam::111111111111:role/my-github-actions-role-test
@@ -29,6 +30,10 @@ steps:
       default-cache-control: no-cache
 ```
 
+See [action.yaml](./action.yml) to learn more details about the configs
+
 ## Built-in cache control mapping
 
 See [cache-control.ts](src/cache-control.ts)
+
+your cosutom cache control mapping will be merged and overwrited the built-in.
