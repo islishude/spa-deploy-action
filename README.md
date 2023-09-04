@@ -68,11 +68,12 @@ glob matcher uses [minimatch](https://github.com/isaacs/minimatch).
   "*.js": "public,max-age=31536000,immutable",
   "*.png": "public,max-age=86400,stale-while-revalidate=2592000",
   "*.jpg": "public,max-age=86400,stale-while-revalidate=2592000",
-  "*.ico": "public,max-age=86400,stale-while-revalidate=2592000"
+  "*.ico": "public,max-age=86400,stale-while-revalidate=2592000",
+  "*.svg": "public,max-age=86400,stale-while-revalidate=2592000"
 }
 ```
 
-you can provide a cache-control input to add and overwirte it.
+you can provide a cache-control input to update it.
 
 ## Required AWS IAM Policy
 

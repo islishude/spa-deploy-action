@@ -19,7 +19,8 @@ export const builtin: Map<string, string> = new Map(
     '*.js': optimizedPolicy,
     '*.png': defaultPolicy,
     '*.jpg': defaultPolicy,
-    '*.ico': defaultPolicy
+    '*.ico': defaultPolicy,
+    '*.svg': defaultPolicy
   })
 )
 

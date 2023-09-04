@@ -4,18 +4,9 @@ describe('cache-control', () => {
   it('merge', () => {
     const merged = CacheControl.Merge({ 'index.html': 'no-cache' })
 
-    expect(merged).toEqual(
-      new Map(
-        Object.entries({
-          'index.html': 'no-cache',
-          '*.css': CacheControl.optimizedPolicy,
-          '*.js': CacheControl.optimizedPolicy,
-          '*.png': CacheControl.defaultPolicy,
-          '*.jpg': CacheControl.defaultPolicy,
-          '*.ico': CacheControl.defaultPolicy
-        })
-      )
-    )
+    const expected = new Map(CacheControl.builtin)
+    expected.set('index.html', 'no-cache')
+    expect(merged).toEqual(expected)
   })
 
   it('get', () => {

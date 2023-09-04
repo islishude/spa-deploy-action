@@ -40860,7 +40860,8 @@ exports.builtin = new Map(Object.entries({
     '*.js': exports.optimizedPolicy,
     '*.png': exports.defaultPolicy,
     '*.jpg': exports.defaultPolicy,
-    '*.ico': exports.defaultPolicy
+    '*.ico': exports.defaultPolicy,
+    '*.svg': exports.defaultPolicy
 }));
 function Merge(i) {
     const merged = new Map(exports.builtin);
