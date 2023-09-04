@@ -1,26 +1,24 @@
-name: 'spa-deploy-action'
-description: 'deploy your spa with corret cache-control'
-author: 'islishude <islishude@gmail.com>'
+name: spa-deploy-action
+description: deploy your spa with corret cache-control
+author: islishude <islishude@gmail.com>
 
 inputs:
   dir-path:
-    description: your local directory path
+    description: directory path for deploying
     required: true
   s3-bucket:
-    description: 'aws S3 bucket name'
+    description: aws s3 bucket name
     required: true
   s3-bucket-prefix:
-    description: 'aws S3 bucket prefix'
+    description: aws S3 bucket prefix
   delete:
     description: files that exist in the s3 but not in the local are deleted.
     default: 'true'
   cache-control:
-    description:
-      a valid json format for cache control, key is a glob pattern to match your
-      file, the value for cache control directives
+    description: file glob and cache control directive pairs
     default: '{}'
   default-cache-control:
-    description: default cache control directive
+    description: use if no cache control globbing matched
 
 runs:
   using: node20
