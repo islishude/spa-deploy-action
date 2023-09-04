@@ -11,6 +11,13 @@ Deploy your single page application to S3 with correct cache control
 name: Build and deploy your spa
 on:
   push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   spa_build_deploy:
     runs-on: ubuntu-latest
@@ -37,13 +44,6 @@ jobs:
         with:
           dir-path: 'dist'
           s3-bucket: your-s3-bucket-name
-          s3-bucket-prefix: your-s3-bucket-prefix
-          delete: true
-          cache-control: |
-            {
-              "*.pdf": "public,max-age=31536000"
-            }
-          default-cache-control: no-cache
 ```
 
 ## Inputs
