@@ -53,7 +53,7 @@ jobs:
 | dir-path              | string |         | yes      | directory path for deploying                                |
 | s3-bucket             | string |         | yes      | aws s3 bucket name                                          |
 | s3-bucket-prefix      | string |         | no       | aws s3 bucket prefix to deploy                              |
-| delete                | bool   | true    | yes      | files that exist in the s3 but not in the local are deleted |
+| delete                | bool   | true    | no       | files that exist in the s3 but not in the local are deleted |
 | cache-control         | json   | {}      | no       | file glob and cache control directive pairs                 |
 | default-cache-control | string |         | no       | use if no matched with cache-control                        |
 
