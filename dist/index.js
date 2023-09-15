@@ -41014,7 +41014,7 @@ class S3Provider {
     }
     async putObject(dir, fpath, contentType, cacheControl) {
         const s3Key = this.prefix ? path_1.default.join(this.prefix, fpath) : fpath;
-        core.info(`Uploading ${s3Key}`);
+        core.info(`Uploading s3://${this.bucket}/${s3Key} | content-type=${contentType} | cache-control=${cacheControl}`);
         await this.client.send(new s3.PutObjectCommand({
             Bucket: this.bucket,
             Key: s3Key,
@@ -41025,7 +41025,7 @@ class S3Provider {
     }
     async deleteObjects(key) {
         const s3Key = this.prefix ? path_1.default.join(this.prefix, key) : key;
-        core.info(`Deleting ${s3Key}`);
+        core.info(`Deleting s3://${this.bucket}/${s3Key}`);
         await this.client.send(new s3.DeleteObjectCommand({
             Bucket: this.bucket,
             Key: s3Key

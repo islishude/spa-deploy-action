@@ -61,7 +61,9 @@ export default class S3Provider implements Provider {
     cacheControl?: string
   ): Promise<void> {
     const s3Key = this.prefix ? path.join(this.prefix, fpath) : fpath
-    core.info(`Uploading ${s3Key}`)
+    core.info(
+      `Uploading s3://${this.bucket}/${s3Key} | content-type=${contentType} | cache-control=${cacheControl}`
+    )
 
     await this.client.send(
       new s3.PutObjectCommand({
@@ -77,7 +79,7 @@ export default class S3Provider implements Provider {
   async deleteObjects(key: string): Promise<void> {
     const s3Key = this.prefix ? path.join(this.prefix, key) : key
 
-    core.info(`Deleting ${s3Key}`)
+    core.info(`Deleting s3://${this.bucket}/${s3Key}`)
     await this.client.send(
       new s3.DeleteObjectCommand({
         Bucket: this.bucket,
