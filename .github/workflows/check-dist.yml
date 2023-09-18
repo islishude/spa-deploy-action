@@ -12,6 +12,7 @@ on:
   push:
     branches:
       - main
+      - v*
     paths-ignore:
       - '**.md'
   pull_request:
@@ -25,13 +26,15 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
       statuses: write
 
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v4
+        id: checkout
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -45,13 +48,32 @@ jobs:
 
       - name: Build dist/ Directory
         id: build
-        run: npm run bundle
+        run: |
+          git checkout --force "${GITHUB_HEAD_REF}"
+          npm run bundle
+          echo "diff=$(git diff --ignore-space-at-eol --text dist/ | wc -l | xargs echo -n)" >> $GITHUB_OUTPUT
+
+      - name: Update dist for dependabot
+        id: dependabot-dist-update
+        if:
+          steps.build.outputs.diff != '0' && github.event_name == 'pull_request'
+          && startsWith(github.head_ref,'dependabot/')
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git add .
+          git commit -m "update dist files"
+          git push --force origin "${GITHUB_HEAD_REF}"
 
       - name: Compare Expected and Actual Directories
-        id: diff
+        id: diff-check
+        if:
+          steps.build.outputs.diff != '0' &&
+          steps.dependabot-dist-update.conclusion == 'skiped'
         run: |
-          if [ "$(git diff --ignore-space-at-eol --text dist/ | wc -l)" -gt "0" ]; then
-            echo "Detected uncommitted changes after build. See status below:"
-            git diff --ignore-space-at-eol --text dist/
-            exit 1
-          fi
+          echo "Detected uncommitted changes after build. See status below:"
+          git diff --ignore-space-at-eol --text dist/
+          exit 1
