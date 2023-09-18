@@ -49,7 +49,10 @@ jobs:
       - name: Build dist/ Directory
         id: build
         run: |
-          git checkout --force "${GITHUB_HEAD_REF}"
+          if [ $GITHUB_EVENT_NAME == 'pull_request' ];
+            git checkout --force "${GITHUB_HEAD_REF}"
+          fi
+
           npm run bundle
           echo "diff=$(git diff --ignore-space-at-eol --text dist/ | wc -l | xargs echo -n)" >> $GITHUB_OUTPUT
 
