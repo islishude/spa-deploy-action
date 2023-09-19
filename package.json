@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "package": "ncc build src/index.ts --license licenses.txt",
     "package:watch": "npm run package -- --watch",
-    "pretest": "docker compose down && docker compose up -d",
+    "pretest": "docker compose down && docker compose up -d --wait",
     "test": "(jest && make-coverage-badge --output-path ./badges/coverage.svg) || make-coverage-badge --output-path ./badges/coverage.svg",
     "posttest": "docker compose down",
     "all": "npm run format:write && npm run lint && npm run test && npm run package"
