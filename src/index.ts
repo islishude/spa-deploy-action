@@ -8,6 +8,8 @@ const isDelete = core.getBooleanInput('delete')
 const defaultCacheControl = core.getInput('default-cachec-control')
 const cacheControlJson = JSON.parse(core.getInput('cache-control'))
 
+core.log('testing')
+
 run({
   bucket,
   prefix,
