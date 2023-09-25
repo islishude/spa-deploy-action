@@ -39,16 +39,19 @@ jobs:
         id: install
         run: npm ci
 
-      - name: Build and check dist Directory
+      - name: Build dist
         id: build
+        run: npm run bundle
+
+      - name: Check dist directory differences
+        id: diff
         run: |
-          npm run bundle
-          echo "diff=$(git diff --ignore-space-at-eol --text dist/ | wc -l | xargs echo -n)" >> $GITHUB_OUTPUT
+          echo "count=$(git diff --ignore-space-at-eol --text dist/ | wc -l | xargs echo -n)" >> $GITHUB_OUTPUT
 
       - name: Update dist for dependabot
         id: dependabot-dist-update
         if:
-          steps.build.outputs.diff != '0' && github.event_name == 'pull_request'
+          steps.diff.outputs.count != '0' && github.event_name == 'pull_request'
           && startsWith(github.head_ref,'dependabot/') &&
           github.event.pull_request.head.repo.full_name == github.repository
         env:
@@ -64,7 +67,7 @@ jobs:
       - name: Compare Expected and Actual Directories
         id: diff-check
         if:
-          steps.build.outputs.diff != '0' &&
+          steps.diff.outputs.count != '0' &&
           steps.dependabot-dist-update.conclusion == 'skiped'
         run: |
           echo "Detected uncommitted changes after build. See status below:"
