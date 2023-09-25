@@ -1,11 +1,3 @@
-# In TypeScript actions, `dist/index.js` is a special file. When you reference
-# an action with `uses:`, `dist/index.js` is the code that will be run. For this
-# project, the `dist/index.js` file is generated from other source files through
-# the build process. We need to make sure that the checked-in `dist/index.js`
-# file matches what is expected from the build.
-#
-# This workflow will fail if the checked-in `dist/index.js` file does not match
-# what is expected from the build.
 name: Check dist/
 
 on:
@@ -46,13 +38,9 @@ jobs:
         id: install
         run: npm ci
 
-      - name: Build dist/ Directory
+      - name: Build and check dist Directory
         id: build
         run: |
-          if [ $GITHUB_EVENT_NAME == 'pull_request' ]; then
-            git checkout --force "${GITHUB_HEAD_REF}"
-          fi
-
           npm run bundle
           echo "diff=$(git diff --ignore-space-at-eol --text dist/ | wc -l | xargs echo -n)" >> $GITHUB_OUTPUT
 
@@ -69,7 +57,7 @@ jobs:
           git remote set-url origin "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git add .
           git commit -m "update dist files"
-          git push --force origin "${GITHUB_HEAD_REF}"
+          git push -f origin "HEAD:${GITHUB_HEAD_REF}"
 
       - name: Compare Expected and Actual Directories
         id: diff-check
