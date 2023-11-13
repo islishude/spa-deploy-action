@@ -73,7 +73,7 @@
     "minimatch": "^9.0.3"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.5",
+    "@types/jest": "^29.5.8",
     "@types/mime-types": "^2.1.2",
     "@types/node": "^20.8.6",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
