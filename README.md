@@ -30,10 +30,9 @@ jobs:
           role-to-assume: arn:aws:iam::111111111111:role/my-github-actions-role
           aws-region: us-east-1
       - name: Use Node.js
-        uses: actions/setup-node@v3
-        timeout-minutes: 10
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
           cache: npm
       - name: Install dependencies
         run: npm ci
