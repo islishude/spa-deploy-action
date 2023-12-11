@@ -2788,6 +2788,7 @@ const CompleteMultipartUploadCommand_1 = __nccwpck_require__(67313);
 const CopyObjectCommand_1 = __nccwpck_require__(12953);
 const CreateBucketCommand_1 = __nccwpck_require__(16512);
 const CreateMultipartUploadCommand_1 = __nccwpck_require__(26994);
+const CreateSessionCommand_1 = __nccwpck_require__(99162);
 const DeleteBucketAnalyticsConfigurationCommand_1 = __nccwpck_require__(25909);
 const DeleteBucketCommand_1 = __nccwpck_require__(67926);
 const DeleteBucketCorsCommand_1 = __nccwpck_require__(85665);
@@ -2841,6 +2842,7 @@ const ListBucketIntelligentTieringConfigurationsCommand_1 = __nccwpck_require__(
 const ListBucketInventoryConfigurationsCommand_1 = __nccwpck_require__(70339);
 const ListBucketMetricsConfigurationsCommand_1 = __nccwpck_require__(72760);
 const ListBucketsCommand_1 = __nccwpck_require__(40175);
+const ListDirectoryBucketsCommand_1 = __nccwpck_require__(68430);
 const ListMultipartUploadsCommand_1 = __nccwpck_require__(92182);
 const ListObjectsCommand_1 = __nccwpck_require__(2341);
 const ListObjectsV2Command_1 = __nccwpck_require__(89368);
@@ -2883,6 +2885,7 @@ const commands = {
     CopyObjectCommand: CopyObjectCommand_1.CopyObjectCommand,
     CreateBucketCommand: CreateBucketCommand_1.CreateBucketCommand,
     CreateMultipartUploadCommand: CreateMultipartUploadCommand_1.CreateMultipartUploadCommand,
+    CreateSessionCommand: CreateSessionCommand_1.CreateSessionCommand,
     DeleteBucketCommand: DeleteBucketCommand_1.DeleteBucketCommand,
     DeleteBucketAnalyticsConfigurationCommand: DeleteBucketAnalyticsConfigurationCommand_1.DeleteBucketAnalyticsConfigurationCommand,
     DeleteBucketCorsCommand: DeleteBucketCorsCommand_1.DeleteBucketCorsCommand,
@@ -2936,6 +2939,7 @@ const commands = {
     ListBucketInventoryConfigurationsCommand: ListBucketInventoryConfigurationsCommand_1.ListBucketInventoryConfigurationsCommand,
     ListBucketMetricsConfigurationsCommand: ListBucketMetricsConfigurationsCommand_1.ListBucketMetricsConfigurationsCommand,
     ListBucketsCommand: ListBucketsCommand_1.ListBucketsCommand,
+    ListDirectoryBucketsCommand: ListDirectoryBucketsCommand_1.ListDirectoryBucketsCommand,
     ListMultipartUploadsCommand: ListMultipartUploadsCommand_1.ListMultipartUploadsCommand,
     ListObjectsCommand: ListObjectsCommand_1.ListObjectsCommand,
     ListObjectsV2Command: ListObjectsV2Command_1.ListObjectsV2Command,
@@ -3001,6 +3005,7 @@ const middleware_endpoint_1 = __nccwpck_require__(82918);
 const middleware_retry_1 = __nccwpck_require__(96039);
 const smithy_client_1 = __nccwpck_require__(63570);
 Object.defineProperty(exports, "__Client", ({ enumerable: true, get: function () { return smithy_client_1.Client; } }));
+const CreateSessionCommand_1 = __nccwpck_require__(99162);
 const EndpointParameters_1 = __nccwpck_require__(15122);
 const runtimeConfig_1 = __nccwpck_require__(12714);
 const runtimeExtensions_1 = __nccwpck_require__(44875);
@@ -3013,7 +3018,7 @@ class S3Client extends smithy_client_1.Client {
         const _config_4 = (0, middleware_retry_1.resolveRetryConfig)(_config_3);
         const _config_5 = (0, middleware_host_header_1.resolveHostHeaderConfig)(_config_4);
         const _config_6 = (0, middleware_signing_1.resolveAwsAuthConfig)(_config_5);
-        const _config_7 = (0, middleware_sdk_s3_1.resolveS3Config)(_config_6);
+        const _config_7 = (0, middleware_sdk_s3_1.resolveS3Config)(_config_6, { session: [() => this, CreateSessionCommand_1.CreateSessionCommand] });
         const _config_8 = (0, middleware_user_agent_1.resolveUserAgentConfig)(_config_7);
         const _config_9 = (0, eventstream_serde_config_resolver_1.resolveEventStreamSerdeConfig)(_config_8);
         const _config_10 = (0, runtimeExtensions_1.resolveRuntimeExtensions)(_config_9, configuration?.extensions || []);
@@ -3028,6 +3033,7 @@ class S3Client extends smithy_client_1.Client {
         this.middlewareStack.use((0, middleware_sdk_s3_1.getValidateBucketNamePlugin)(this.config));
         this.middlewareStack.use((0, middleware_expect_continue_1.getAddExpectContinuePlugin)(this.config));
         this.middlewareStack.use((0, middleware_sdk_s3_1.getRegionRedirectMiddlewarePlugin)(this.config));
+        this.middlewareStack.use((0, middleware_sdk_s3_1.getS3ExpressPlugin)(this.config));
         this.middlewareStack.use((0, middleware_user_agent_1.getUserAgentPlugin)(this.config));
     }
     destroy() {
@@ -3056,10 +3062,12 @@ class AbortMultipartUploadCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3124,10 +3132,12 @@ class CompleteMultipartUploadCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3193,6 +3203,7 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class CopyObjectCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            DisableS3ExpressSessionAuth: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
@@ -3261,12 +3272,14 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class CreateBucketCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             DisableAccessPoints: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3331,10 +3344,12 @@ class CreateMultipartUploadCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3380,6 +3395,73 @@ exports.CreateMultipartUploadCommand = CreateMultipartUploadCommand;
 
 /***/ }),
 
+/***/ 99162:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CreateSessionCommand = exports.$Command = void 0;
+const middleware_endpoint_1 = __nccwpck_require__(82918);
+const middleware_serde_1 = __nccwpck_require__(81238);
+const smithy_client_1 = __nccwpck_require__(63570);
+Object.defineProperty(exports, "$Command", ({ enumerable: true, get: function () { return smithy_client_1.Command; } }));
+const types_1 = __nccwpck_require__(55756);
+const models_0_1 = __nccwpck_require__(51628);
+const Aws_restXml_1 = __nccwpck_require__(39809);
+class CreateSessionCommand extends smithy_client_1.Command {
+    static getEndpointParameterInstructions() {
+        return {
+            DisableS3ExpressSessionAuth: { type: "staticContextParams", value: true },
+            Bucket: { type: "contextParams", name: "Bucket" },
+            ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
+            UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
+            DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
+            Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
+            UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
+            Endpoint: { type: "builtInParams", name: "endpoint" },
+            Region: { type: "builtInParams", name: "region" },
+            UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" },
+        };
+    }
+    constructor(input) {
+        super();
+        this.input = input;
+    }
+    resolveMiddleware(clientStack, configuration, options) {
+        this.middlewareStack.use((0, middleware_serde_1.getSerdePlugin)(configuration, this.serialize, this.deserialize));
+        this.middlewareStack.use((0, middleware_endpoint_1.getEndpointPlugin)(configuration, CreateSessionCommand.getEndpointParameterInstructions()));
+        const stack = clientStack.concat(this.middlewareStack);
+        const { logger } = configuration;
+        const clientName = "S3Client";
+        const commandName = "CreateSessionCommand";
+        const handlerExecutionContext = {
+            logger,
+            clientName,
+            commandName,
+            inputFilterSensitiveLog: (_) => _,
+            outputFilterSensitiveLog: models_0_1.CreateSessionOutputFilterSensitiveLog,
+            [types_1.SMITHY_CONTEXT_KEY]: {
+                service: "AmazonS3",
+                operation: "CreateSession",
+            },
+        };
+        const { requestHandler } = configuration;
+        return stack.resolve((request) => requestHandler.handle(request.request, options || {}), handlerExecutionContext);
+    }
+    serialize(input, context) {
+        return (0, Aws_restXml_1.se_CreateSessionCommand)(input, context);
+    }
+    deserialize(output, context) {
+        return (0, Aws_restXml_1.de_CreateSessionCommand)(output, context);
+    }
+}
+exports.CreateSessionCommand = CreateSessionCommand;
+
+
+/***/ }),
+
 /***/ 25909:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -3396,11 +3478,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketAnalyticsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3461,11 +3545,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3526,11 +3612,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketCorsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3591,11 +3679,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketEncryptionCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3656,11 +3746,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketIntelligentTieringConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3721,11 +3813,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketInventoryConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3786,11 +3880,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketLifecycleCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3851,11 +3947,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketMetricsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3916,11 +4014,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketOwnershipControlsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -3981,11 +4081,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketPolicyCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4046,11 +4148,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketReplicationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4111,11 +4215,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketTaggingCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4176,11 +4282,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeleteBucketWebsiteCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4242,10 +4350,12 @@ class DeleteObjectCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4311,6 +4421,7 @@ class DeleteObjectTaggingCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4377,6 +4488,7 @@ class DeleteObjectsCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4442,11 +4554,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class DeletePublicAccessBlockCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4507,11 +4621,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketAccelerateConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4572,11 +4688,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketAclCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4637,11 +4755,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketAnalyticsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4702,11 +4822,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketCorsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4768,11 +4890,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketEncryptionCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4833,11 +4957,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketIntelligentTieringConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4899,11 +5025,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketInventoryConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -4964,11 +5092,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketLifecycleConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5029,11 +5159,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketLocationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5094,11 +5226,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketLoggingCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5159,11 +5293,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketMetricsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5224,11 +5360,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketNotificationConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5289,11 +5427,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketOwnershipControlsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5354,11 +5494,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketPolicyCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5419,11 +5561,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketPolicyStatusCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5484,11 +5628,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketReplicationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5549,11 +5695,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketRequestPaymentCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5614,11 +5762,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketTaggingCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5679,11 +5829,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketVersioningCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5744,11 +5896,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetBucketWebsiteCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5810,10 +5964,12 @@ class GetObjectAclCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5881,6 +6037,7 @@ class GetObjectAttributesCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -5946,10 +6103,12 @@ class GetObjectCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6022,6 +6181,7 @@ class GetObjectLegalHoldCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6087,6 +6247,7 @@ class GetObjectLockConfigurationCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6152,6 +6313,7 @@ class GetObjectRetentionCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6217,6 +6379,7 @@ class GetObjectTaggingCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6283,6 +6446,7 @@ class GetObjectTorrentCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6343,11 +6507,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class GetPublicAccessBlockCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6413,6 +6579,7 @@ class HeadBucketCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6476,10 +6643,12 @@ class HeadObjectCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6541,11 +6710,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class ListBucketAnalyticsConfigurationsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6606,11 +6777,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class ListBucketIntelligentTieringConfigurationsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6672,11 +6845,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class ListBucketInventoryConfigurationsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6742,6 +6917,7 @@ class ListBucketMetricsConfigurationsCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6806,6 +6982,7 @@ class ListBucketsCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6850,6 +7027,72 @@ exports.ListBucketsCommand = ListBucketsCommand;
 
 /***/ }),
 
+/***/ 68430:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ListDirectoryBucketsCommand = exports.$Command = void 0;
+const middleware_endpoint_1 = __nccwpck_require__(82918);
+const middleware_serde_1 = __nccwpck_require__(81238);
+const smithy_client_1 = __nccwpck_require__(63570);
+Object.defineProperty(exports, "$Command", ({ enumerable: true, get: function () { return smithy_client_1.Command; } }));
+const types_1 = __nccwpck_require__(55756);
+const Aws_restXml_1 = __nccwpck_require__(39809);
+class ListDirectoryBucketsCommand extends smithy_client_1.Command {
+    static getEndpointParameterInstructions() {
+        return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
+            ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
+            UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
+            DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
+            Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
+            UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
+            UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
+            Endpoint: { type: "builtInParams", name: "endpoint" },
+            Region: { type: "builtInParams", name: "region" },
+            UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" },
+        };
+    }
+    constructor(input) {
+        super();
+        this.input = input;
+    }
+    resolveMiddleware(clientStack, configuration, options) {
+        this.middlewareStack.use((0, middleware_serde_1.getSerdePlugin)(configuration, this.serialize, this.deserialize));
+        this.middlewareStack.use((0, middleware_endpoint_1.getEndpointPlugin)(configuration, ListDirectoryBucketsCommand.getEndpointParameterInstructions()));
+        const stack = clientStack.concat(this.middlewareStack);
+        const { logger } = configuration;
+        const clientName = "S3Client";
+        const commandName = "ListDirectoryBucketsCommand";
+        const handlerExecutionContext = {
+            logger,
+            clientName,
+            commandName,
+            inputFilterSensitiveLog: (_) => _,
+            outputFilterSensitiveLog: (_) => _,
+            [types_1.SMITHY_CONTEXT_KEY]: {
+                service: "AmazonS3",
+                operation: "ListDirectoryBuckets",
+            },
+        };
+        const { requestHandler } = configuration;
+        return stack.resolve((request) => requestHandler.handle(request.request, options || {}), handlerExecutionContext);
+    }
+    serialize(input, context) {
+        return (0, Aws_restXml_1.se_ListDirectoryBucketsCommand)(input, context);
+    }
+    deserialize(output, context) {
+        return (0, Aws_restXml_1.de_ListDirectoryBucketsCommand)(output, context);
+    }
+}
+exports.ListDirectoryBucketsCommand = ListDirectoryBucketsCommand;
+
+
+/***/ }),
+
 /***/ 92182:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -6867,10 +7110,12 @@ class ListMultipartUploadsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Prefix: { type: "contextParams", name: "Prefix" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6932,10 +7177,12 @@ class ListObjectVersionsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Prefix: { type: "contextParams", name: "Prefix" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -6997,10 +7244,12 @@ class ListObjectsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Prefix: { type: "contextParams", name: "Prefix" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7062,10 +7311,12 @@ class ListObjectsV2Command extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Prefix: { type: "contextParams", name: "Prefix" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7129,10 +7380,12 @@ class ListPartsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7195,11 +7448,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketAccelerateConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7266,11 +7521,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketAclCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7336,11 +7593,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketAnalyticsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7402,11 +7661,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketCorsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7474,11 +7735,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketEncryptionCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7544,11 +7807,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketIntelligentTieringConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7610,11 +7875,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketInventoryConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7676,11 +7943,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketLifecycleConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7747,11 +8016,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketLoggingCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7817,11 +8088,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketMetricsConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7882,11 +8155,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketNotificationConfigurationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -7948,11 +8223,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketOwnershipControlsCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8015,11 +8292,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketPolicyCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8086,11 +8365,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketReplicationCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8157,11 +8438,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketRequestPaymentCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8228,11 +8511,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketTaggingCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8299,11 +8584,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketVersioningCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8370,11 +8657,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutBucketWebsiteCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8442,10 +8731,12 @@ class PutObjectAclCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8510,16 +8801,18 @@ const middleware_serde_1 = __nccwpck_require__(81238);
 const smithy_client_1 = __nccwpck_require__(63570);
 Object.defineProperty(exports, "$Command", ({ enumerable: true, get: function () { return smithy_client_1.Command; } }));
 const types_1 = __nccwpck_require__(55756);
-const models_0_1 = __nccwpck_require__(51628);
+const models_1_1 = __nccwpck_require__(6958);
 const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutObjectCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8549,8 +8842,8 @@ class PutObjectCommand extends smithy_client_1.Command {
             logger,
             clientName,
             commandName,
-            inputFilterSensitiveLog: models_0_1.PutObjectRequestFilterSensitiveLog,
-            outputFilterSensitiveLog: models_0_1.PutObjectOutputFilterSensitiveLog,
+            inputFilterSensitiveLog: models_1_1.PutObjectRequestFilterSensitiveLog,
+            outputFilterSensitiveLog: models_1_1.PutObjectOutputFilterSensitiveLog,
             [types_1.SMITHY_CONTEXT_KEY]: {
                 service: "AmazonS3",
                 operation: "PutObject",
@@ -8593,6 +8886,7 @@ class PutObjectLegalHoldCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8664,6 +8958,7 @@ class PutObjectLockConfigurationCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8735,6 +9030,7 @@ class PutObjectRetentionCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8806,6 +9102,7 @@ class PutObjectTaggingCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8872,11 +9169,13 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class PutPublicAccessBlockCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            UseS3ExpressControlEndpoint: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -8949,6 +9248,7 @@ class RestoreObjectCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -9021,6 +9321,7 @@ class SelectObjectContentCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -9086,10 +9387,12 @@ class UploadPartCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
             Bucket: { type: "contextParams", name: "Bucket" },
+            Key: { type: "contextParams", name: "Key" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -9159,6 +9462,7 @@ const Aws_restXml_1 = __nccwpck_require__(39809);
 class UploadPartCopyCommand extends smithy_client_1.Command {
     static getEndpointParameterInstructions() {
         return {
+            DisableS3ExpressSessionAuth: { type: "staticContextParams", value: true },
             Bucket: { type: "contextParams", name: "Bucket" },
             ForcePathStyle: { type: "clientContextParams", name: "forcePathStyle" },
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
@@ -9232,6 +9536,7 @@ class WriteGetObjectResponseCommand extends smithy_client_1.Command {
             UseArnRegion: { type: "clientContextParams", name: "useArnRegion" },
             DisableMultiRegionAccessPoints: { type: "clientContextParams", name: "disableMultiregionAccessPoints" },
             Accelerate: { type: "clientContextParams", name: "useAccelerateEndpoint" },
+            DisableS3ExpressSessionAuth: { type: "clientContextParams", name: "disableS3ExpressSessionAuth" },
             UseGlobalEndpoint: { type: "builtInParams", name: "useGlobalEndpoint" },
             UseFIPS: { type: "builtInParams", name: "useFipsEndpoint" },
             Endpoint: { type: "builtInParams", name: "endpoint" },
@@ -9288,6 +9593,7 @@ tslib_1.__exportStar(__nccwpck_require__(67313), exports);
 tslib_1.__exportStar(__nccwpck_require__(12953), exports);
 tslib_1.__exportStar(__nccwpck_require__(16512), exports);
 tslib_1.__exportStar(__nccwpck_require__(26994), exports);
+tslib_1.__exportStar(__nccwpck_require__(99162), exports);
 tslib_1.__exportStar(__nccwpck_require__(25909), exports);
 tslib_1.__exportStar(__nccwpck_require__(67926), exports);
 tslib_1.__exportStar(__nccwpck_require__(85665), exports);
@@ -9341,6 +9647,7 @@ tslib_1.__exportStar(__nccwpck_require__(49557), exports);
 tslib_1.__exportStar(__nccwpck_require__(70339), exports);
 tslib_1.__exportStar(__nccwpck_require__(72760), exports);
 tslib_1.__exportStar(__nccwpck_require__(40175), exports);
+tslib_1.__exportStar(__nccwpck_require__(68430), exports);
 tslib_1.__exportStar(__nccwpck_require__(92182), exports);
 tslib_1.__exportStar(__nccwpck_require__(44112), exports);
 tslib_1.__exportStar(__nccwpck_require__(2341), exports);
@@ -9431,9 +9738,9 @@ exports.defaultEndpointResolver = defaultEndpointResolver;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ruleSet = void 0;
-const bJ = "required", bK = "type", bL = "conditions", bM = "fn", bN = "argv", bO = "ref", bP = "assign", bQ = "url", bR = "properties", bS = "authSchemes", bT = "disableDoubleEncoding", bU = "signingName", bV = "signingRegion", bW = "headers";
-const a = false, b = true, c = "isSet", d = "tree", e = "booleanEquals", f = "error", g = "aws.partition", h = "stringEquals", i = "getAttr", j = "name", k = "substring", l = "hardwareType", m = "regionPrefix", n = "bucketAliasSuffix", o = "outpostId", p = "isValidHostLabel", q = "not", r = "parseURL", s = "s3-outposts", t = "endpoint", u = "aws.isVirtualHostableS3Bucket", v = "s3", w = "{url#scheme}://{url#authority}{url#normalizedPath}{Bucket}", x = "{url#scheme}://{Bucket}.{url#authority}{url#path}", y = "https://{Bucket}.s3-accelerate.{partitionResult#dnsSuffix}", z = "https://{Bucket}.s3.{partitionResult#dnsSuffix}", A = "aws.parseArn", B = "bucketArn", C = "arnType", D = "", E = "s3-object-lambda", F = "accesspoint", G = "accessPointName", H = "{url#scheme}://{accessPointName}-{bucketArn#accountId}.{url#authority}{url#path}", I = "mrapPartition", J = "outpostType", K = "arnPrefix", L = "{url#scheme}://{url#authority}{url#normalizedPath}{uri_encoded_bucket}", M = "https://s3.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", N = "{url#scheme}://{url#authority}{url#path}", O = "https://s3.{partitionResult#dnsSuffix}", P = { [bJ]: false, [bK]: "String" }, Q = { [bJ]: true, "default": false, [bK]: "Boolean" }, R = { [bJ]: false, [bK]: "Boolean" }, S = { [bM]: e, [bN]: [{ [bO]: "Accelerate" }, true] }, T = { [bM]: e, [bN]: [{ [bO]: "UseFIPS" }, true] }, U = { [bM]: e, [bN]: [{ [bO]: "UseDualStack" }, true] }, V = { [bM]: c, [bN]: [{ [bO]: "Endpoint" }] }, W = { [bM]: g, [bN]: [{ [bO]: "Region" }], [bP]: "partitionResult" }, X = { [bM]: h, [bN]: [{ [bM]: i, [bN]: [{ [bO]: "partitionResult" }, j] }, "aws-cn"] }, Y = { [bM]: c, [bN]: [{ [bO]: "Bucket" }] }, Z = { [bO]: "Bucket" }, aa = { [bO]: l }, ab = { [bL]: [{ [bM]: q, [bN]: [V] }], [f]: "Expected a endpoint to be specified but no endpoint was found", [bK]: f }, ac = { [bM]: q, [bN]: [V] }, ad = { [bM]: r, [bN]: [{ [bO]: "Endpoint" }], [bP]: "url" }, ae = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: s, [bV]: "{Region}" }] }, af = {}, ag = { [bM]: e, [bN]: [{ [bO]: "ForcePathStyle" }, false] }, ah = { [bO]: "ForcePathStyle" }, ai = { [bM]: e, [bN]: [{ [bO]: "Accelerate" }, false] }, aj = { [bM]: h, [bN]: [{ [bO]: "Region" }, "aws-global"] }, ak = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: v, [bV]: "us-east-1" }] }, al = { [bM]: q, [bN]: [aj] }, am = { [bM]: e, [bN]: [{ [bO]: "UseGlobalEndpoint" }, true] }, an = { [bQ]: "https://{Bucket}.s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [bR]: { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: v, [bV]: "{Region}" }] }, [bW]: {} }, ao = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: v, [bV]: "{Region}" }] }, ap = { [bM]: e, [bN]: [{ [bO]: "UseGlobalEndpoint" }, false] }, aq = { [bM]: e, [bN]: [{ [bO]: "UseDualStack" }, false] }, ar = { [bQ]: "https://{Bucket}.s3-fips.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, as = { [bM]: e, [bN]: [{ [bO]: "UseFIPS" }, false] }, at = { [bQ]: "https://{Bucket}.s3-accelerate.dualstack.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, au = { [bQ]: "https://{Bucket}.s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, av = { [bM]: e, [bN]: [{ [bM]: i, [bN]: [{ [bO]: "url" }, "isIp"] }, true] }, aw = { [bO]: "url" }, ax = { [bM]: e, [bN]: [{ [bM]: i, [bN]: [aw, "isIp"] }, false] }, ay = { [bQ]: w, [bR]: ao, [bW]: {} }, az = { [bQ]: x, [bR]: ao, [bW]: {} }, aA = { [t]: az, [bK]: t }, aB = { [bQ]: y, [bR]: ao, [bW]: {} }, aC = { [bQ]: "https://{Bucket}.s3.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, aD = { [f]: "Invalid region: region was not a valid DNS name.", [bK]: f }, aE = { [bO]: B }, aF = { [bO]: C }, aG = { [bM]: i, [bN]: [aE, "service"] }, aH = { [bO]: G }, aI = { [bL]: [U], [f]: "S3 Object Lambda does not support Dual-stack", [bK]: f }, aJ = { [bL]: [S], [f]: "S3 Object Lambda does not support S3 Accelerate", [bK]: f }, aK = { [bL]: [{ [bM]: c, [bN]: [{ [bO]: "DisableAccessPoints" }] }, { [bM]: e, [bN]: [{ [bO]: "DisableAccessPoints" }, true] }], [f]: "Access points are not supported for this operation", [bK]: f }, aL = { [bL]: [{ [bM]: c, [bN]: [{ [bO]: "UseArnRegion" }] }, { [bM]: e, [bN]: [{ [bO]: "UseArnRegion" }, false] }, { [bM]: q, [bN]: [{ [bM]: h, [bN]: [{ [bM]: i, [bN]: [aE, "region"] }, "{Region}"] }] }], [f]: "Invalid configuration: region from ARN `{bucketArn#region}` does not match client region `{Region}` and UseArnRegion is `false`", [bK]: f }, aM = { [bM]: i, [bN]: [{ [bO]: "bucketPartition" }, j] }, aN = { [bM]: i, [bN]: [aE, "accountId"] }, aO = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: E, [bV]: "{bucketArn#region}" }] }, aP = { [f]: "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName}`", [bK]: f }, aQ = { [f]: "Invalid ARN: The account id may only contain a-z, A-Z, 0-9 and `-`. Found: `{bucketArn#accountId}`", [bK]: f }, aR = { [f]: "Invalid region in ARN: `{bucketArn#region}` (invalid DNS name)", [bK]: f }, aS = { [f]: "Client was configured for partition `{partitionResult#name}` but ARN (`{Bucket}`) has `{bucketPartition#name}`", [bK]: f }, aT = { [f]: "Invalid ARN: The ARN may only contain a single resource component after `accesspoint`.", [bK]: f }, aU = { [f]: "Invalid ARN: Expected a resource of the format `accesspoint:<accesspoint name>` but no name was provided", [bK]: f }, aV = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: v, [bV]: "{bucketArn#region}" }] }, aW = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: s, [bV]: "{bucketArn#region}" }] }, aX = { [bM]: A, [bN]: [Z] }, aY = { [bQ]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ao, [bW]: {} }, aZ = { [bQ]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ao, [bW]: {} }, ba = { [bQ]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ao, [bW]: {} }, bb = { [bQ]: L, [bR]: ao, [bW]: {} }, bc = { [bQ]: "https://s3.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ao, [bW]: {} }, bd = { [bO]: "UseObjectLambdaEndpoint" }, be = { [bS]: [{ [bT]: true, [j]: "sigv4", [bU]: E, [bV]: "{Region}" }] }, bf = { [bQ]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, bg = { [bQ]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, bh = { [bQ]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, bi = { [bQ]: N, [bR]: ao, [bW]: {} }, bj = { [bQ]: "https://s3.{Region}.{partitionResult#dnsSuffix}", [bR]: ao, [bW]: {} }, bk = [{ [bO]: "Region" }], bl = [{ [bO]: "Endpoint" }], bm = [Z], bn = [{ [bM]: p, [bN]: [{ [bO]: o }, false] }], bo = [{ [bM]: h, [bN]: [{ [bO]: m }, "beta"] }], bp = [V, ad], bq = [Y], br = [W], bs = [{ [bM]: p, [bN]: [{ [bO]: "Region" }, false] }], bt = [{ [bM]: h, [bN]: [{ [bO]: "Region" }, "us-east-1"] }], bu = [{ [bM]: h, [bN]: [aF, F] }], bv = [{ [bM]: i, [bN]: [aE, "resourceId[1]"], [bP]: G }, { [bM]: q, [bN]: [{ [bM]: h, [bN]: [aH, D] }] }], bw = [aE, "resourceId[1]"], bx = [U], by = [S], bz = [{ [bM]: q, [bN]: [{ [bM]: h, [bN]: [{ [bM]: i, [bN]: [aE, "region"] }, D] }] }], bA = [{ [bM]: q, [bN]: [{ [bM]: c, [bN]: [{ [bM]: i, [bN]: [aE, "resourceId[2]"] }] }] }], bB = [aE, "resourceId[2]"], bC = [{ [bM]: g, [bN]: [{ [bM]: i, [bN]: [aE, "region"] }], [bP]: "bucketPartition" }], bD = [{ [bM]: h, [bN]: [aM, { [bM]: i, [bN]: [{ [bO]: "partitionResult" }, j] }] }], bE = [{ [bM]: p, [bN]: [{ [bM]: i, [bN]: [aE, "region"] }, true] }], bF = [{ [bM]: p, [bN]: [aN, false] }], bG = [{ [bM]: p, [bN]: [aH, false] }], bH = [T], bI = [{ [bM]: p, [bN]: [{ [bO]: "Region" }, true] }];
-const _data = { version: "1.0", parameters: { Bucket: P, Region: P, UseFIPS: Q, UseDualStack: Q, Endpoint: P, ForcePathStyle: Q, Accelerate: Q, UseGlobalEndpoint: Q, UseObjectLambdaEndpoint: R, DisableAccessPoints: R, DisableMultiRegionAccessPoints: Q, UseArnRegion: R }, rules: [{ [bL]: [{ [bM]: c, [bN]: bk }], [bK]: d, rules: [{ [bL]: [S, T], error: "Accelerate cannot be used with FIPS", [bK]: f }, { [bL]: [U, V], error: "Cannot set dual-stack in combination with a custom endpoint.", [bK]: f }, { [bL]: [V, T], error: "A custom endpoint cannot be combined with FIPS", [bK]: f }, { [bL]: [V, S], error: "A custom endpoint cannot be combined with S3 Accelerate", [bK]: f }, { [bL]: [T, W, X], error: "Partition does not support FIPS", [bK]: f }, { [bL]: [Y, { [bM]: k, [bN]: [Z, 49, 50, b], [bP]: l }, { [bM]: k, [bN]: [Z, 8, 12, b], [bP]: m }, { [bM]: k, [bN]: [Z, 0, 7, b], [bP]: n }, { [bM]: k, [bN]: [Z, 32, 49, b], [bP]: o }, { [bM]: g, [bN]: bk, [bP]: "regionPartition" }, { [bM]: h, [bN]: [{ [bO]: n }, "--op-s3"] }], [bK]: d, rules: [{ [bL]: bn, [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [aa, "e"] }], [bK]: d, rules: [{ [bL]: bo, [bK]: d, rules: [ab, { [bL]: bp, endpoint: { [bQ]: "https://{Bucket}.ec2.{url#authority}", [bR]: ae, [bW]: af }, [bK]: t }] }, { endpoint: { [bQ]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [bR]: ae, [bW]: af }, [bK]: t }] }, { [bL]: [{ [bM]: h, [bN]: [aa, "o"] }], [bK]: d, rules: [{ [bL]: bo, [bK]: d, rules: [ab, { [bL]: bp, endpoint: { [bQ]: "https://{Bucket}.op-{outpostId}.{url#authority}", [bR]: ae, [bW]: af }, [bK]: t }] }, { endpoint: { [bQ]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [bR]: ae, [bW]: af }, [bK]: t }] }, { error: "Unrecognized hardware type: \"Expected hardware type o or e but got {hardwareType}\"", [bK]: f }] }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [bK]: f }] }, { [bL]: bq, [bK]: d, rules: [{ [bL]: [V, { [bM]: q, [bN]: [{ [bM]: c, [bN]: [{ [bM]: r, [bN]: bl }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [bK]: f }, { [bL]: [ag, { [bM]: u, [bN]: [Z, a] }], [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bs, [bK]: d, rules: [{ [bL]: [S, X], error: "S3 Accelerate cannot be used in this region", [bK]: f }, { [bL]: [U, T, ai, ac, aj], endpoint: { [bQ]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [U, T, ai, ac, al, am], [bK]: d, rules: [{ endpoint: an, [bK]: t }] }, { [bL]: [U, T, ai, ac, al, ap], endpoint: an, [bK]: t }, { [bL]: [aq, T, ai, ac, aj], endpoint: { [bQ]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, T, ai, ac, al, am], [bK]: d, rules: [{ endpoint: ar, [bK]: t }] }, { [bL]: [aq, T, ai, ac, al, ap], endpoint: ar, [bK]: t }, { [bL]: [U, as, S, ac, aj], endpoint: { [bQ]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [U, as, S, ac, al, am], [bK]: d, rules: [{ endpoint: at, [bK]: t }] }, { [bL]: [U, as, S, ac, al, ap], endpoint: at, [bK]: t }, { [bL]: [U, as, ai, ac, aj], endpoint: { [bQ]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [U, as, ai, ac, al, am], [bK]: d, rules: [{ endpoint: au, [bK]: t }] }, { [bL]: [U, as, ai, ac, al, ap], endpoint: au, [bK]: t }, { [bL]: [aq, as, ai, V, ad, av, aj], endpoint: { [bQ]: w, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, as, ai, V, ad, ax, aj], endpoint: { [bQ]: x, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, as, ai, V, ad, av, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: ay, [bK]: t }, { endpoint: ay, [bK]: t }] }, { [bL]: [aq, as, ai, V, ad, ax, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: az, [bK]: t }, aA] }, { [bL]: [aq, as, ai, V, ad, av, al, ap], endpoint: ay, [bK]: t }, { [bL]: [aq, as, ai, V, ad, ax, al, ap], endpoint: az, [bK]: t }, { [bL]: [aq, as, S, ac, aj], endpoint: { [bQ]: y, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, as, S, ac, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: aB, [bK]: t }, { endpoint: aB, [bK]: t }] }, { [bL]: [aq, as, S, ac, al, ap], endpoint: aB, [bK]: t }, { [bL]: [aq, as, ai, ac, aj], endpoint: { [bQ]: z, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, as, ai, ac, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: { [bQ]: z, [bR]: ao, [bW]: af }, [bK]: t }, { endpoint: aC, [bK]: t }] }, { [bL]: [aq, as, ai, ac, al, ap], endpoint: aC, [bK]: t }] }, aD] }] }, { [bL]: [V, ad, { [bM]: h, [bN]: [{ [bM]: i, [bN]: [aw, "scheme"] }, "http"] }, { [bM]: u, [bN]: [Z, b] }, ag, as, aq, ai], [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bs, [bK]: d, rules: [aA] }, aD] }] }, { [bL]: [ag, { [bM]: A, [bN]: bm, [bP]: B }], [bK]: d, rules: [{ [bL]: [{ [bM]: i, [bN]: [aE, "resourceId[0]"], [bP]: C }, { [bM]: q, [bN]: [{ [bM]: h, [bN]: [aF, D] }] }], [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [aG, E] }], [bK]: d, rules: [{ [bL]: bu, [bK]: d, rules: [{ [bL]: bv, [bK]: d, rules: [aI, aJ, { [bL]: bz, [bK]: d, rules: [aK, { [bL]: bA, [bK]: d, rules: [aL, { [bL]: bC, [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bD, [bK]: d, rules: [{ [bL]: bE, [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [aN, D] }], error: "Invalid ARN: Missing account id", [bK]: f }, { [bL]: bF, [bK]: d, rules: [{ [bL]: bG, [bK]: d, rules: [{ [bL]: bp, endpoint: { [bQ]: H, [bR]: aO, [bW]: af }, [bK]: t }, { [bL]: bH, endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aO, [bW]: af }, [bK]: t }, { endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aO, [bW]: af }, [bK]: t }] }, aP] }, aQ] }, aR] }, aS] }] }] }, aT] }, { error: "Invalid ARN: bucket ARN is missing a region", [bK]: f }] }, aU] }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [bK]: f }] }, { [bL]: bu, [bK]: d, rules: [{ [bL]: bv, [bK]: d, rules: [{ [bL]: bz, [bK]: d, rules: [{ [bL]: bu, [bK]: d, rules: [{ [bL]: bz, [bK]: d, rules: [aK, { [bL]: bA, [bK]: d, rules: [aL, { [bL]: bC, [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [aM, "{partitionResult#name}"] }], [bK]: d, rules: [{ [bL]: bE, [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [aG, v] }], [bK]: d, rules: [{ [bL]: bF, [bK]: d, rules: [{ [bL]: bG, [bK]: d, rules: [{ [bL]: by, error: "Access Points do not support S3 Accelerate", [bK]: f }, { [bL]: [T, U], endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aV, [bW]: af }, [bK]: t }, { [bL]: [T, aq], endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aV, [bW]: af }, [bK]: t }, { [bL]: [as, U], endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aV, [bW]: af }, [bK]: t }, { [bL]: [as, aq, V, ad], endpoint: { [bQ]: H, [bR]: aV, [bW]: af }, [bK]: t }, { [bL]: [as, aq], endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aV, [bW]: af }, [bK]: t }] }, aP] }, aQ] }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [bK]: f }] }, aR] }, aS] }] }] }, aT] }] }] }, { [bL]: [{ [bM]: p, [bN]: [aH, b] }], [bK]: d, rules: [{ [bL]: bx, error: "S3 MRAP does not support dual-stack", [bK]: f }, { [bL]: bH, error: "S3 MRAP does not support FIPS", [bK]: f }, { [bL]: by, error: "S3 MRAP does not support S3 Accelerate", [bK]: f }, { [bL]: [{ [bM]: e, [bN]: [{ [bO]: "DisableMultiRegionAccessPoints" }, b] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [bK]: f }, { [bL]: [{ [bM]: g, [bN]: bk, [bP]: I }], [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [{ [bM]: i, [bN]: [{ [bO]: I }, j] }, { [bM]: i, [bN]: [aE, "partition"] }] }], [bK]: d, rules: [{ endpoint: { [bQ]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [bR]: { [bS]: [{ [bT]: b, name: "sigv4a", [bU]: v, signingRegionSet: ["*"] }] }, [bW]: af }, [bK]: t }] }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [bK]: f }] }] }, { error: "Invalid Access Point Name", [bK]: f }] }, aU] }, { [bL]: [{ [bM]: h, [bN]: [aG, s] }], [bK]: d, rules: [{ [bL]: bx, error: "S3 Outposts does not support Dual-stack", [bK]: f }, { [bL]: bH, error: "S3 Outposts does not support FIPS", [bK]: f }, { [bL]: by, error: "S3 Outposts does not support S3 Accelerate", [bK]: f }, { [bL]: [{ [bM]: c, [bN]: [{ [bM]: i, [bN]: [aE, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [bK]: f }, { [bL]: [{ [bM]: i, [bN]: bw, [bP]: o }], [bK]: d, rules: [{ [bL]: bn, [bK]: d, rules: [aL, { [bL]: bC, [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bD, [bK]: d, rules: [{ [bL]: bE, [bK]: d, rules: [{ [bL]: bF, [bK]: d, rules: [{ [bL]: [{ [bM]: i, [bN]: bB, [bP]: J }], [bK]: d, rules: [{ [bL]: [{ [bM]: i, [bN]: [aE, "resourceId[3]"], [bP]: G }], [bK]: d, rules: [{ [bL]: [{ [bM]: h, [bN]: [{ [bO]: J }, F] }], [bK]: d, rules: [{ [bL]: bp, endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [bR]: aW, [bW]: af }, [bK]: t }, { endpoint: { [bQ]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [bR]: aW, [bW]: af }, [bK]: t }] }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [bK]: f }] }, { error: "Invalid ARN: expected an access point name", [bK]: f }] }, { error: "Invalid ARN: Expected a 4-component resource", [bK]: f }] }, aQ] }, aR] }, aS] }] }] }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [bK]: f }] }, { error: "Invalid ARN: The Outpost Id was not set", [bK]: f }] }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [bK]: f }] }, { error: "Invalid ARN: No ARN type specified", [bK]: f }] }, { [bL]: [{ [bM]: k, [bN]: [Z, 0, 4, a], [bP]: K }, { [bM]: h, [bN]: [{ [bO]: K }, "arn:"] }, { [bM]: q, [bN]: [{ [bM]: c, [bN]: [aX] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [bK]: f }, { [bL]: [{ [bM]: e, [bN]: [ah, b] }, aX], error: "Path-style addressing cannot be used with ARN buckets", [bK]: f }, { [bL]: [{ [bM]: "uriEncode", [bN]: bm, [bP]: "uri_encoded_bucket" }], [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: [ai], [bK]: d, rules: [{ [bL]: [U, ac, T, aj], endpoint: { [bQ]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [U, ac, T, al, am], [bK]: d, rules: [{ endpoint: aY, [bK]: t }] }, { [bL]: [U, ac, T, al, ap], endpoint: aY, [bK]: t }, { [bL]: [aq, ac, T, aj], endpoint: { [bQ]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, ac, T, al, am], [bK]: d, rules: [{ endpoint: aZ, [bK]: t }] }, { [bL]: [aq, ac, T, al, ap], endpoint: aZ, [bK]: t }, { [bL]: [U, ac, as, aj], endpoint: { [bQ]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [U, ac, as, al, am], [bK]: d, rules: [{ endpoint: ba, [bK]: t }] }, { [bL]: [U, ac, as, al, ap], endpoint: ba, [bK]: t }, { [bL]: [aq, V, ad, as, aj], endpoint: { [bQ]: L, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, V, ad, as, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: bb, [bK]: t }, { endpoint: bb, [bK]: t }] }, { [bL]: [aq, V, ad, as, al, ap], endpoint: bb, [bK]: t }, { [bL]: [aq, ac, as, aj], endpoint: { [bQ]: M, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [aq, ac, as, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: { [bQ]: M, [bR]: ao, [bW]: af }, [bK]: t }, { endpoint: bc, [bK]: t }] }, { [bL]: [aq, ac, as, al, ap], endpoint: bc, [bK]: t }] }, { error: "Path-style addressing cannot be used with S3 Accelerate", [bK]: f }] }] }] }, { [bL]: [{ [bM]: c, [bN]: [bd] }, { [bM]: e, [bN]: [bd, b] }], [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bI, [bK]: d, rules: [aI, aJ, { [bL]: bp, endpoint: { [bQ]: N, [bR]: be, [bW]: af }, [bK]: t }, { [bL]: bH, endpoint: { [bQ]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [bR]: be, [bW]: af }, [bK]: t }, { endpoint: { [bQ]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [bR]: be, [bW]: af }, [bK]: t }] }, aD] }] }, { [bL]: [{ [bM]: q, [bN]: bq }], [bK]: d, rules: [{ [bL]: br, [bK]: d, rules: [{ [bL]: bI, [bK]: d, rules: [{ [bL]: [T, U, ac, aj], endpoint: { [bQ]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [T, U, ac, al, am], [bK]: d, rules: [{ endpoint: bf, [bK]: t }] }, { [bL]: [T, U, ac, al, ap], endpoint: bf, [bK]: t }, { [bL]: [T, aq, ac, aj], endpoint: { [bQ]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [T, aq, ac, al, am], [bK]: d, rules: [{ endpoint: bg, [bK]: t }] }, { [bL]: [T, aq, ac, al, ap], endpoint: bg, [bK]: t }, { [bL]: [as, U, ac, aj], endpoint: { [bQ]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [as, U, ac, al, am], [bK]: d, rules: [{ endpoint: bh, [bK]: t }] }, { [bL]: [as, U, ac, al, ap], endpoint: bh, [bK]: t }, { [bL]: [as, aq, V, ad, aj], endpoint: { [bQ]: N, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [as, aq, V, ad, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: bi, [bK]: t }, { endpoint: bi, [bK]: t }] }, { [bL]: [as, aq, V, ad, al, ap], endpoint: bi, [bK]: t }, { [bL]: [as, aq, ac, aj], endpoint: { [bQ]: O, [bR]: ak, [bW]: af }, [bK]: t }, { [bL]: [as, aq, ac, al, am], [bK]: d, rules: [{ [bL]: bt, endpoint: { [bQ]: O, [bR]: ao, [bW]: af }, [bK]: t }, { endpoint: bj, [bK]: t }] }, { [bL]: [as, aq, ac, al, ap], endpoint: bj, [bK]: t }] }, aD] }] }] }, { error: "A region must be set when sending requests to S3.", [bK]: f }] };
+const cc = "required", cd = "type", ce = "conditions", cf = "fn", cg = "argv", ch = "ref", ci = "assign", cj = "url", ck = "properties", cl = "backend", cm = "authSchemes", cn = "disableDoubleEncoding", co = "signingName", cp = "signingRegion", cq = "headers";
+const a = false, b = true, c = "isSet", d = "booleanEquals", e = "error", f = "aws.partition", g = "stringEquals", h = "getAttr", i = "name", j = "substring", k = "bucketSuffix", l = "parseURL", m = "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", n = "endpoint", o = "tree", p = "aws.isVirtualHostableS3Bucket", q = "{url#scheme}://{Bucket}.{url#authority}{url#path}", r = "not", s = "{url#scheme}://{url#authority}{url#path}", t = "hardwareType", u = "regionPrefix", v = "bucketAliasSuffix", w = "outpostId", x = "isValidHostLabel", y = "s3-outposts", z = "s3", A = "{url#scheme}://{url#authority}{url#normalizedPath}{Bucket}", B = "https://{Bucket}.s3-accelerate.{partitionResult#dnsSuffix}", C = "https://{Bucket}.s3.{partitionResult#dnsSuffix}", D = "aws.parseArn", E = "bucketArn", F = "arnType", G = "", H = "s3-object-lambda", I = "accesspoint", J = "accessPointName", K = "{url#scheme}://{accessPointName}-{bucketArn#accountId}.{url#authority}{url#path}", L = "mrapPartition", M = "outpostType", N = "arnPrefix", O = "{url#scheme}://{url#authority}{url#normalizedPath}{uri_encoded_bucket}", P = "https://s3.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", Q = "https://s3.{partitionResult#dnsSuffix}", R = { [cc]: false, [cd]: "String" }, S = { [cc]: true, "default": false, [cd]: "Boolean" }, T = { [cc]: false, [cd]: "Boolean" }, U = { [cf]: d, [cg]: [{ [ch]: "Accelerate" }, true] }, V = { [cf]: d, [cg]: [{ [ch]: "UseFIPS" }, true] }, W = { [cf]: d, [cg]: [{ [ch]: "UseDualStack" }, true] }, X = { [cf]: c, [cg]: [{ [ch]: "Endpoint" }] }, Y = { [cf]: f, [cg]: [{ [ch]: "Region" }], [ci]: "partitionResult" }, Z = { [cf]: g, [cg]: [{ [cf]: h, [cg]: [{ [ch]: "partitionResult" }, i] }, "aws-cn"] }, aa = { [cf]: c, [cg]: [{ [ch]: "Bucket" }] }, ab = { [ch]: "Bucket" }, ac = { [cf]: l, [cg]: [{ [ch]: "Endpoint" }], [ci]: "url" }, ad = { [cf]: d, [cg]: [{ [cf]: h, [cg]: [{ [ch]: "url" }, "isIp"] }, true] }, ae = { [ch]: "url" }, af = { [cf]: "uriEncode", [cg]: [ab], [ci]: "uri_encoded_bucket" }, ag = { [cl]: "S3Express", [cm]: [{ [cn]: true, [i]: "sigv4", [co]: "s3express", [cp]: "{Region}" }] }, ah = {}, ai = { [cf]: p, [cg]: [ab, false] }, aj = { [e]: "S3Express bucket name is not a valid virtual hostable name.", [cd]: e }, ak = { [cl]: "S3Express", [cm]: [{ [cn]: true, [i]: "sigv4-s3express", [co]: "s3express", [cp]: "{Region}" }] }, al = { [cf]: c, [cg]: [{ [ch]: "UseS3ExpressControlEndpoint" }] }, am = { [cf]: d, [cg]: [{ [ch]: "UseS3ExpressControlEndpoint" }, true] }, an = { [cf]: r, [cg]: [X] }, ao = { [e]: "Unrecognized S3Express bucket name format.", [cd]: e }, ap = { [cf]: r, [cg]: [aa] }, aq = { [ch]: t }, ar = { [ce]: [an], [e]: "Expected a endpoint to be specified but no endpoint was found", [cd]: e }, as = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: y, [cp]: "{Region}" }] }, at = { [cf]: d, [cg]: [{ [ch]: "ForcePathStyle" }, false] }, au = { [ch]: "ForcePathStyle" }, av = { [cf]: d, [cg]: [{ [ch]: "Accelerate" }, false] }, aw = { [cf]: g, [cg]: [{ [ch]: "Region" }, "aws-global"] }, ax = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: z, [cp]: "us-east-1" }] }, ay = { [cf]: r, [cg]: [aw] }, az = { [cf]: d, [cg]: [{ [ch]: "UseGlobalEndpoint" }, true] }, aA = { [cj]: "https://{Bucket}.s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [ck]: { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: z, [cp]: "{Region}" }] }, [cq]: {} }, aB = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: z, [cp]: "{Region}" }] }, aC = { [cf]: d, [cg]: [{ [ch]: "UseGlobalEndpoint" }, false] }, aD = { [cf]: d, [cg]: [{ [ch]: "UseDualStack" }, false] }, aE = { [cj]: "https://{Bucket}.s3-fips.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, aF = { [cf]: d, [cg]: [{ [ch]: "UseFIPS" }, false] }, aG = { [cj]: "https://{Bucket}.s3-accelerate.dualstack.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, aH = { [cj]: "https://{Bucket}.s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, aI = { [cf]: d, [cg]: [{ [cf]: h, [cg]: [ae, "isIp"] }, false] }, aJ = { [cj]: A, [ck]: aB, [cq]: {} }, aK = { [cj]: q, [ck]: aB, [cq]: {} }, aL = { [n]: aK, [cd]: n }, aM = { [cj]: B, [ck]: aB, [cq]: {} }, aN = { [cj]: "https://{Bucket}.s3.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, aO = { [e]: "Invalid region: region was not a valid DNS name.", [cd]: e }, aP = { [ch]: E }, aQ = { [ch]: F }, aR = { [cf]: h, [cg]: [aP, "service"] }, aS = { [ch]: J }, aT = { [ce]: [W], [e]: "S3 Object Lambda does not support Dual-stack", [cd]: e }, aU = { [ce]: [U], [e]: "S3 Object Lambda does not support S3 Accelerate", [cd]: e }, aV = { [ce]: [{ [cf]: c, [cg]: [{ [ch]: "DisableAccessPoints" }] }, { [cf]: d, [cg]: [{ [ch]: "DisableAccessPoints" }, true] }], [e]: "Access points are not supported for this operation", [cd]: e }, aW = { [ce]: [{ [cf]: c, [cg]: [{ [ch]: "UseArnRegion" }] }, { [cf]: d, [cg]: [{ [ch]: "UseArnRegion" }, false] }, { [cf]: r, [cg]: [{ [cf]: g, [cg]: [{ [cf]: h, [cg]: [aP, "region"] }, "{Region}"] }] }], [e]: "Invalid configuration: region from ARN `{bucketArn#region}` does not match client region `{Region}` and UseArnRegion is `false`", [cd]: e }, aX = { [cf]: h, [cg]: [{ [ch]: "bucketPartition" }, i] }, aY = { [cf]: h, [cg]: [aP, "accountId"] }, aZ = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: H, [cp]: "{bucketArn#region}" }] }, ba = { [e]: "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName}`", [cd]: e }, bb = { [e]: "Invalid ARN: The account id may only contain a-z, A-Z, 0-9 and `-`. Found: `{bucketArn#accountId}`", [cd]: e }, bc = { [e]: "Invalid region in ARN: `{bucketArn#region}` (invalid DNS name)", [cd]: e }, bd = { [e]: "Client was configured for partition `{partitionResult#name}` but ARN (`{Bucket}`) has `{bucketPartition#name}`", [cd]: e }, be = { [e]: "Invalid ARN: The ARN may only contain a single resource component after `accesspoint`.", [cd]: e }, bf = { [e]: "Invalid ARN: Expected a resource of the format `accesspoint:<accesspoint name>` but no name was provided", [cd]: e }, bg = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: z, [cp]: "{bucketArn#region}" }] }, bh = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: y, [cp]: "{bucketArn#region}" }] }, bi = { [cf]: D, [cg]: [ab] }, bj = { [cj]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: aB, [cq]: {} }, bk = { [cj]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: aB, [cq]: {} }, bl = { [cj]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: aB, [cq]: {} }, bm = { [cj]: O, [ck]: aB, [cq]: {} }, bn = { [cj]: "https://s3.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: aB, [cq]: {} }, bo = { [ch]: "UseObjectLambdaEndpoint" }, bp = { [cm]: [{ [cn]: true, [i]: "sigv4", [co]: H, [cp]: "{Region}" }] }, bq = { [cj]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, br = { [cj]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, bs = { [cj]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, bt = { [cj]: s, [ck]: aB, [cq]: {} }, bu = { [cj]: "https://s3.{Region}.{partitionResult#dnsSuffix}", [ck]: aB, [cq]: {} }, bv = [{ [ch]: "Region" }], bw = [{ [ch]: "Endpoint" }], bx = [ab], by = [W], bz = [U], bA = [X, ac], bB = [{ [cf]: c, [cg]: [{ [ch]: "DisableS3ExpressSessionAuth" }] }, { [cf]: d, [cg]: [{ [ch]: "DisableS3ExpressSessionAuth" }, true] }], bC = [ad], bD = [af], bE = [ai], bF = [V], bG = [{ [cf]: j, [cg]: [ab, 6, 14, true], [ci]: "s3expressAvailabilityZoneId" }, { [cf]: j, [cg]: [ab, 14, 16, true], [ci]: "s3expressAvailabilityZoneDelim" }, { [cf]: g, [cg]: [{ [ch]: "s3expressAvailabilityZoneDelim" }, "--"] }], bH = [{ [ce]: [V], [n]: { [cj]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [ck]: ag, [cq]: {} }, [cd]: n }, { [n]: { [cj]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [ck]: ag, [cq]: {} }, [cd]: n }], bI = [{ [cf]: j, [cg]: [ab, 6, 15, true], [ci]: "s3expressAvailabilityZoneId" }, { [cf]: j, [cg]: [ab, 15, 17, true], [ci]: "s3expressAvailabilityZoneDelim" }, { [cf]: g, [cg]: [{ [ch]: "s3expressAvailabilityZoneDelim" }, "--"] }], bJ = [{ [ce]: [V], [n]: { [cj]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [ck]: ak, [cq]: {} }, [cd]: n }, { [n]: { [cj]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [ck]: ak, [cq]: {} }, [cd]: n }], bK = [aa], bL = [{ [cf]: x, [cg]: [{ [ch]: w }, false] }], bM = [{ [cf]: g, [cg]: [{ [ch]: u }, "beta"] }], bN = [Y], bO = [{ [cf]: x, [cg]: [{ [ch]: "Region" }, false] }], bP = [{ [cf]: g, [cg]: [{ [ch]: "Region" }, "us-east-1"] }], bQ = [{ [cf]: g, [cg]: [aQ, I] }], bR = [{ [cf]: h, [cg]: [aP, "resourceId[1]"], [ci]: J }, { [cf]: r, [cg]: [{ [cf]: g, [cg]: [aS, G] }] }], bS = [aP, "resourceId[1]"], bT = [{ [cf]: r, [cg]: [{ [cf]: g, [cg]: [{ [cf]: h, [cg]: [aP, "region"] }, G] }] }], bU = [{ [cf]: r, [cg]: [{ [cf]: c, [cg]: [{ [cf]: h, [cg]: [aP, "resourceId[2]"] }] }] }], bV = [aP, "resourceId[2]"], bW = [{ [cf]: f, [cg]: [{ [cf]: h, [cg]: [aP, "region"] }], [ci]: "bucketPartition" }], bX = [{ [cf]: g, [cg]: [aX, { [cf]: h, [cg]: [{ [ch]: "partitionResult" }, i] }] }], bY = [{ [cf]: x, [cg]: [{ [cf]: h, [cg]: [aP, "region"] }, true] }], bZ = [{ [cf]: x, [cg]: [aY, false] }], ca = [{ [cf]: x, [cg]: [aS, false] }], cb = [{ [cf]: x, [cg]: [{ [ch]: "Region" }, true] }];
+const _data = { version: "1.0", parameters: { Bucket: R, Region: R, UseFIPS: S, UseDualStack: S, Endpoint: R, ForcePathStyle: S, Accelerate: S, UseGlobalEndpoint: S, UseObjectLambdaEndpoint: T, Key: R, Prefix: R, DisableAccessPoints: T, DisableMultiRegionAccessPoints: S, UseArnRegion: T, UseS3ExpressControlEndpoint: T, DisableS3ExpressSessionAuth: T }, rules: [{ [ce]: [{ [cf]: c, [cg]: bv }], rules: [{ [ce]: [U, V], error: "Accelerate cannot be used with FIPS", [cd]: e }, { [ce]: [W, X], error: "Cannot set dual-stack in combination with a custom endpoint.", [cd]: e }, { [ce]: [X, V], error: "A custom endpoint cannot be combined with FIPS", [cd]: e }, { [ce]: [X, U], error: "A custom endpoint cannot be combined with S3 Accelerate", [cd]: e }, { [ce]: [V, Y, Z], error: "Partition does not support FIPS", [cd]: e }, { [ce]: [aa, { [cf]: j, [cg]: [ab, 0, 6, b], [ci]: k }, { [cf]: g, [cg]: [{ [ch]: k }, "--x-s3"] }], rules: [{ [ce]: by, error: "S3Express does not support Dual-stack.", [cd]: e }, { [ce]: bz, error: "S3Express does not support S3 Accelerate.", [cd]: e }, { [ce]: bA, rules: [{ [ce]: bB, rules: [{ [ce]: bC, rules: [{ [ce]: bD, rules: [{ endpoint: { [cj]: m, [ck]: ag, [cq]: ah }, [cd]: n }], [cd]: o }], [cd]: o }, { [ce]: bE, rules: [{ endpoint: { [cj]: q, [ck]: ag, [cq]: ah }, [cd]: n }], [cd]: o }, aj], [cd]: o }, { [ce]: bC, rules: [{ [ce]: bD, rules: [{ endpoint: { [cj]: m, [ck]: ak, [cq]: ah }, [cd]: n }], [cd]: o }], [cd]: o }, { [ce]: bE, rules: [{ endpoint: { [cj]: q, [ck]: ak, [cq]: ah }, [cd]: n }], [cd]: o }, aj], [cd]: o }, { [ce]: [al, am], rules: [{ [ce]: [af, an], rules: [{ [ce]: bF, endpoint: { [cj]: "https://s3express-control-fips.{Region}.amazonaws.com/{uri_encoded_bucket}", [ck]: ag, [cq]: ah }, [cd]: n }, { endpoint: { [cj]: "https://s3express-control.{Region}.amazonaws.com/{uri_encoded_bucket}", [ck]: ag, [cq]: ah }, [cd]: n }], [cd]: o }], [cd]: o }, { [ce]: bE, rules: [{ [ce]: bB, rules: [{ [ce]: bG, rules: bH, [cd]: o }, { [ce]: bI, rules: bH, [cd]: o }, ao], [cd]: o }, { [ce]: bG, rules: bJ, [cd]: o }, { [ce]: bI, rules: bJ, [cd]: o }, ao], [cd]: o }, aj], [cd]: o }, { [ce]: [ap, al, am], rules: [{ [ce]: bA, endpoint: { [cj]: s, [ck]: ag, [cq]: ah }, [cd]: n }, { [ce]: bF, endpoint: { [cj]: "https://s3express-control-fips.{Region}.amazonaws.com", [ck]: ag, [cq]: ah }, [cd]: n }, { endpoint: { [cj]: "https://s3express-control.{Region}.amazonaws.com", [ck]: ag, [cq]: ah }, [cd]: n }], [cd]: o }, { [ce]: [aa, { [cf]: j, [cg]: [ab, 49, 50, b], [ci]: t }, { [cf]: j, [cg]: [ab, 8, 12, b], [ci]: u }, { [cf]: j, [cg]: [ab, 0, 7, b], [ci]: v }, { [cf]: j, [cg]: [ab, 32, 49, b], [ci]: w }, { [cf]: f, [cg]: bv, [ci]: "regionPartition" }, { [cf]: g, [cg]: [{ [ch]: v }, "--op-s3"] }], rules: [{ [ce]: bL, rules: [{ [ce]: [{ [cf]: g, [cg]: [aq, "e"] }], rules: [{ [ce]: bM, rules: [ar, { [ce]: bA, endpoint: { [cj]: "https://{Bucket}.ec2.{url#authority}", [ck]: as, [cq]: ah }, [cd]: n }], [cd]: o }, { endpoint: { [cj]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [ck]: as, [cq]: ah }, [cd]: n }], [cd]: o }, { [ce]: [{ [cf]: g, [cg]: [aq, "o"] }], rules: [{ [ce]: bM, rules: [ar, { [ce]: bA, endpoint: { [cj]: "https://{Bucket}.op-{outpostId}.{url#authority}", [ck]: as, [cq]: ah }, [cd]: n }], [cd]: o }, { endpoint: { [cj]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [ck]: as, [cq]: ah }, [cd]: n }], [cd]: o }, { error: "Unrecognized hardware type: \"Expected hardware type o or e but got {hardwareType}\"", [cd]: e }], [cd]: o }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [cd]: e }], [cd]: o }, { [ce]: bK, rules: [{ [ce]: [X, { [cf]: r, [cg]: [{ [cf]: c, [cg]: [{ [cf]: l, [cg]: bw }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [cd]: e }, { [ce]: [at, ai], rules: [{ [ce]: bN, rules: [{ [ce]: bO, rules: [{ [ce]: [U, Z], error: "S3 Accelerate cannot be used in this region", [cd]: e }, { [ce]: [W, V, av, an, aw], endpoint: { [cj]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [W, V, av, an, ay, az], rules: [{ endpoint: aA, [cd]: n }], [cd]: o }, { [ce]: [W, V, av, an, ay, aC], endpoint: aA, [cd]: n }, { [ce]: [aD, V, av, an, aw], endpoint: { [cj]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, V, av, an, ay, az], rules: [{ endpoint: aE, [cd]: n }], [cd]: o }, { [ce]: [aD, V, av, an, ay, aC], endpoint: aE, [cd]: n }, { [ce]: [W, aF, U, an, aw], endpoint: { [cj]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [W, aF, U, an, ay, az], rules: [{ endpoint: aG, [cd]: n }], [cd]: o }, { [ce]: [W, aF, U, an, ay, aC], endpoint: aG, [cd]: n }, { [ce]: [W, aF, av, an, aw], endpoint: { [cj]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [W, aF, av, an, ay, az], rules: [{ endpoint: aH, [cd]: n }], [cd]: o }, { [ce]: [W, aF, av, an, ay, aC], endpoint: aH, [cd]: n }, { [ce]: [aD, aF, av, X, ac, ad, aw], endpoint: { [cj]: A, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, aF, av, X, ac, aI, aw], endpoint: { [cj]: q, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, aF, av, X, ac, ad, ay, az], rules: [{ [ce]: bP, endpoint: aJ, [cd]: n }, { endpoint: aJ, [cd]: n }], [cd]: o }, { [ce]: [aD, aF, av, X, ac, aI, ay, az], rules: [{ [ce]: bP, endpoint: aK, [cd]: n }, aL], [cd]: o }, { [ce]: [aD, aF, av, X, ac, ad, ay, aC], endpoint: aJ, [cd]: n }, { [ce]: [aD, aF, av, X, ac, aI, ay, aC], endpoint: aK, [cd]: n }, { [ce]: [aD, aF, U, an, aw], endpoint: { [cj]: B, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, aF, U, an, ay, az], rules: [{ [ce]: bP, endpoint: aM, [cd]: n }, { endpoint: aM, [cd]: n }], [cd]: o }, { [ce]: [aD, aF, U, an, ay, aC], endpoint: aM, [cd]: n }, { [ce]: [aD, aF, av, an, aw], endpoint: { [cj]: C, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, aF, av, an, ay, az], rules: [{ [ce]: bP, endpoint: { [cj]: C, [ck]: aB, [cq]: ah }, [cd]: n }, { endpoint: aN, [cd]: n }], [cd]: o }, { [ce]: [aD, aF, av, an, ay, aC], endpoint: aN, [cd]: n }], [cd]: o }, aO], [cd]: o }], [cd]: o }, { [ce]: [X, ac, { [cf]: g, [cg]: [{ [cf]: h, [cg]: [ae, "scheme"] }, "http"] }, { [cf]: p, [cg]: [ab, b] }, at, aF, aD, av], rules: [{ [ce]: bN, rules: [{ [ce]: bO, rules: [aL], [cd]: o }, aO], [cd]: o }], [cd]: o }, { [ce]: [at, { [cf]: D, [cg]: bx, [ci]: E }], rules: [{ [ce]: [{ [cf]: h, [cg]: [aP, "resourceId[0]"], [ci]: F }, { [cf]: r, [cg]: [{ [cf]: g, [cg]: [aQ, G] }] }], rules: [{ [ce]: [{ [cf]: g, [cg]: [aR, H] }], rules: [{ [ce]: bQ, rules: [{ [ce]: bR, rules: [aT, aU, { [ce]: bT, rules: [aV, { [ce]: bU, rules: [aW, { [ce]: bW, rules: [{ [ce]: bN, rules: [{ [ce]: bX, rules: [{ [ce]: bY, rules: [{ [ce]: [{ [cf]: g, [cg]: [aY, G] }], error: "Invalid ARN: Missing account id", [cd]: e }, { [ce]: bZ, rules: [{ [ce]: ca, rules: [{ [ce]: bA, endpoint: { [cj]: K, [ck]: aZ, [cq]: ah }, [cd]: n }, { [ce]: bF, endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: aZ, [cq]: ah }, [cd]: n }, { endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: aZ, [cq]: ah }, [cd]: n }], [cd]: o }, ba], [cd]: o }, bb], [cd]: o }, bc], [cd]: o }, bd], [cd]: o }], [cd]: o }], [cd]: o }, be], [cd]: o }, { error: "Invalid ARN: bucket ARN is missing a region", [cd]: e }], [cd]: o }, bf], [cd]: o }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [cd]: e }], [cd]: o }, { [ce]: bQ, rules: [{ [ce]: bR, rules: [{ [ce]: bT, rules: [{ [ce]: bQ, rules: [{ [ce]: bT, rules: [aV, { [ce]: bU, rules: [aW, { [ce]: bW, rules: [{ [ce]: bN, rules: [{ [ce]: [{ [cf]: g, [cg]: [aX, "{partitionResult#name}"] }], rules: [{ [ce]: bY, rules: [{ [ce]: [{ [cf]: g, [cg]: [aR, z] }], rules: [{ [ce]: bZ, rules: [{ [ce]: ca, rules: [{ [ce]: bz, error: "Access Points do not support S3 Accelerate", [cd]: e }, { [ce]: [V, W], endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: bg, [cq]: ah }, [cd]: n }, { [ce]: [V, aD], endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: bg, [cq]: ah }, [cd]: n }, { [ce]: [aF, W], endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: bg, [cq]: ah }, [cd]: n }, { [ce]: [aF, aD, X, ac], endpoint: { [cj]: K, [ck]: bg, [cq]: ah }, [cd]: n }, { [ce]: [aF, aD], endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: bg, [cq]: ah }, [cd]: n }], [cd]: o }, ba], [cd]: o }, bb], [cd]: o }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [cd]: e }], [cd]: o }, bc], [cd]: o }, bd], [cd]: o }], [cd]: o }], [cd]: o }, be], [cd]: o }], [cd]: o }], [cd]: o }, { [ce]: [{ [cf]: x, [cg]: [aS, b] }], rules: [{ [ce]: by, error: "S3 MRAP does not support dual-stack", [cd]: e }, { [ce]: bF, error: "S3 MRAP does not support FIPS", [cd]: e }, { [ce]: bz, error: "S3 MRAP does not support S3 Accelerate", [cd]: e }, { [ce]: [{ [cf]: d, [cg]: [{ [ch]: "DisableMultiRegionAccessPoints" }, b] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [cd]: e }, { [ce]: [{ [cf]: f, [cg]: bv, [ci]: L }], rules: [{ [ce]: [{ [cf]: g, [cg]: [{ [cf]: h, [cg]: [{ [ch]: L }, i] }, { [cf]: h, [cg]: [aP, "partition"] }] }], rules: [{ endpoint: { [cj]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [ck]: { [cm]: [{ [cn]: b, name: "sigv4a", [co]: z, signingRegionSet: ["*"] }] }, [cq]: ah }, [cd]: n }], [cd]: o }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [cd]: e }], [cd]: o }], [cd]: o }, { error: "Invalid Access Point Name", [cd]: e }], [cd]: o }, bf], [cd]: o }, { [ce]: [{ [cf]: g, [cg]: [aR, y] }], rules: [{ [ce]: by, error: "S3 Outposts does not support Dual-stack", [cd]: e }, { [ce]: bF, error: "S3 Outposts does not support FIPS", [cd]: e }, { [ce]: bz, error: "S3 Outposts does not support S3 Accelerate", [cd]: e }, { [ce]: [{ [cf]: c, [cg]: [{ [cf]: h, [cg]: [aP, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [cd]: e }, { [ce]: [{ [cf]: h, [cg]: bS, [ci]: w }], rules: [{ [ce]: bL, rules: [aW, { [ce]: bW, rules: [{ [ce]: bN, rules: [{ [ce]: bX, rules: [{ [ce]: bY, rules: [{ [ce]: bZ, rules: [{ [ce]: [{ [cf]: h, [cg]: bV, [ci]: M }], rules: [{ [ce]: [{ [cf]: h, [cg]: [aP, "resourceId[3]"], [ci]: J }], rules: [{ [ce]: [{ [cf]: g, [cg]: [{ [ch]: M }, I] }], rules: [{ [ce]: bA, endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [ck]: bh, [cq]: ah }, [cd]: n }, { endpoint: { [cj]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [ck]: bh, [cq]: ah }, [cd]: n }], [cd]: o }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [cd]: e }], [cd]: o }, { error: "Invalid ARN: expected an access point name", [cd]: e }], [cd]: o }, { error: "Invalid ARN: Expected a 4-component resource", [cd]: e }], [cd]: o }, bb], [cd]: o }, bc], [cd]: o }, bd], [cd]: o }], [cd]: o }], [cd]: o }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [cd]: e }], [cd]: o }, { error: "Invalid ARN: The Outpost Id was not set", [cd]: e }], [cd]: o }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [cd]: e }], [cd]: o }, { error: "Invalid ARN: No ARN type specified", [cd]: e }], [cd]: o }, { [ce]: [{ [cf]: j, [cg]: [ab, 0, 4, a], [ci]: N }, { [cf]: g, [cg]: [{ [ch]: N }, "arn:"] }, { [cf]: r, [cg]: [{ [cf]: c, [cg]: [bi] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [cd]: e }, { [ce]: [{ [cf]: d, [cg]: [au, b] }, bi], error: "Path-style addressing cannot be used with ARN buckets", [cd]: e }, { [ce]: bD, rules: [{ [ce]: bN, rules: [{ [ce]: [av], rules: [{ [ce]: [W, an, V, aw], endpoint: { [cj]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [W, an, V, ay, az], rules: [{ endpoint: bj, [cd]: n }], [cd]: o }, { [ce]: [W, an, V, ay, aC], endpoint: bj, [cd]: n }, { [ce]: [aD, an, V, aw], endpoint: { [cj]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, an, V, ay, az], rules: [{ endpoint: bk, [cd]: n }], [cd]: o }, { [ce]: [aD, an, V, ay, aC], endpoint: bk, [cd]: n }, { [ce]: [W, an, aF, aw], endpoint: { [cj]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [W, an, aF, ay, az], rules: [{ endpoint: bl, [cd]: n }], [cd]: o }, { [ce]: [W, an, aF, ay, aC], endpoint: bl, [cd]: n }, { [ce]: [aD, X, ac, aF, aw], endpoint: { [cj]: O, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, X, ac, aF, ay, az], rules: [{ [ce]: bP, endpoint: bm, [cd]: n }, { endpoint: bm, [cd]: n }], [cd]: o }, { [ce]: [aD, X, ac, aF, ay, aC], endpoint: bm, [cd]: n }, { [ce]: [aD, an, aF, aw], endpoint: { [cj]: P, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aD, an, aF, ay, az], rules: [{ [ce]: bP, endpoint: { [cj]: P, [ck]: aB, [cq]: ah }, [cd]: n }, { endpoint: bn, [cd]: n }], [cd]: o }, { [ce]: [aD, an, aF, ay, aC], endpoint: bn, [cd]: n }], [cd]: o }, { error: "Path-style addressing cannot be used with S3 Accelerate", [cd]: e }], [cd]: o }], [cd]: o }], [cd]: o }, { [ce]: [{ [cf]: c, [cg]: [bo] }, { [cf]: d, [cg]: [bo, b] }], rules: [{ [ce]: bN, rules: [{ [ce]: cb, rules: [aT, aU, { [ce]: bA, endpoint: { [cj]: s, [ck]: bp, [cq]: ah }, [cd]: n }, { [ce]: bF, endpoint: { [cj]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [ck]: bp, [cq]: ah }, [cd]: n }, { endpoint: { [cj]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [ck]: bp, [cq]: ah }, [cd]: n }], [cd]: o }, aO], [cd]: o }], [cd]: o }, { [ce]: [ap], rules: [{ [ce]: bN, rules: [{ [ce]: cb, rules: [{ [ce]: [V, W, an, aw], endpoint: { [cj]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [V, W, an, ay, az], rules: [{ endpoint: bq, [cd]: n }], [cd]: o }, { [ce]: [V, W, an, ay, aC], endpoint: bq, [cd]: n }, { [ce]: [V, aD, an, aw], endpoint: { [cj]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [V, aD, an, ay, az], rules: [{ endpoint: br, [cd]: n }], [cd]: o }, { [ce]: [V, aD, an, ay, aC], endpoint: br, [cd]: n }, { [ce]: [aF, W, an, aw], endpoint: { [cj]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aF, W, an, ay, az], rules: [{ endpoint: bs, [cd]: n }], [cd]: o }, { [ce]: [aF, W, an, ay, aC], endpoint: bs, [cd]: n }, { [ce]: [aF, aD, X, ac, aw], endpoint: { [cj]: s, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aF, aD, X, ac, ay, az], rules: [{ [ce]: bP, endpoint: bt, [cd]: n }, { endpoint: bt, [cd]: n }], [cd]: o }, { [ce]: [aF, aD, X, ac, ay, aC], endpoint: bt, [cd]: n }, { [ce]: [aF, aD, an, aw], endpoint: { [cj]: Q, [ck]: ax, [cq]: ah }, [cd]: n }, { [ce]: [aF, aD, an, ay, az], rules: [{ [ce]: bP, endpoint: { [cj]: Q, [ck]: aB, [cq]: ah }, [cd]: n }, { endpoint: bu, [cd]: n }], [cd]: o }, { [ce]: [aF, aD, an, ay, aC], endpoint: bu, [cd]: n }], [cd]: o }, aO], [cd]: o }], [cd]: o }], [cd]: o }, { error: "A region must be set when sending requests to S3.", [cd]: e }] };
 exports.ruleSet = _data;
 
 
@@ -9499,8 +9806,8 @@ tslib_1.__exportStar(__nccwpck_require__(6958), exports);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ReplicationStatus = exports.Protocol = exports.BucketVersioningStatus = exports.MFADeleteStatus = exports.Payer = exports.ReplicationRuleStatus = exports.SseKmsEncryptedObjectsStatus = exports.ReplicaModificationsStatus = exports.ReplicationRuleFilter = exports.ExistingObjectReplicationStatus = exports.ReplicationTimeStatus = exports.MetricsStatus = exports.DeleteMarkerReplicationStatus = exports.FilterRuleName = exports.Event = exports.MetricsFilter = exports.BucketLogsPermission = exports.ExpirationStatus = exports.TransitionStorageClass = exports.LifecycleRuleFilter = exports.InventoryFrequency = exports.InventoryOptionalField = exports.InventoryIncludedObjectVersions = exports.InventoryFormat = exports.IntelligentTieringAccessTier = exports.IntelligentTieringStatus = exports.StorageClassAnalysisSchemaVersion = exports.AnalyticsS3ExportFileFormat = exports.AnalyticsFilter = exports.ObjectOwnership = exports.BucketLocationConstraint = exports.BucketCannedACL = exports.BucketAlreadyOwnedByYou = exports.BucketAlreadyExists = exports.ObjectNotInActiveTierError = exports.TaggingDirective = exports.StorageClass = exports.ObjectLockMode = exports.ObjectLockLegalHoldStatus = exports.MetadataDirective = exports.ChecksumAlgorithm = exports.ObjectCannedACL = exports.ServerSideEncryption = exports.OwnerOverride = exports.Permission = exports.Type = exports.BucketAccelerateStatus = exports.NoSuchUpload = exports.RequestPayer = exports.RequestCharged = void 0;
-exports.PutObjectRequestFilterSensitiveLog = exports.PutObjectOutputFilterSensitiveLog = exports.PutBucketInventoryConfigurationRequestFilterSensitiveLog = exports.PutBucketEncryptionRequestFilterSensitiveLog = exports.ListPartsRequestFilterSensitiveLog = exports.ListBucketInventoryConfigurationsOutputFilterSensitiveLog = exports.HeadObjectRequestFilterSensitiveLog = exports.HeadObjectOutputFilterSensitiveLog = exports.GetObjectTorrentOutputFilterSensitiveLog = exports.GetObjectAttributesRequestFilterSensitiveLog = exports.GetObjectRequestFilterSensitiveLog = exports.GetObjectOutputFilterSensitiveLog = exports.GetBucketInventoryConfigurationOutputFilterSensitiveLog = exports.InventoryConfigurationFilterSensitiveLog = exports.InventoryDestinationFilterSensitiveLog = exports.InventoryS3BucketDestinationFilterSensitiveLog = exports.InventoryEncryptionFilterSensitiveLog = exports.SSEKMSFilterSensitiveLog = exports.GetBucketEncryptionOutputFilterSensitiveLog = exports.ServerSideEncryptionConfigurationFilterSensitiveLog = exports.ServerSideEncryptionRuleFilterSensitiveLog = exports.ServerSideEncryptionByDefaultFilterSensitiveLog = exports.CreateMultipartUploadRequestFilterSensitiveLog = exports.CreateMultipartUploadOutputFilterSensitiveLog = exports.CopyObjectRequestFilterSensitiveLog = exports.CopyObjectOutputFilterSensitiveLog = exports.CompleteMultipartUploadRequestFilterSensitiveLog = exports.CompleteMultipartUploadOutputFilterSensitiveLog = exports.MFADelete = exports.ObjectVersionStorageClass = exports.NoSuchBucket = exports.OptionalObjectAttributes = exports.ObjectStorageClass = exports.EncodingType = exports.ArchiveStatus = exports.NotFound = exports.ObjectLockRetentionMode = exports.ObjectLockEnabled = exports.ObjectAttributes = exports.NoSuchKey = exports.InvalidObjectState = exports.ChecksumMode = void 0;
+exports.SseKmsEncryptedObjectsStatus = exports.ReplicaModificationsStatus = exports.ReplicationRuleFilter = exports.ExistingObjectReplicationStatus = exports.ReplicationTimeStatus = exports.MetricsStatus = exports.DeleteMarkerReplicationStatus = exports.FilterRuleName = exports.Event = exports.MetricsFilter = exports.PartitionDateSource = exports.BucketLogsPermission = exports.ExpirationStatus = exports.TransitionStorageClass = exports.LifecycleRuleFilter = exports.InventoryFrequency = exports.InventoryOptionalField = exports.InventoryIncludedObjectVersions = exports.InventoryFormat = exports.IntelligentTieringAccessTier = exports.IntelligentTieringStatus = exports.StorageClassAnalysisSchemaVersion = exports.AnalyticsS3ExportFileFormat = exports.AnalyticsFilter = exports.NoSuchBucket = exports.SessionMode = exports.ObjectOwnership = exports.BucketLocationConstraint = exports.LocationType = exports.BucketType = exports.DataRedundancy = exports.BucketCannedACL = exports.BucketAlreadyOwnedByYou = exports.BucketAlreadyExists = exports.ObjectNotInActiveTierError = exports.TaggingDirective = exports.StorageClass = exports.ObjectLockMode = exports.ObjectLockLegalHoldStatus = exports.MetadataDirective = exports.ChecksumAlgorithm = exports.ObjectCannedACL = exports.ServerSideEncryption = exports.OwnerOverride = exports.Permission = exports.Type = exports.BucketAccelerateStatus = exports.NoSuchUpload = exports.RequestPayer = exports.RequestCharged = void 0;
+exports.PutBucketInventoryConfigurationRequestFilterSensitiveLog = exports.PutBucketEncryptionRequestFilterSensitiveLog = exports.ListPartsRequestFilterSensitiveLog = exports.ListBucketInventoryConfigurationsOutputFilterSensitiveLog = exports.HeadObjectRequestFilterSensitiveLog = exports.HeadObjectOutputFilterSensitiveLog = exports.GetObjectTorrentOutputFilterSensitiveLog = exports.GetObjectAttributesRequestFilterSensitiveLog = exports.GetObjectRequestFilterSensitiveLog = exports.GetObjectOutputFilterSensitiveLog = exports.GetBucketInventoryConfigurationOutputFilterSensitiveLog = exports.InventoryConfigurationFilterSensitiveLog = exports.InventoryDestinationFilterSensitiveLog = exports.InventoryS3BucketDestinationFilterSensitiveLog = exports.InventoryEncryptionFilterSensitiveLog = exports.SSEKMSFilterSensitiveLog = exports.GetBucketEncryptionOutputFilterSensitiveLog = exports.ServerSideEncryptionConfigurationFilterSensitiveLog = exports.ServerSideEncryptionRuleFilterSensitiveLog = exports.ServerSideEncryptionByDefaultFilterSensitiveLog = exports.CreateSessionOutputFilterSensitiveLog = exports.SessionCredentialsFilterSensitiveLog = exports.CreateMultipartUploadRequestFilterSensitiveLog = exports.CreateMultipartUploadOutputFilterSensitiveLog = exports.CopyObjectRequestFilterSensitiveLog = exports.CopyObjectOutputFilterSensitiveLog = exports.CompleteMultipartUploadRequestFilterSensitiveLog = exports.CompleteMultipartUploadOutputFilterSensitiveLog = exports.ObjectVersionStorageClass = exports.OptionalObjectAttributes = exports.ObjectStorageClass = exports.EncodingType = exports.ArchiveStatus = exports.NotFound = exports.ObjectLockRetentionMode = exports.ObjectLockEnabled = exports.ObjectAttributes = exports.NoSuchKey = exports.InvalidObjectState = exports.ChecksumMode = exports.ReplicationStatus = exports.Protocol = exports.BucketVersioningStatus = exports.MFADeleteStatus = exports.Payer = exports.ReplicationRuleStatus = void 0;
 const smithy_client_1 = __nccwpck_require__(63570);
 const S3ServiceException_1 = __nccwpck_require__(37614);
 exports.RequestCharged = {
@@ -9575,6 +9882,7 @@ exports.ObjectLockMode = {
 };
 exports.StorageClass = {
     DEEP_ARCHIVE: "DEEP_ARCHIVE",
+    EXPRESS_ONEZONE: "EXPRESS_ONEZONE",
     GLACIER: "GLACIER",
     GLACIER_IR: "GLACIER_IR",
     INTELLIGENT_TIERING: "INTELLIGENT_TIERING",
@@ -9634,6 +9942,15 @@ exports.BucketCannedACL = {
     public_read: "public-read",
     public_read_write: "public-read-write",
 };
+exports.DataRedundancy = {
+    SingleAvailabilityZone: "SingleAvailabilityZone",
+};
+exports.BucketType = {
+    Directory: "Directory",
+};
+exports.LocationType = {
+    AvailabilityZone: "AvailabilityZone",
+};
 exports.BucketLocationConstraint = {
     EU: "EU",
     af_south_1: "af-south-1",
@@ -9669,6 +9986,23 @@ exports.ObjectOwnership = {
     BucketOwnerPreferred: "BucketOwnerPreferred",
     ObjectWriter: "ObjectWriter",
 };
+exports.SessionMode = {
+    ReadOnly: "ReadOnly",
+    ReadWrite: "ReadWrite",
+};
+class NoSuchBucket extends S3ServiceException_1.S3ServiceException {
+    constructor(opts) {
+        super({
+            name: "NoSuchBucket",
+            $fault: "client",
+            ...opts,
+        });
+        this.name = "NoSuchBucket";
+        this.$fault = "client";
+        Object.setPrototypeOf(this, NoSuchBucket.prototype);
+    }
+}
+exports.NoSuchBucket = NoSuchBucket;
 var AnalyticsFilter;
 (function (AnalyticsFilter) {
     AnalyticsFilter.visit = (value, visitor) => {
@@ -9757,6 +10091,10 @@ exports.BucketLogsPermission = {
     FULL_CONTROL: "FULL_CONTROL",
     READ: "READ",
     WRITE: "WRITE",
+};
+exports.PartitionDateSource = {
+    DeliveryTime: "DeliveryTime",
+    EventTime: "EventTime",
 };
 var MetricsFilter;
 (function (MetricsFilter) {
@@ -9935,6 +10273,7 @@ exports.EncodingType = {
 };
 exports.ObjectStorageClass = {
     DEEP_ARCHIVE: "DEEP_ARCHIVE",
+    EXPRESS_ONEZONE: "EXPRESS_ONEZONE",
     GLACIER: "GLACIER",
     GLACIER_IR: "GLACIER_IR",
     INTELLIGENT_TIERING: "INTELLIGENT_TIERING",
@@ -9948,25 +10287,8 @@ exports.ObjectStorageClass = {
 exports.OptionalObjectAttributes = {
     RESTORE_STATUS: "RestoreStatus",
 };
-class NoSuchBucket extends S3ServiceException_1.S3ServiceException {
-    constructor(opts) {
-        super({
-            name: "NoSuchBucket",
-            $fault: "client",
-            ...opts,
-        });
-        this.name = "NoSuchBucket";
-        this.$fault = "client";
-        Object.setPrototypeOf(this, NoSuchBucket.prototype);
-    }
-}
-exports.NoSuchBucket = NoSuchBucket;
 exports.ObjectVersionStorageClass = {
     STANDARD: "STANDARD",
-};
-exports.MFADelete = {
-    Disabled: "Disabled",
-    Enabled: "Enabled",
 };
 const CompleteMultipartUploadOutputFilterSensitiveLog = (obj) => ({
     ...obj,
@@ -10005,6 +10327,17 @@ const CreateMultipartUploadRequestFilterSensitiveLog = (obj) => ({
     ...(obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: smithy_client_1.SENSITIVE_STRING }),
 });
 exports.CreateMultipartUploadRequestFilterSensitiveLog = CreateMultipartUploadRequestFilterSensitiveLog;
+const SessionCredentialsFilterSensitiveLog = (obj) => ({
+    ...obj,
+    ...(obj.SecretAccessKey && { SecretAccessKey: smithy_client_1.SENSITIVE_STRING }),
+    ...(obj.SessionToken && { SessionToken: smithy_client_1.SENSITIVE_STRING }),
+});
+exports.SessionCredentialsFilterSensitiveLog = SessionCredentialsFilterSensitiveLog;
+const CreateSessionOutputFilterSensitiveLog = (obj) => ({
+    ...obj,
+    ...(obj.Credentials && { Credentials: (0, exports.SessionCredentialsFilterSensitiveLog)(obj.Credentials) }),
+});
+exports.CreateSessionOutputFilterSensitiveLog = CreateSessionOutputFilterSensitiveLog;
 const ServerSideEncryptionByDefaultFilterSensitiveLog = (obj) => ({
     ...obj,
     ...(obj.KMSMasterKeyID && { KMSMasterKeyID: smithy_client_1.SENSITIVE_STRING }),
@@ -10118,19 +10451,6 @@ const PutBucketInventoryConfigurationRequestFilterSensitiveLog = (obj) => ({
     }),
 });
 exports.PutBucketInventoryConfigurationRequestFilterSensitiveLog = PutBucketInventoryConfigurationRequestFilterSensitiveLog;
-const PutObjectOutputFilterSensitiveLog = (obj) => ({
-    ...obj,
-    ...(obj.SSEKMSKeyId && { SSEKMSKeyId: smithy_client_1.SENSITIVE_STRING }),
-    ...(obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: smithy_client_1.SENSITIVE_STRING }),
-});
-exports.PutObjectOutputFilterSensitiveLog = PutObjectOutputFilterSensitiveLog;
-const PutObjectRequestFilterSensitiveLog = (obj) => ({
-    ...obj,
-    ...(obj.SSECustomerKey && { SSECustomerKey: smithy_client_1.SENSITIVE_STRING }),
-    ...(obj.SSEKMSKeyId && { SSEKMSKeyId: smithy_client_1.SENSITIVE_STRING }),
-    ...(obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: smithy_client_1.SENSITIVE_STRING }),
-});
-exports.PutObjectRequestFilterSensitiveLog = PutObjectRequestFilterSensitiveLog;
 
 
 /***/ }),
@@ -10141,9 +10461,13 @@ exports.PutObjectRequestFilterSensitiveLog = PutObjectRequestFilterSensitiveLog;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.WriteGetObjectResponseRequestFilterSensitiveLog = exports.UploadPartCopyRequestFilterSensitiveLog = exports.UploadPartCopyOutputFilterSensitiveLog = exports.UploadPartRequestFilterSensitiveLog = exports.UploadPartOutputFilterSensitiveLog = exports.SelectObjectContentRequestFilterSensitiveLog = exports.SelectObjectContentOutputFilterSensitiveLog = exports.SelectObjectContentEventStreamFilterSensitiveLog = exports.RestoreObjectRequestFilterSensitiveLog = exports.RestoreRequestFilterSensitiveLog = exports.OutputLocationFilterSensitiveLog = exports.S3LocationFilterSensitiveLog = exports.EncryptionFilterSensitiveLog = exports.SelectObjectContentEventStream = exports.RestoreRequestType = exports.QuoteFields = exports.JSONType = exports.FileHeaderInfo = exports.CompressionType = exports.ExpressionType = exports.Tier = exports.ObjectAlreadyInActiveTierError = void 0;
+exports.WriteGetObjectResponseRequestFilterSensitiveLog = exports.UploadPartCopyRequestFilterSensitiveLog = exports.UploadPartCopyOutputFilterSensitiveLog = exports.UploadPartRequestFilterSensitiveLog = exports.UploadPartOutputFilterSensitiveLog = exports.SelectObjectContentRequestFilterSensitiveLog = exports.SelectObjectContentOutputFilterSensitiveLog = exports.SelectObjectContentEventStreamFilterSensitiveLog = exports.RestoreObjectRequestFilterSensitiveLog = exports.RestoreRequestFilterSensitiveLog = exports.OutputLocationFilterSensitiveLog = exports.S3LocationFilterSensitiveLog = exports.EncryptionFilterSensitiveLog = exports.PutObjectRequestFilterSensitiveLog = exports.PutObjectOutputFilterSensitiveLog = exports.SelectObjectContentEventStream = exports.RestoreRequestType = exports.QuoteFields = exports.JSONType = exports.FileHeaderInfo = exports.CompressionType = exports.ExpressionType = exports.Tier = exports.ObjectAlreadyInActiveTierError = exports.MFADelete = void 0;
 const smithy_client_1 = __nccwpck_require__(63570);
 const S3ServiceException_1 = __nccwpck_require__(37614);
+exports.MFADelete = {
+    Disabled: "Disabled",
+    Enabled: "Enabled",
+};
 class ObjectAlreadyInActiveTierError extends S3ServiceException_1.S3ServiceException {
     constructor(opts) {
         super({
@@ -10202,6 +10526,19 @@ var SelectObjectContentEventStream;
         return visitor._(value.$unknown[0], value.$unknown[1]);
     };
 })(SelectObjectContentEventStream = exports.SelectObjectContentEventStream || (exports.SelectObjectContentEventStream = {}));
+const PutObjectOutputFilterSensitiveLog = (obj) => ({
+    ...obj,
+    ...(obj.SSEKMSKeyId && { SSEKMSKeyId: smithy_client_1.SENSITIVE_STRING }),
+    ...(obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: smithy_client_1.SENSITIVE_STRING }),
+});
+exports.PutObjectOutputFilterSensitiveLog = PutObjectOutputFilterSensitiveLog;
+const PutObjectRequestFilterSensitiveLog = (obj) => ({
+    ...obj,
+    ...(obj.SSECustomerKey && { SSECustomerKey: smithy_client_1.SENSITIVE_STRING }),
+    ...(obj.SSEKMSKeyId && { SSEKMSKeyId: smithy_client_1.SENSITIVE_STRING }),
+    ...(obj.SSEKMSEncryptionContext && { SSEKMSEncryptionContext: smithy_client_1.SENSITIVE_STRING }),
+});
+exports.PutObjectRequestFilterSensitiveLog = PutObjectRequestFilterSensitiveLog;
 const EncryptionFilterSensitiveLog = (obj) => ({
     ...obj,
     ...(obj.KMSKeyId && { KMSKeyId: smithy_client_1.SENSITIVE_STRING }),
@@ -10292,6 +10629,43 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 /***/ }),
 
+/***/ 30532:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.paginateListDirectoryBuckets = void 0;
+const ListDirectoryBucketsCommand_1 = __nccwpck_require__(68430);
+const S3Client_1 = __nccwpck_require__(22034);
+const makePagedClientRequest = async (client, input, ...args) => {
+    return await client.send(new ListDirectoryBucketsCommand_1.ListDirectoryBucketsCommand(input), ...args);
+};
+async function* paginateListDirectoryBuckets(config, input, ...additionalArguments) {
+    let token = config.startingToken || undefined;
+    let hasNext = true;
+    let page;
+    while (hasNext) {
+        input.ContinuationToken = token;
+        input["MaxDirectoryBuckets"] = config.pageSize;
+        if (config.client instanceof S3Client_1.S3Client) {
+            page = await makePagedClientRequest(config.client, input, ...additionalArguments);
+        }
+        else {
+            throw new Error("Invalid client, expected S3 | S3Client");
+        }
+        yield page;
+        const prevToken = token;
+        token = page.ContinuationToken;
+        hasNext = !!(token && (!config.stopOnSameToken || token !== prevToken));
+    }
+    return undefined;
+}
+exports.paginateListDirectoryBuckets = paginateListDirectoryBuckets;
+
+
+/***/ }),
+
 /***/ 45491:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -10374,6 +10748,7 @@ exports.paginateListParts = paginateListParts;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __nccwpck_require__(4351);
 tslib_1.__exportStar(__nccwpck_require__(27356), exports);
+tslib_1.__exportStar(__nccwpck_require__(30532), exports);
 tslib_1.__exportStar(__nccwpck_require__(45491), exports);
 tslib_1.__exportStar(__nccwpck_require__(82064), exports);
 
@@ -10386,10 +10761,10 @@ tslib_1.__exportStar(__nccwpck_require__(82064), exports);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.se_GetObjectTorrentCommand = exports.se_GetObjectTaggingCommand = exports.se_GetObjectRetentionCommand = exports.se_GetObjectLockConfigurationCommand = exports.se_GetObjectLegalHoldCommand = exports.se_GetObjectAttributesCommand = exports.se_GetObjectAclCommand = exports.se_GetObjectCommand = exports.se_GetBucketWebsiteCommand = exports.se_GetBucketVersioningCommand = exports.se_GetBucketTaggingCommand = exports.se_GetBucketRequestPaymentCommand = exports.se_GetBucketReplicationCommand = exports.se_GetBucketPolicyStatusCommand = exports.se_GetBucketPolicyCommand = exports.se_GetBucketOwnershipControlsCommand = exports.se_GetBucketNotificationConfigurationCommand = exports.se_GetBucketMetricsConfigurationCommand = exports.se_GetBucketLoggingCommand = exports.se_GetBucketLocationCommand = exports.se_GetBucketLifecycleConfigurationCommand = exports.se_GetBucketInventoryConfigurationCommand = exports.se_GetBucketIntelligentTieringConfigurationCommand = exports.se_GetBucketEncryptionCommand = exports.se_GetBucketCorsCommand = exports.se_GetBucketAnalyticsConfigurationCommand = exports.se_GetBucketAclCommand = exports.se_GetBucketAccelerateConfigurationCommand = exports.se_DeletePublicAccessBlockCommand = exports.se_DeleteObjectTaggingCommand = exports.se_DeleteObjectsCommand = exports.se_DeleteObjectCommand = exports.se_DeleteBucketWebsiteCommand = exports.se_DeleteBucketTaggingCommand = exports.se_DeleteBucketReplicationCommand = exports.se_DeleteBucketPolicyCommand = exports.se_DeleteBucketOwnershipControlsCommand = exports.se_DeleteBucketMetricsConfigurationCommand = exports.se_DeleteBucketLifecycleCommand = exports.se_DeleteBucketInventoryConfigurationCommand = exports.se_DeleteBucketIntelligentTieringConfigurationCommand = exports.se_DeleteBucketEncryptionCommand = exports.se_DeleteBucketCorsCommand = exports.se_DeleteBucketAnalyticsConfigurationCommand = exports.se_DeleteBucketCommand = exports.se_CreateMultipartUploadCommand = exports.se_CreateBucketCommand = exports.se_CopyObjectCommand = exports.se_CompleteMultipartUploadCommand = exports.se_AbortMultipartUploadCommand = void 0;
-exports.de_DeleteBucketAnalyticsConfigurationCommand = exports.de_DeleteBucketCommand = exports.de_CreateMultipartUploadCommand = exports.de_CreateBucketCommand = exports.de_CopyObjectCommand = exports.de_CompleteMultipartUploadCommand = exports.de_AbortMultipartUploadCommand = exports.se_WriteGetObjectResponseCommand = exports.se_UploadPartCopyCommand = exports.se_UploadPartCommand = exports.se_SelectObjectContentCommand = exports.se_RestoreObjectCommand = exports.se_PutPublicAccessBlockCommand = exports.se_PutObjectTaggingCommand = exports.se_PutObjectRetentionCommand = exports.se_PutObjectLockConfigurationCommand = exports.se_PutObjectLegalHoldCommand = exports.se_PutObjectAclCommand = exports.se_PutObjectCommand = exports.se_PutBucketWebsiteCommand = exports.se_PutBucketVersioningCommand = exports.se_PutBucketTaggingCommand = exports.se_PutBucketRequestPaymentCommand = exports.se_PutBucketReplicationCommand = exports.se_PutBucketPolicyCommand = exports.se_PutBucketOwnershipControlsCommand = exports.se_PutBucketNotificationConfigurationCommand = exports.se_PutBucketMetricsConfigurationCommand = exports.se_PutBucketLoggingCommand = exports.se_PutBucketLifecycleConfigurationCommand = exports.se_PutBucketInventoryConfigurationCommand = exports.se_PutBucketIntelligentTieringConfigurationCommand = exports.se_PutBucketEncryptionCommand = exports.se_PutBucketCorsCommand = exports.se_PutBucketAnalyticsConfigurationCommand = exports.se_PutBucketAclCommand = exports.se_PutBucketAccelerateConfigurationCommand = exports.se_ListPartsCommand = exports.se_ListObjectVersionsCommand = exports.se_ListObjectsV2Command = exports.se_ListObjectsCommand = exports.se_ListMultipartUploadsCommand = exports.se_ListBucketsCommand = exports.se_ListBucketMetricsConfigurationsCommand = exports.se_ListBucketInventoryConfigurationsCommand = exports.se_ListBucketIntelligentTieringConfigurationsCommand = exports.se_ListBucketAnalyticsConfigurationsCommand = exports.se_HeadObjectCommand = exports.se_HeadBucketCommand = exports.se_GetPublicAccessBlockCommand = void 0;
-exports.de_ListBucketMetricsConfigurationsCommand = exports.de_ListBucketInventoryConfigurationsCommand = exports.de_ListBucketIntelligentTieringConfigurationsCommand = exports.de_ListBucketAnalyticsConfigurationsCommand = exports.de_HeadObjectCommand = exports.de_HeadBucketCommand = exports.de_GetPublicAccessBlockCommand = exports.de_GetObjectTorrentCommand = exports.de_GetObjectTaggingCommand = exports.de_GetObjectRetentionCommand = exports.de_GetObjectLockConfigurationCommand = exports.de_GetObjectLegalHoldCommand = exports.de_GetObjectAttributesCommand = exports.de_GetObjectAclCommand = exports.de_GetObjectCommand = exports.de_GetBucketWebsiteCommand = exports.de_GetBucketVersioningCommand = exports.de_GetBucketTaggingCommand = exports.de_GetBucketRequestPaymentCommand = exports.de_GetBucketReplicationCommand = exports.de_GetBucketPolicyStatusCommand = exports.de_GetBucketPolicyCommand = exports.de_GetBucketOwnershipControlsCommand = exports.de_GetBucketNotificationConfigurationCommand = exports.de_GetBucketMetricsConfigurationCommand = exports.de_GetBucketLoggingCommand = exports.de_GetBucketLocationCommand = exports.de_GetBucketLifecycleConfigurationCommand = exports.de_GetBucketInventoryConfigurationCommand = exports.de_GetBucketIntelligentTieringConfigurationCommand = exports.de_GetBucketEncryptionCommand = exports.de_GetBucketCorsCommand = exports.de_GetBucketAnalyticsConfigurationCommand = exports.de_GetBucketAclCommand = exports.de_GetBucketAccelerateConfigurationCommand = exports.de_DeletePublicAccessBlockCommand = exports.de_DeleteObjectTaggingCommand = exports.de_DeleteObjectsCommand = exports.de_DeleteObjectCommand = exports.de_DeleteBucketWebsiteCommand = exports.de_DeleteBucketTaggingCommand = exports.de_DeleteBucketReplicationCommand = exports.de_DeleteBucketPolicyCommand = exports.de_DeleteBucketOwnershipControlsCommand = exports.de_DeleteBucketMetricsConfigurationCommand = exports.de_DeleteBucketLifecycleCommand = exports.de_DeleteBucketInventoryConfigurationCommand = exports.de_DeleteBucketIntelligentTieringConfigurationCommand = exports.de_DeleteBucketEncryptionCommand = exports.de_DeleteBucketCorsCommand = void 0;
-exports.de_WriteGetObjectResponseCommand = exports.de_UploadPartCopyCommand = exports.de_UploadPartCommand = exports.de_SelectObjectContentCommand = exports.de_RestoreObjectCommand = exports.de_PutPublicAccessBlockCommand = exports.de_PutObjectTaggingCommand = exports.de_PutObjectRetentionCommand = exports.de_PutObjectLockConfigurationCommand = exports.de_PutObjectLegalHoldCommand = exports.de_PutObjectAclCommand = exports.de_PutObjectCommand = exports.de_PutBucketWebsiteCommand = exports.de_PutBucketVersioningCommand = exports.de_PutBucketTaggingCommand = exports.de_PutBucketRequestPaymentCommand = exports.de_PutBucketReplicationCommand = exports.de_PutBucketPolicyCommand = exports.de_PutBucketOwnershipControlsCommand = exports.de_PutBucketNotificationConfigurationCommand = exports.de_PutBucketMetricsConfigurationCommand = exports.de_PutBucketLoggingCommand = exports.de_PutBucketLifecycleConfigurationCommand = exports.de_PutBucketInventoryConfigurationCommand = exports.de_PutBucketIntelligentTieringConfigurationCommand = exports.de_PutBucketEncryptionCommand = exports.de_PutBucketCorsCommand = exports.de_PutBucketAnalyticsConfigurationCommand = exports.de_PutBucketAclCommand = exports.de_PutBucketAccelerateConfigurationCommand = exports.de_ListPartsCommand = exports.de_ListObjectVersionsCommand = exports.de_ListObjectsV2Command = exports.de_ListObjectsCommand = exports.de_ListMultipartUploadsCommand = exports.de_ListBucketsCommand = void 0;
+exports.se_GetObjectTaggingCommand = exports.se_GetObjectRetentionCommand = exports.se_GetObjectLockConfigurationCommand = exports.se_GetObjectLegalHoldCommand = exports.se_GetObjectAttributesCommand = exports.se_GetObjectAclCommand = exports.se_GetObjectCommand = exports.se_GetBucketWebsiteCommand = exports.se_GetBucketVersioningCommand = exports.se_GetBucketTaggingCommand = exports.se_GetBucketRequestPaymentCommand = exports.se_GetBucketReplicationCommand = exports.se_GetBucketPolicyStatusCommand = exports.se_GetBucketPolicyCommand = exports.se_GetBucketOwnershipControlsCommand = exports.se_GetBucketNotificationConfigurationCommand = exports.se_GetBucketMetricsConfigurationCommand = exports.se_GetBucketLoggingCommand = exports.se_GetBucketLocationCommand = exports.se_GetBucketLifecycleConfigurationCommand = exports.se_GetBucketInventoryConfigurationCommand = exports.se_GetBucketIntelligentTieringConfigurationCommand = exports.se_GetBucketEncryptionCommand = exports.se_GetBucketCorsCommand = exports.se_GetBucketAnalyticsConfigurationCommand = exports.se_GetBucketAclCommand = exports.se_GetBucketAccelerateConfigurationCommand = exports.se_DeletePublicAccessBlockCommand = exports.se_DeleteObjectTaggingCommand = exports.se_DeleteObjectsCommand = exports.se_DeleteObjectCommand = exports.se_DeleteBucketWebsiteCommand = exports.se_DeleteBucketTaggingCommand = exports.se_DeleteBucketReplicationCommand = exports.se_DeleteBucketPolicyCommand = exports.se_DeleteBucketOwnershipControlsCommand = exports.se_DeleteBucketMetricsConfigurationCommand = exports.se_DeleteBucketLifecycleCommand = exports.se_DeleteBucketInventoryConfigurationCommand = exports.se_DeleteBucketIntelligentTieringConfigurationCommand = exports.se_DeleteBucketEncryptionCommand = exports.se_DeleteBucketCorsCommand = exports.se_DeleteBucketAnalyticsConfigurationCommand = exports.se_DeleteBucketCommand = exports.se_CreateSessionCommand = exports.se_CreateMultipartUploadCommand = exports.se_CreateBucketCommand = exports.se_CopyObjectCommand = exports.se_CompleteMultipartUploadCommand = exports.se_AbortMultipartUploadCommand = void 0;
+exports.de_CreateMultipartUploadCommand = exports.de_CreateBucketCommand = exports.de_CopyObjectCommand = exports.de_CompleteMultipartUploadCommand = exports.de_AbortMultipartUploadCommand = exports.se_WriteGetObjectResponseCommand = exports.se_UploadPartCopyCommand = exports.se_UploadPartCommand = exports.se_SelectObjectContentCommand = exports.se_RestoreObjectCommand = exports.se_PutPublicAccessBlockCommand = exports.se_PutObjectTaggingCommand = exports.se_PutObjectRetentionCommand = exports.se_PutObjectLockConfigurationCommand = exports.se_PutObjectLegalHoldCommand = exports.se_PutObjectAclCommand = exports.se_PutObjectCommand = exports.se_PutBucketWebsiteCommand = exports.se_PutBucketVersioningCommand = exports.se_PutBucketTaggingCommand = exports.se_PutBucketRequestPaymentCommand = exports.se_PutBucketReplicationCommand = exports.se_PutBucketPolicyCommand = exports.se_PutBucketOwnershipControlsCommand = exports.se_PutBucketNotificationConfigurationCommand = exports.se_PutBucketMetricsConfigurationCommand = exports.se_PutBucketLoggingCommand = exports.se_PutBucketLifecycleConfigurationCommand = exports.se_PutBucketInventoryConfigurationCommand = exports.se_PutBucketIntelligentTieringConfigurationCommand = exports.se_PutBucketEncryptionCommand = exports.se_PutBucketCorsCommand = exports.se_PutBucketAnalyticsConfigurationCommand = exports.se_PutBucketAclCommand = exports.se_PutBucketAccelerateConfigurationCommand = exports.se_ListPartsCommand = exports.se_ListObjectVersionsCommand = exports.se_ListObjectsV2Command = exports.se_ListObjectsCommand = exports.se_ListMultipartUploadsCommand = exports.se_ListDirectoryBucketsCommand = exports.se_ListBucketsCommand = exports.se_ListBucketMetricsConfigurationsCommand = exports.se_ListBucketInventoryConfigurationsCommand = exports.se_ListBucketIntelligentTieringConfigurationsCommand = exports.se_ListBucketAnalyticsConfigurationsCommand = exports.se_HeadObjectCommand = exports.se_HeadBucketCommand = exports.se_GetPublicAccessBlockCommand = exports.se_GetObjectTorrentCommand = void 0;
+exports.de_ListBucketAnalyticsConfigurationsCommand = exports.de_HeadObjectCommand = exports.de_HeadBucketCommand = exports.de_GetPublicAccessBlockCommand = exports.de_GetObjectTorrentCommand = exports.de_GetObjectTaggingCommand = exports.de_GetObjectRetentionCommand = exports.de_GetObjectLockConfigurationCommand = exports.de_GetObjectLegalHoldCommand = exports.de_GetObjectAttributesCommand = exports.de_GetObjectAclCommand = exports.de_GetObjectCommand = exports.de_GetBucketWebsiteCommand = exports.de_GetBucketVersioningCommand = exports.de_GetBucketTaggingCommand = exports.de_GetBucketRequestPaymentCommand = exports.de_GetBucketReplicationCommand = exports.de_GetBucketPolicyStatusCommand = exports.de_GetBucketPolicyCommand = exports.de_GetBucketOwnershipControlsCommand = exports.de_GetBucketNotificationConfigurationCommand = exports.de_GetBucketMetricsConfigurationCommand = exports.de_GetBucketLoggingCommand = exports.de_GetBucketLocationCommand = exports.de_GetBucketLifecycleConfigurationCommand = exports.de_GetBucketInventoryConfigurationCommand = exports.de_GetBucketIntelligentTieringConfigurationCommand = exports.de_GetBucketEncryptionCommand = exports.de_GetBucketCorsCommand = exports.de_GetBucketAnalyticsConfigurationCommand = exports.de_GetBucketAclCommand = exports.de_GetBucketAccelerateConfigurationCommand = exports.de_DeletePublicAccessBlockCommand = exports.de_DeleteObjectTaggingCommand = exports.de_DeleteObjectsCommand = exports.de_DeleteObjectCommand = exports.de_DeleteBucketWebsiteCommand = exports.de_DeleteBucketTaggingCommand = exports.de_DeleteBucketReplicationCommand = exports.de_DeleteBucketPolicyCommand = exports.de_DeleteBucketOwnershipControlsCommand = exports.de_DeleteBucketMetricsConfigurationCommand = exports.de_DeleteBucketLifecycleCommand = exports.de_DeleteBucketInventoryConfigurationCommand = exports.de_DeleteBucketIntelligentTieringConfigurationCommand = exports.de_DeleteBucketEncryptionCommand = exports.de_DeleteBucketCorsCommand = exports.de_DeleteBucketAnalyticsConfigurationCommand = exports.de_DeleteBucketCommand = exports.de_CreateSessionCommand = void 0;
+exports.de_WriteGetObjectResponseCommand = exports.de_UploadPartCopyCommand = exports.de_UploadPartCommand = exports.de_SelectObjectContentCommand = exports.de_RestoreObjectCommand = exports.de_PutPublicAccessBlockCommand = exports.de_PutObjectTaggingCommand = exports.de_PutObjectRetentionCommand = exports.de_PutObjectLockConfigurationCommand = exports.de_PutObjectLegalHoldCommand = exports.de_PutObjectAclCommand = exports.de_PutObjectCommand = exports.de_PutBucketWebsiteCommand = exports.de_PutBucketVersioningCommand = exports.de_PutBucketTaggingCommand = exports.de_PutBucketRequestPaymentCommand = exports.de_PutBucketReplicationCommand = exports.de_PutBucketPolicyCommand = exports.de_PutBucketOwnershipControlsCommand = exports.de_PutBucketNotificationConfigurationCommand = exports.de_PutBucketMetricsConfigurationCommand = exports.de_PutBucketLoggingCommand = exports.de_PutBucketLifecycleConfigurationCommand = exports.de_PutBucketInventoryConfigurationCommand = exports.de_PutBucketIntelligentTieringConfigurationCommand = exports.de_PutBucketEncryptionCommand = exports.de_PutBucketCorsCommand = exports.de_PutBucketAnalyticsConfigurationCommand = exports.de_PutBucketAclCommand = exports.de_PutBucketAccelerateConfigurationCommand = exports.de_ListPartsCommand = exports.de_ListObjectVersionsCommand = exports.de_ListObjectsV2Command = exports.de_ListObjectsCommand = exports.de_ListMultipartUploadsCommand = exports.de_ListDirectoryBucketsCommand = exports.de_ListBucketsCommand = exports.de_ListBucketMetricsConfigurationsCommand = exports.de_ListBucketInventoryConfigurationsCommand = exports.de_ListBucketIntelligentTieringConfigurationsCommand = void 0;
 const xml_builder_1 = __nccwpck_require__(42329);
 const protocol_http_1 = __nccwpck_require__(64418);
 const smithy_client_1 = __nccwpck_require__(63570);
@@ -10648,6 +11023,29 @@ const se_CreateMultipartUploadCommand = async (input, context) => {
     });
 };
 exports.se_CreateMultipartUploadCommand = se_CreateMultipartUploadCommand;
+const se_CreateSessionCommand = async (input, context) => {
+    const { hostname, protocol = "https", port, path: basePath } = await context.endpoint();
+    const headers = (0, smithy_client_1.map)({}, isSerializableHeaderValue, {
+        "x-amz-create-session-mode": input.SessionMode,
+    });
+    let resolvedPath = `${basePath?.endsWith("/") ? basePath.slice(0, -1) : basePath || ""}` + "/";
+    resolvedPath = (0, smithy_client_1.resolvedPath)(resolvedPath, input, "Bucket", () => input.Bucket, "{Bucket}", false);
+    const query = (0, smithy_client_1.map)({
+        session: [, ""],
+    });
+    let body;
+    return new protocol_http_1.HttpRequest({
+        protocol,
+        hostname,
+        port,
+        method: "GET",
+        headers,
+        path: resolvedPath,
+        query,
+        body,
+    });
+};
+exports.se_CreateSessionCommand = se_CreateSessionCommand;
 const se_DeleteBucketCommand = async (input, context) => {
     const { hostname, protocol = "https", port, path: basePath } = await context.endpoint();
     const headers = (0, smithy_client_1.map)({}, isSerializableHeaderValue, {
@@ -11958,6 +12356,9 @@ const se_ListBucketsCommand = async (input, context) => {
         "content-type": "application/xml",
     };
     const resolvedPath = `${basePath?.endsWith("/") ? basePath.slice(0, -1) : basePath || ""}` + "/";
+    const query = (0, smithy_client_1.map)({
+        "x-id": [, "ListBuckets"],
+    });
     let body;
     body = "";
     return new protocol_http_1.HttpRequest({
@@ -11967,10 +12368,33 @@ const se_ListBucketsCommand = async (input, context) => {
         method: "GET",
         headers,
         path: resolvedPath,
+        query,
         body,
     });
 };
 exports.se_ListBucketsCommand = se_ListBucketsCommand;
+const se_ListDirectoryBucketsCommand = async (input, context) => {
+    const { hostname, protocol = "https", port, path: basePath } = await context.endpoint();
+    const headers = {};
+    const resolvedPath = `${basePath?.endsWith("/") ? basePath.slice(0, -1) : basePath || ""}` + "/";
+    const query = (0, smithy_client_1.map)({
+        "x-id": [, "ListDirectoryBuckets"],
+        "continuation-token": [, input.ContinuationToken],
+        "max-directory-buckets": [() => input.MaxDirectoryBuckets !== void 0, () => input.MaxDirectoryBuckets.toString()],
+    });
+    let body;
+    return new protocol_http_1.HttpRequest({
+        protocol,
+        hostname,
+        port,
+        method: "GET",
+        headers,
+        path: resolvedPath,
+        query,
+        body,
+    });
+};
+exports.se_ListDirectoryBucketsCommand = se_ListDirectoryBucketsCommand;
 const se_ListMultipartUploadsCommand = async (input, context) => {
     const { hostname, protocol = "https", port, path: basePath } = await context.endpoint();
     const headers = (0, smithy_client_1.map)({}, isSerializableHeaderValue, {
@@ -13616,6 +14040,39 @@ const de_CreateMultipartUploadCommandError = async (output, context) => {
         errorCode,
     });
 };
+const de_CreateSessionCommand = async (output, context) => {
+    if (output.statusCode !== 200 && output.statusCode >= 300) {
+        return de_CreateSessionCommandError(output, context);
+    }
+    const contents = (0, smithy_client_1.map)({
+        $metadata: deserializeMetadata(output),
+    });
+    const data = (0, smithy_client_1.expectNonNull)((0, smithy_client_1.expectObject)(await parseBody(output.body, context)), "body");
+    if (data["Credentials"] !== undefined) {
+        contents.Credentials = de_SessionCredentials(data["Credentials"], context);
+    }
+    return contents;
+};
+exports.de_CreateSessionCommand = de_CreateSessionCommand;
+const de_CreateSessionCommandError = async (output, context) => {
+    const parsedOutput = {
+        ...output,
+        body: await parseErrorBody(output.body, context),
+    };
+    const errorCode = loadRestXmlErrorCode(output, parsedOutput.body);
+    switch (errorCode) {
+        case "NoSuchBucket":
+        case "com.amazonaws.s3#NoSuchBucket":
+            throw await de_NoSuchBucketRes(parsedOutput, context);
+        default:
+            const parsedBody = parsedOutput.body;
+            return throwDefaultError({
+                output,
+                parsedBody,
+                errorCode,
+            });
+    }
+};
 const de_DeleteBucketCommand = async (output, context) => {
     if (output.statusCode !== 204 && output.statusCode >= 300) {
         return de_DeleteBucketCommandError(output, context);
@@ -14979,6 +15436,13 @@ const de_HeadBucketCommand = async (output, context) => {
     }
     const contents = (0, smithy_client_1.map)({
         $metadata: deserializeMetadata(output),
+        BucketLocationType: [, output.headers["x-amz-bucket-location-type"]],
+        BucketLocationName: [, output.headers["x-amz-bucket-location-name"]],
+        BucketRegion: [, output.headers["x-amz-bucket-region"]],
+        AccessPointAlias: [
+            () => void 0 !== output.headers["x-amz-access-point-alias"],
+            () => (0, smithy_client_1.parseBoolean)(output.headers["x-amz-access-point-alias"]),
+        ],
     });
     await (0, smithy_client_1.collectBody)(output.body, context);
     return contents;
@@ -15276,6 +15740,39 @@ const de_ListBucketsCommand = async (output, context) => {
 };
 exports.de_ListBucketsCommand = de_ListBucketsCommand;
 const de_ListBucketsCommandError = async (output, context) => {
+    const parsedOutput = {
+        ...output,
+        body: await parseErrorBody(output.body, context),
+    };
+    const errorCode = loadRestXmlErrorCode(output, parsedOutput.body);
+    const parsedBody = parsedOutput.body;
+    return throwDefaultError({
+        output,
+        parsedBody,
+        errorCode,
+    });
+};
+const de_ListDirectoryBucketsCommand = async (output, context) => {
+    if (output.statusCode !== 200 && output.statusCode >= 300) {
+        return de_ListDirectoryBucketsCommandError(output, context);
+    }
+    const contents = (0, smithy_client_1.map)({
+        $metadata: deserializeMetadata(output),
+    });
+    const data = (0, smithy_client_1.expectNonNull)((0, smithy_client_1.expectObject)(await parseBody(output.body, context)), "body");
+    if (data.Buckets === "") {
+        contents.Buckets = [];
+    }
+    else if (data["Buckets"] !== undefined && data["Buckets"]["Bucket"] !== undefined) {
+        contents.Buckets = de_Buckets((0, smithy_client_1.getArrayIfSingleItem)(data["Buckets"]["Bucket"]), context);
+    }
+    if (data["ContinuationToken"] !== undefined) {
+        contents.ContinuationToken = (0, smithy_client_1.expectString)(data["ContinuationToken"]);
+    }
+    return contents;
+};
+exports.de_ListDirectoryBucketsCommand = de_ListDirectoryBucketsCommand;
+const de_ListDirectoryBucketsCommandError = async (output, context) => {
     const parsedOutput = {
         ...output,
         body: await parseErrorBody(output.body, context),
@@ -16713,6 +17210,18 @@ const se_AnalyticsS3BucketDestination = (input, context) => {
     }
     return bodyNode;
 };
+const se_BucketInfo = (input, context) => {
+    const bodyNode = new xml_builder_1.XmlNode("BucketInfo");
+    if (input.DataRedundancy != null) {
+        const node = xml_builder_1.XmlNode.of("DataRedundancy", input.DataRedundancy).withName("DataRedundancy");
+        bodyNode.addChildNode(node);
+    }
+    if (input.Type != null) {
+        const node = xml_builder_1.XmlNode.of("BucketType", input.Type).withName("Type");
+        bodyNode.addChildNode(node);
+    }
+    return bodyNode;
+};
 const se_BucketLifecycleConfiguration = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("BucketLifecycleConfiguration");
     if (input.Rules != null) {
@@ -16856,6 +17365,14 @@ const se_CreateBucketConfiguration = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("CreateBucketConfiguration");
     if (input.LocationConstraint != null) {
         const node = xml_builder_1.XmlNode.of("BucketLocationConstraint", input.LocationConstraint).withName("LocationConstraint");
+        bodyNode.addChildNode(node);
+    }
+    if (input.Location != null) {
+        const node = se_LocationInfo(input.Location, context).withName("Location");
+        bodyNode.addChildNode(node);
+    }
+    if (input.Bucket != null) {
+        const node = se_BucketInfo(input.Bucket, context).withName("Bucket");
         bodyNode.addChildNode(node);
     }
     return bodyNode;
@@ -17487,6 +18004,18 @@ const se_LifecycleRules = (input, context) => {
         return node.withName("member");
     });
 };
+const se_LocationInfo = (input, context) => {
+    const bodyNode = new xml_builder_1.XmlNode("LocationInfo");
+    if (input.Type != null) {
+        const node = xml_builder_1.XmlNode.of("LocationType", input.Type).withName("Type");
+        bodyNode.addChildNode(node);
+    }
+    if (input.Name != null) {
+        const node = xml_builder_1.XmlNode.of("LocationNameAsString", input.Name).withName("Name");
+        bodyNode.addChildNode(node);
+    }
+    return bodyNode;
+};
 const se_LoggingEnabled = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("LoggingEnabled");
     if (input.TargetBucket != null) {
@@ -17503,6 +18032,10 @@ const se_LoggingEnabled = (input, context) => {
     }
     if (input.TargetPrefix != null) {
         const node = xml_builder_1.XmlNode.of("TargetPrefix", input.TargetPrefix).withName("TargetPrefix");
+        bodyNode.addChildNode(node);
+    }
+    if (input.TargetObjectKeyFormat != null) {
+        const node = se_TargetObjectKeyFormat(input.TargetObjectKeyFormat, context).withName("TargetObjectKeyFormat");
         bodyNode.addChildNode(node);
     }
     return bodyNode;
@@ -17790,6 +18323,14 @@ const se_OwnershipControlsRules = (input, context) => {
 };
 const se_ParquetInput = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("ParquetInput");
+    return bodyNode;
+};
+const se_PartitionedPrefix = (input, context) => {
+    const bodyNode = new xml_builder_1.XmlNode("PartitionedPrefix");
+    if (input.PartitionDateSource != null) {
+        const node = xml_builder_1.XmlNode.of("PartitionDateSource", input.PartitionDateSource).withName("PartitionDateSource");
+        bodyNode.addChildNode(node);
+    }
     return bodyNode;
 };
 const se_PublicAccessBlockConfiguration = (input, context) => {
@@ -18207,6 +18748,10 @@ const se_ServerSideEncryptionRules = (input, context) => {
         return node.withName("member");
     });
 };
+const se_SimplePrefix = (input, context) => {
+    const bodyNode = new xml_builder_1.XmlNode("SimplePrefix");
+    return bodyNode;
+};
 const se_SourceSelectionCriteria = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("SourceSelectionCriteria");
     if (input.SseKmsEncryptedObjects != null) {
@@ -18313,6 +18858,18 @@ const se_TargetGrants = (input, context) => {
         const node = se_TargetGrant(entry, context);
         return node.withName("Grant");
     });
+};
+const se_TargetObjectKeyFormat = (input, context) => {
+    const bodyNode = new xml_builder_1.XmlNode("TargetObjectKeyFormat");
+    if (input.SimplePrefix != null) {
+        const node = se_SimplePrefix(input.SimplePrefix, context).withName("SimplePrefix");
+        bodyNode.addChildNode(node);
+    }
+    if (input.PartitionedPrefix != null) {
+        const node = se_PartitionedPrefix(input.PartitionedPrefix, context).withName("PartitionedPrefix");
+        bodyNode.addChildNode(node);
+    }
+    return bodyNode;
 };
 const se_Tiering = (input, context) => {
     const bodyNode = new xml_builder_1.XmlNode("Tiering");
@@ -19242,6 +19799,9 @@ const de_LoggingEnabled = (output, context) => {
     if (output["TargetPrefix"] !== undefined) {
         contents.TargetPrefix = (0, smithy_client_1.expectString)(output["TargetPrefix"]);
     }
+    if (output["TargetObjectKeyFormat"] !== undefined) {
+        contents.TargetObjectKeyFormat = de_TargetObjectKeyFormat(output["TargetObjectKeyFormat"], context);
+    }
     return contents;
 };
 const de_Metrics = (output, context) => {
@@ -19581,6 +20141,13 @@ const de_Part = (output, context) => {
     }
     return contents;
 };
+const de_PartitionedPrefix = (output, context) => {
+    const contents = {};
+    if (output["PartitionDateSource"] !== undefined) {
+        contents.PartitionDateSource = (0, smithy_client_1.expectString)(output["PartitionDateSource"]);
+    }
+    return contents;
+};
 const de_Parts = (output, context) => {
     return (output || [])
         .filter((e) => e != null)
@@ -19868,6 +20435,26 @@ const de_ServerSideEncryptionRules = (output, context) => {
         return de_ServerSideEncryptionRule(entry, context);
     });
 };
+const de_SessionCredentials = (output, context) => {
+    const contents = {};
+    if (output["AccessKeyId"] !== undefined) {
+        contents.AccessKeyId = (0, smithy_client_1.expectString)(output["AccessKeyId"]);
+    }
+    if (output["SecretAccessKey"] !== undefined) {
+        contents.SecretAccessKey = (0, smithy_client_1.expectString)(output["SecretAccessKey"]);
+    }
+    if (output["SessionToken"] !== undefined) {
+        contents.SessionToken = (0, smithy_client_1.expectString)(output["SessionToken"]);
+    }
+    if (output["Expiration"] !== undefined) {
+        contents.Expiration = (0, smithy_client_1.expectNonNull)((0, smithy_client_1.parseRfc3339DateTimeWithOffset)(output["Expiration"]));
+    }
+    return contents;
+};
+const de_SimplePrefix = (output, context) => {
+    const contents = {};
+    return contents;
+};
 const de_SourceSelectionCriteria = (output, context) => {
     const contents = {};
     if (output["SseKmsEncryptedObjects"] !== undefined) {
@@ -19959,6 +20546,16 @@ const de_TargetGrants = (output, context) => {
         .map((entry) => {
         return de_TargetGrant(entry, context);
     });
+};
+const de_TargetObjectKeyFormat = (output, context) => {
+    const contents = {};
+    if (output["SimplePrefix"] !== undefined) {
+        contents.SimplePrefix = de_SimplePrefix(output["SimplePrefix"], context);
+    }
+    if (output["PartitionedPrefix"] !== undefined) {
+        contents.PartitionedPrefix = de_PartitionedPrefix(output["PartitionedPrefix"], context);
+    }
+    return contents;
 };
 const de_Tiering = (output, context) => {
     const contents = {};
@@ -20092,6 +20689,7 @@ const client_sts_1 = __nccwpck_require__(52209);
 const core_1 = __nccwpck_require__(59963);
 const credential_provider_node_1 = __nccwpck_require__(75531);
 const middleware_bucket_endpoint_1 = __nccwpck_require__(96689);
+const middleware_sdk_s3_1 = __nccwpck_require__(81139);
 const util_user_agent_node_1 = __nccwpck_require__(98095);
 const config_resolver_1 = __nccwpck_require__(53098);
 const eventstream_serde_node_1 = __nccwpck_require__(77682);
@@ -20121,6 +20719,7 @@ const getRuntimeConfig = (config) => {
         credentialDefaultProvider: config?.credentialDefaultProvider ?? (0, client_sts_1.decorateDefaultCredentialProvider)(credential_provider_node_1.defaultProvider),
         defaultUserAgentProvider: config?.defaultUserAgentProvider ??
             (0, util_user_agent_node_1.defaultUserAgent)({ serviceId: clientSharedValues.serviceId, clientVersion: package_json_1.default.version }),
+        disableS3ExpressSessionAuth: config?.disableS3ExpressSessionAuth ?? (0, node_config_provider_1.loadConfig)(middleware_sdk_s3_1.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS),
         eventStreamSerdeProvider: config?.eventStreamSerdeProvider ?? eventstream_serde_node_1.eventStreamSerdeProvider,
         maxAttempts: config?.maxAttempts ?? (0, node_config_provider_1.loadConfig)(middleware_retry_1.NODE_MAX_ATTEMPT_CONFIG_OPTIONS),
         md5: config?.md5 ?? hash_node_1.Hash.bind(null, "md5"),
@@ -25061,7 +25660,7 @@ exports.getAddExpectContinuePlugin = getAddExpectContinuePlugin;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ChecksumLocation = exports.ChecksumAlgorithm = void 0;
+exports.S3_EXPRESS_DEFAULT_CHECKSUM_ALGORITHM = exports.DEFAULT_CHECKSUM_ALGORITHM = exports.ChecksumLocation = exports.ChecksumAlgorithm = void 0;
 var ChecksumAlgorithm;
 (function (ChecksumAlgorithm) {
     ChecksumAlgorithm["MD5"] = "MD5";
@@ -25075,6 +25674,8 @@ var ChecksumLocation;
     ChecksumLocation["HEADER"] = "header";
     ChecksumLocation["TRAILER"] = "trailer";
 })(ChecksumLocation = exports.ChecksumLocation || (exports.ChecksumLocation = {}));
+exports.DEFAULT_CHECKSUM_ALGORITHM = ChecksumAlgorithm.MD5;
+exports.S3_EXPRESS_DEFAULT_CHECKSUM_ALGORITHM = ChecksumAlgorithm.CRC32;
 
 
 /***/ }),
@@ -25099,7 +25700,7 @@ exports.flexibleChecksumsMiddlewareOptions = {
     tags: ["BODY_CHECKSUM"],
     override: true,
 };
-const flexibleChecksumsMiddleware = (config, middlewareConfig) => (next) => async (args) => {
+const flexibleChecksumsMiddleware = (config, middlewareConfig) => (next, context) => async (args) => {
     if (!protocol_http_1.HttpRequest.isInstance(args.request)) {
         return next(args);
     }
@@ -25110,7 +25711,7 @@ const flexibleChecksumsMiddleware = (config, middlewareConfig) => (next) => asyn
     const checksumAlgorithm = (0, getChecksumAlgorithmForRequest_1.getChecksumAlgorithmForRequest)(input, {
         requestChecksumRequired,
         requestAlgorithmMember,
-    });
+    }, !!context.isS3ExpressBucket);
     let updatedBody = requestBody;
     let updatedHeaders = headers;
     if (checksumAlgorithm) {
@@ -25249,9 +25850,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getChecksumAlgorithmForRequest = void 0;
 const constants_1 = __nccwpck_require__(5972);
 const types_1 = __nccwpck_require__(70724);
-const getChecksumAlgorithmForRequest = (input, { requestChecksumRequired, requestAlgorithmMember }) => {
+const getChecksumAlgorithmForRequest = (input, { requestChecksumRequired, requestAlgorithmMember }, isS3Express) => {
+    const defaultAlgorithm = isS3Express ? constants_1.S3_EXPRESS_DEFAULT_CHECKSUM_ALGORITHM : constants_1.DEFAULT_CHECKSUM_ALGORITHM;
     if (!requestAlgorithmMember || !input[requestAlgorithmMember]) {
-        return requestChecksumRequired ? constants_1.ChecksumAlgorithm.MD5 : undefined;
+        return requestChecksumRequired ? defaultAlgorithm : undefined;
     }
     const checksumAlgorithm = input[requestAlgorithmMember];
     if (!types_1.CLIENT_SUPPORTED_ALGORITHMS.includes(checksumAlgorithm)) {
@@ -25571,7 +26173,7 @@ function locationConstraintMiddleware(options) {
     return (next) => async (args) => {
         const { CreateBucketConfiguration } = args.input;
         const region = await options.region();
-        if (!CreateBucketConfiguration || !CreateBucketConfiguration.LocationConstraint) {
+        if (!(CreateBucketConfiguration === null || CreateBucketConfiguration === void 0 ? void 0 : CreateBucketConfiguration.LocationConstraint) && !(CreateBucketConfiguration === null || CreateBucketConfiguration === void 0 ? void 0 : CreateBucketConfiguration.Location)) {
             args = {
                 ...args,
                 input: {
@@ -25770,6 +26372,7 @@ const tslib_1 = __nccwpck_require__(4351);
 tslib_1.__exportStar(__nccwpck_require__(51671), exports);
 tslib_1.__exportStar(__nccwpck_require__(34332), exports);
 tslib_1.__exportStar(__nccwpck_require__(7552), exports);
+tslib_1.__exportStar(__nccwpck_require__(84253), exports);
 tslib_1.__exportStar(__nccwpck_require__(15537), exports);
 tslib_1.__exportStar(__nccwpck_require__(10404), exports);
 tslib_1.__exportStar(__nccwpck_require__(56777), exports);
@@ -25867,22 +26470,318 @@ exports.getRegionRedirectMiddlewarePlugin = getRegionRedirectMiddlewarePlugin;
 
 /***/ }),
 
-/***/ 15537:
+/***/ 86434:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.S3ExpressIdentityCache = void 0;
+class S3ExpressIdentityCache {
+    constructor(data = {}) {
+        this.data = data;
+        this.lastPurgeTime = Date.now();
+    }
+    get(key) {
+        const entry = this.data[key];
+        if (!entry) {
+            return;
+        }
+        return entry;
+    }
+    set(key, entry) {
+        this.data[key] = entry;
+        return entry;
+    }
+    delete(key) {
+        delete this.data[key];
+    }
+    async purgeExpired() {
+        const now = Date.now();
+        if (this.lastPurgeTime + S3ExpressIdentityCache.EXPIRED_CREDENTIAL_PURGE_INTERVAL_MS > now) {
+            return;
+        }
+        for (const key in this.data) {
+            const entry = this.data[key];
+            if (!entry.isRefreshing) {
+                const credential = await entry.identity;
+                if (credential.expiration) {
+                    if (credential.expiration.getTime() < now) {
+                        delete this.data[key];
+                    }
+                }
+            }
+        }
+    }
+}
+exports.S3ExpressIdentityCache = S3ExpressIdentityCache;
+S3ExpressIdentityCache.EXPIRED_CREDENTIAL_PURGE_INTERVAL_MS = 30000;
+
+
+/***/ }),
+
+/***/ 16667:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.S3ExpressIdentityCacheEntry = void 0;
+class S3ExpressIdentityCacheEntry {
+    constructor(_identity, isRefreshing = false, accessed = Date.now()) {
+        this._identity = _identity;
+        this.isRefreshing = isRefreshing;
+        this.accessed = accessed;
+    }
+    get identity() {
+        this.accessed = Date.now();
+        return this._identity;
+    }
+}
+exports.S3ExpressIdentityCacheEntry = S3ExpressIdentityCacheEntry;
+
+
+/***/ }),
+
+/***/ 2895:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.S3ExpressIdentityProviderImpl = void 0;
+const S3ExpressIdentityCache_1 = __nccwpck_require__(86434);
+const S3ExpressIdentityCacheEntry_1 = __nccwpck_require__(16667);
+class S3ExpressIdentityProviderImpl {
+    constructor(createSessionFn, cache = new S3ExpressIdentityCache_1.S3ExpressIdentityCache()) {
+        this.createSessionFn = createSessionFn;
+        this.cache = cache;
+    }
+    async getS3ExpressIdentity(awsIdentity, identityProperties) {
+        const key = identityProperties.Bucket;
+        const { cache } = this;
+        const entry = cache.get(key);
+        if (entry) {
+            return entry.identity.then((identity) => {
+                var _a, _b, _c, _d;
+                const isExpired = ((_b = (_a = identity.expiration) === null || _a === void 0 ? void 0 : _a.getTime()) !== null && _b !== void 0 ? _b : 0) < Date.now();
+                if (isExpired) {
+                    return cache.set(key, new S3ExpressIdentityCacheEntry_1.S3ExpressIdentityCacheEntry(this.getIdentity(key))).identity;
+                }
+                const isExpiringSoon = ((_d = (_c = identity.expiration) === null || _c === void 0 ? void 0 : _c.getTime()) !== null && _d !== void 0 ? _d : 0) < Date.now() + S3ExpressIdentityProviderImpl.REFRESH_WINDOW_MS;
+                if (isExpiringSoon && !entry.isRefreshing) {
+                    entry.isRefreshing = true;
+                    this.getIdentity(key).then((id) => {
+                        cache.set(key, new S3ExpressIdentityCacheEntry_1.S3ExpressIdentityCacheEntry(Promise.resolve(id)));
+                    });
+                }
+                return identity;
+            });
+        }
+        return cache.set(key, new S3ExpressIdentityCacheEntry_1.S3ExpressIdentityCacheEntry(this.getIdentity(key))).identity;
+    }
+    async getIdentity(key) {
+        var _a, _b;
+        await this.cache.purgeExpired().catch((error) => {
+            console.warn("Error while clearing expired entries in S3ExpressIdentityCache: \n" + error);
+        });
+        const session = await this.createSessionFn(key);
+        if (!((_a = session.Credentials) === null || _a === void 0 ? void 0 : _a.AccessKeyId) || !((_b = session.Credentials) === null || _b === void 0 ? void 0 : _b.SecretAccessKey)) {
+            throw new Error("s3#createSession response credential missing AccessKeyId or SecretAccessKey.");
+        }
+        const identity = {
+            accessKeyId: session.Credentials.AccessKeyId,
+            secretAccessKey: session.Credentials.SecretAccessKey,
+            sessionToken: session.Credentials.SessionToken,
+            expiration: session.Credentials.Expiration ? new Date(session.Credentials.Expiration) : undefined,
+        };
+        return identity;
+    }
+}
+exports.S3ExpressIdentityProviderImpl = S3ExpressIdentityProviderImpl;
+S3ExpressIdentityProviderImpl.REFRESH_WINDOW_MS = 60000;
+
+
+/***/ }),
+
+/***/ 93574:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.SignatureV4S3Express = void 0;
+const signature_v4_1 = __nccwpck_require__(11528);
+const constants_1 = __nccwpck_require__(96905);
+class SignatureV4S3Express extends signature_v4_1.SignatureV4 {
+    async signWithCredentials(requestToSign, credentials, options) {
+        const credentialsWithoutSessionToken = getCredentialsWithoutSessionToken(credentials);
+        requestToSign.headers[constants_1.SESSION_TOKEN_HEADER] = credentials.sessionToken;
+        const privateAccess = this;
+        setSingleOverride(privateAccess, credentialsWithoutSessionToken);
+        return privateAccess.signRequest(requestToSign, options !== null && options !== void 0 ? options : {});
+    }
+    async presignWithCredentials(requestToSign, credentials, options) {
+        var _a;
+        const credentialsWithoutSessionToken = getCredentialsWithoutSessionToken(credentials);
+        delete requestToSign.headers[constants_1.SESSION_TOKEN_HEADER];
+        requestToSign.headers[constants_1.SESSION_TOKEN_QUERY_PARAM] = credentials.sessionToken;
+        requestToSign.query = (_a = requestToSign.query) !== null && _a !== void 0 ? _a : {};
+        requestToSign.query[constants_1.SESSION_TOKEN_QUERY_PARAM] = credentials.sessionToken;
+        const privateAccess = this;
+        setSingleOverride(privateAccess, credentialsWithoutSessionToken);
+        return this.presign(requestToSign, options);
+    }
+}
+exports.SignatureV4S3Express = SignatureV4S3Express;
+function getCredentialsWithoutSessionToken(credentials) {
+    const credentialsWithoutSessionToken = {
+        accessKeyId: credentials.accessKeyId,
+        secretAccessKey: credentials.secretAccessKey,
+        expiration: credentials.expiration,
+    };
+    return credentialsWithoutSessionToken;
+}
+function setSingleOverride(privateAccess, credentialsWithoutSessionToken) {
+    const id = setTimeout(() => {
+        throw new Error("SignatureV4S3Express credential override was created but not called.");
+    }, 10);
+    const currentCredentialProvider = privateAccess.credentialProvider;
+    const overrideCredentialsProviderOnce = () => {
+        clearTimeout(id);
+        privateAccess.credentialProvider = currentCredentialProvider;
+        return Promise.resolve(credentialsWithoutSessionToken);
+    };
+    privateAccess.credentialProvider = overrideCredentialsProviderOnce;
+}
+
+
+/***/ }),
+
+/***/ 96905:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS = exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_INI_NAME = exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_ENV_NAME = exports.SESSION_TOKEN_HEADER = exports.SESSION_TOKEN_QUERY_PARAM = exports.S3_EXPRESS_AUTH_SCHEME = exports.S3_EXPRESS_BACKEND = exports.S3_EXPRESS_BUCKET_TYPE = void 0;
+const util_config_provider_1 = __nccwpck_require__(83375);
+exports.S3_EXPRESS_BUCKET_TYPE = "Directory";
+exports.S3_EXPRESS_BACKEND = "S3Express";
+exports.S3_EXPRESS_AUTH_SCHEME = "sigv4-s3express";
+exports.SESSION_TOKEN_QUERY_PARAM = "X-Amz-S3session-Token";
+exports.SESSION_TOKEN_HEADER = exports.SESSION_TOKEN_QUERY_PARAM.toLowerCase();
+exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_ENV_NAME = "AWS_S3_DISABLE_EXPRESS_SESSION_AUTH";
+exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_INI_NAME = "s3_disable_express_session_auth";
+exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS = {
+    environmentVariableSelector: (env) => (0, util_config_provider_1.booleanSelector)(env, exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_ENV_NAME, util_config_provider_1.SelectorType.ENV),
+    configFileSelector: (profile) => (0, util_config_provider_1.booleanSelector)(profile, exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_INI_NAME, util_config_provider_1.SelectorType.CONFIG),
+    default: false,
+};
+
+
+/***/ }),
+
+/***/ 28693:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getS3ExpressPlugin = exports.s3ExpressMiddlewareOptions = exports.s3ExpressMiddleware = void 0;
+const protocol_http_1 = __nccwpck_require__(64418);
+const constants_1 = __nccwpck_require__(96905);
+const s3ExpressMiddleware = (options) => {
+    return (next, context) => async (args) => {
+        var _a, _b, _c, _d, _e;
+        if (context.endpointV2) {
+            const endpoint = context.endpointV2;
+            const isS3ExpressAuth = ((_c = (_b = (_a = endpoint.properties) === null || _a === void 0 ? void 0 : _a.authSchemes) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.name) === constants_1.S3_EXPRESS_AUTH_SCHEME;
+            const isS3ExpressBucket = ((_d = endpoint.properties) === null || _d === void 0 ? void 0 : _d.backend) === constants_1.S3_EXPRESS_BACKEND ||
+                ((_e = endpoint.properties) === null || _e === void 0 ? void 0 : _e.bucketType) === constants_1.S3_EXPRESS_BUCKET_TYPE;
+            if (isS3ExpressBucket) {
+                context.isS3ExpressBucket = true;
+            }
+            if (isS3ExpressAuth) {
+                const requestBucket = args.input.Bucket;
+                if (requestBucket) {
+                    const s3ExpressIdentity = await options.s3ExpressIdentityProvider.getS3ExpressIdentity(await options.credentials(), {
+                        Bucket: requestBucket,
+                    });
+                    context.s3ExpressIdentity = s3ExpressIdentity;
+                    if (protocol_http_1.HttpRequest.isInstance(args.request) && s3ExpressIdentity.sessionToken) {
+                        args.request.headers[constants_1.SESSION_TOKEN_HEADER] = s3ExpressIdentity.sessionToken;
+                    }
+                }
+            }
+        }
+        return next(args);
+    };
+};
+exports.s3ExpressMiddleware = s3ExpressMiddleware;
+exports.s3ExpressMiddlewareOptions = {
+    name: "s3ExpressMiddleware",
+    step: "build",
+    tags: ["S3", "S3_EXPRESS"],
+    override: true,
+};
+const getS3ExpressPlugin = (options) => ({
+    applyToStack: (clientStack) => {
+        clientStack.add((0, exports.s3ExpressMiddleware)(options), exports.s3ExpressMiddlewareOptions);
+    },
+});
+exports.getS3ExpressPlugin = getS3ExpressPlugin;
+
+
+/***/ }),
+
+/***/ 84253:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.s3ExpressMiddlewareOptions = exports.s3ExpressMiddleware = exports.getS3ExpressPlugin = exports.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS = exports.SignatureV4S3Express = exports.S3ExpressIdentityProviderImpl = exports.S3ExpressIdentityCacheEntry = exports.S3ExpressIdentityCache = void 0;
+var S3ExpressIdentityCache_1 = __nccwpck_require__(86434);
+Object.defineProperty(exports, "S3ExpressIdentityCache", ({ enumerable: true, get: function () { return S3ExpressIdentityCache_1.S3ExpressIdentityCache; } }));
+var S3ExpressIdentityCacheEntry_1 = __nccwpck_require__(16667);
+Object.defineProperty(exports, "S3ExpressIdentityCacheEntry", ({ enumerable: true, get: function () { return S3ExpressIdentityCacheEntry_1.S3ExpressIdentityCacheEntry; } }));
+var S3ExpressIdentityProviderImpl_1 = __nccwpck_require__(2895);
+Object.defineProperty(exports, "S3ExpressIdentityProviderImpl", ({ enumerable: true, get: function () { return S3ExpressIdentityProviderImpl_1.S3ExpressIdentityProviderImpl; } }));
+var SignatureV4S3Express_1 = __nccwpck_require__(93574);
+Object.defineProperty(exports, "SignatureV4S3Express", ({ enumerable: true, get: function () { return SignatureV4S3Express_1.SignatureV4S3Express; } }));
+var constants_1 = __nccwpck_require__(96905);
+Object.defineProperty(exports, "NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS", ({ enumerable: true, get: function () { return constants_1.NODE_DISABLE_S3_EXPRESS_SESSION_AUTH_OPTIONS; } }));
+var s3ExpressMiddleware_1 = __nccwpck_require__(28693);
+Object.defineProperty(exports, "getS3ExpressPlugin", ({ enumerable: true, get: function () { return s3ExpressMiddleware_1.getS3ExpressPlugin; } }));
+Object.defineProperty(exports, "s3ExpressMiddleware", ({ enumerable: true, get: function () { return s3ExpressMiddleware_1.s3ExpressMiddleware; } }));
+Object.defineProperty(exports, "s3ExpressMiddlewareOptions", ({ enumerable: true, get: function () { return s3ExpressMiddleware_1.s3ExpressMiddlewareOptions; } }));
+
+
+/***/ }),
+
+/***/ 15537:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.resolveS3Config = void 0;
-const resolveS3Config = (input) => {
-    var _a, _b, _c, _d;
-    return ({
+const s3_express_1 = __nccwpck_require__(84253);
+const resolveS3Config = (input, { session, }) => {
+    var _a, _b, _c, _d, _e;
+    const [s3ClientProvider, CreateSessionCommandCtor] = session;
+    return {
         ...input,
         forcePathStyle: (_a = input.forcePathStyle) !== null && _a !== void 0 ? _a : false,
         useAccelerateEndpoint: (_b = input.useAccelerateEndpoint) !== null && _b !== void 0 ? _b : false,
         disableMultiregionAccessPoints: (_c = input.disableMultiregionAccessPoints) !== null && _c !== void 0 ? _c : false,
         followRegionRedirects: (_d = input.followRegionRedirects) !== null && _d !== void 0 ? _d : false,
-    });
+        s3ExpressIdentityProvider: (_e = input.s3ExpressIdentityProvider) !== null && _e !== void 0 ? _e : new s3_express_1.S3ExpressIdentityProviderImpl(async (key) => s3ClientProvider().send(new CreateSessionCommandCtor({
+            Bucket: key,
+            SessionMode: "ReadWrite",
+        }))),
+    };
 };
 exports.resolveS3Config = resolveS3Config;
 
@@ -26129,13 +27028,25 @@ const awsAuthMiddleware = (options) => (next, context) => async function (args) 
     const authScheme = (_c = (_b = (_a = context.endpointV2) === null || _a === void 0 ? void 0 : _a.properties) === null || _b === void 0 ? void 0 : _b.authSchemes) === null || _c === void 0 ? void 0 : _c[0];
     const multiRegionOverride = (authScheme === null || authScheme === void 0 ? void 0 : authScheme.name) === "sigv4a" ? (_d = authScheme === null || authScheme === void 0 ? void 0 : authScheme.signingRegionSet) === null || _d === void 0 ? void 0 : _d.join(",") : undefined;
     const signer = await options.signer(authScheme);
+    let signedRequest;
+    const signingOptions = {
+        signingDate: (0, getSkewCorrectedDate_1.getSkewCorrectedDate)(options.systemClockOffset),
+        signingRegion: multiRegionOverride || context["signing_region"],
+        signingService: context["signing_service"],
+    };
+    if (context.s3ExpressIdentity) {
+        const sigV4MultiRegion = signer;
+        signedRequest = await sigV4MultiRegion.signWithCredentials(args.request, context.s3ExpressIdentity, signingOptions);
+        if (signedRequest.headers["X-Amz-Security-Token"] || signedRequest.headers["x-amz-security-token"]) {
+            throw new Error("X-Amz-Security-Token must not be set for s3-express requests.");
+        }
+    }
+    else {
+        signedRequest = await signer.sign(args.request, signingOptions);
+    }
     const output = await next({
         ...args,
-        request: await signer.sign(args.request, {
-            signingDate: (0, getSkewCorrectedDate_1.getSkewCorrectedDate)(options.systemClockOffset),
-            signingRegion: multiRegionOverride || context["signing_region"],
-            signingService: context["signing_service"],
-        }),
+        request: signedRequest,
     }).catch((error) => {
         var _a;
         const serverTime = (_a = error.ServerTime) !== null && _a !== void 0 ? _a : getDateHeader(error.$response);
@@ -26589,11 +27500,11 @@ exports.resolveRegionConfig = resolveRegionConfig;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SignatureV4MultiRegion = void 0;
-const signature_v4_1 = __nccwpck_require__(11528);
+const middleware_sdk_s3_1 = __nccwpck_require__(81139);
 const signature_v4_crt_container_1 = __nccwpck_require__(72286);
 class SignatureV4MultiRegion {
     constructor(options) {
-        this.sigv4Signer = new signature_v4_1.SignatureV4(options);
+        this.sigv4Signer = new middleware_sdk_s3_1.SignatureV4S3Express(options);
         this.signerOptions = options;
     }
     async sign(requestToSign, options = {}) {
@@ -26604,6 +27515,14 @@ class SignatureV4MultiRegion {
         }
         return this.sigv4Signer.sign(requestToSign, options);
     }
+    async signWithCredentials(requestToSign, credentials, options = {}) {
+        if (options.signingRegion === "*") {
+            if (this.signerOptions.runtime !== "node")
+                throw new Error("This request requires signing with SigV4Asymmetric algorithm. It's only available in Node.js");
+            return this.getSigv4aSigner().signWithCredentials(requestToSign, credentials, options);
+        }
+        return this.sigv4Signer.signWithCredentials(requestToSign, credentials, options);
+    }
     async presign(originalRequest, options = {}) {
         if (options.signingRegion === "*") {
             if (this.signerOptions.runtime !== "node")
@@ -26611,6 +27530,12 @@ class SignatureV4MultiRegion {
             return this.getSigv4aSigner().presign(originalRequest, options);
         }
         return this.sigv4Signer.presign(originalRequest, options);
+    }
+    async presignWithCredentials(originalRequest, credentials, options = {}) {
+        if (options.signingRegion === "*") {
+            throw new Error("Method presignWithCredentials is not supported for [signingRegion=*].");
+        }
+        return this.sigv4Signer.presignWithCredentials(originalRequest, credentials, options);
     }
     getSigv4aSigner() {
         if (!this.sigv4aSigner) {
@@ -30771,10 +31696,11 @@ exports.toEndpointV1 = toEndpointV1;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.endpointMiddleware = void 0;
+const util_middleware_1 = __nccwpck_require__(2390);
 const getEndpointFromInstructions_1 = __nccwpck_require__(73929);
 const endpointMiddleware = ({ config, instructions, }) => {
     return (next, context) => async (args) => {
-        var _a, _b;
+        var _a, _b, _c;
         const endpoint = await (0, getEndpointFromInstructions_1.getEndpointFromInstructions)(args.input, {
             getEndpointParameterInstructions() {
                 return instructions;
@@ -30786,6 +31712,17 @@ const endpointMiddleware = ({ config, instructions, }) => {
         if (authScheme) {
             context["signing_region"] = authScheme.signingRegion;
             context["signing_service"] = authScheme.signingName;
+            const smithyContext = (0, util_middleware_1.getSmithyContext)(context);
+            const httpAuthOption = (_c = smithyContext === null || smithyContext === void 0 ? void 0 : smithyContext.selectedHttpAuthScheme) === null || _c === void 0 ? void 0 : _c.httpAuthOption;
+            if (httpAuthOption) {
+                httpAuthOption.signingProperties = Object.assign(httpAuthOption.signingProperties || {}, {
+                    signing_region: authScheme.signingRegion,
+                    signingRegion: authScheme.signingRegion,
+                    signing_service: authScheme.signingName,
+                    signingName: authScheme.signingName,
+                    signingRegionSet: authScheme.signingRegionSet,
+                }, authScheme.properties);
+            }
         }
         return next({
             ...args,
@@ -31217,6 +32154,21 @@ tslib_1.__exportStar(__nccwpck_require__(81434), exports);
 
 /***/ }),
 
+/***/ 18977:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.isStreamingPayload = void 0;
+const stream_1 = __nccwpck_require__(12781);
+const isStreamingPayload = (request) => (request === null || request === void 0 ? void 0 : request.body) instanceof stream_1.Readable ||
+    (typeof ReadableStream !== "undefined" && (request === null || request === void 0 ? void 0 : request.body) instanceof ReadableStream);
+exports.isStreamingPayload = isStreamingPayload;
+
+
+/***/ }),
+
 /***/ 76556:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
@@ -31280,10 +32232,13 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getRetryAfterHint = exports.getRetryPlugin = exports.retryMiddlewareOptions = exports.retryMiddleware = void 0;
 const protocol_http_1 = __nccwpck_require__(64418);
 const service_error_classification_1 = __nccwpck_require__(6375);
+const smithy_client_1 = __nccwpck_require__(63570);
 const util_retry_1 = __nccwpck_require__(84902);
 const uuid_1 = __nccwpck_require__(75840);
+const isStreamingPayload_1 = __nccwpck_require__(18977);
 const util_1 = __nccwpck_require__(42827);
 const retryMiddleware = (options) => (next, context) => async (args) => {
+    var _a;
     let retryStrategy = await options.retryStrategy();
     const maxAttempts = await options.maxAttempts();
     if (isRetryStrategyV2(retryStrategy)) {
@@ -31293,12 +32248,13 @@ const retryMiddleware = (options) => (next, context) => async (args) => {
         let attempts = 0;
         let totalRetryDelay = 0;
         const { request } = args;
-        if (protocol_http_1.HttpRequest.isInstance(request)) {
+        const isRequest = protocol_http_1.HttpRequest.isInstance(request);
+        if (isRequest) {
             request.headers[util_retry_1.INVOCATION_ID_HEADER] = (0, uuid_1.v4)();
         }
         while (true) {
             try {
-                if (protocol_http_1.HttpRequest.isInstance(request)) {
+                if (isRequest) {
                     request.headers[util_retry_1.REQUEST_HEADER] = `attempt=${attempts + 1}; max=${maxAttempts}`;
                 }
                 const { response, output } = await next(args);
@@ -31310,6 +32266,10 @@ const retryMiddleware = (options) => (next, context) => async (args) => {
             catch (e) {
                 const retryErrorInfo = getRetryErrorInfo(e);
                 lastError = (0, util_1.asSdkError)(e);
+                if (isRequest && (0, isStreamingPayload_1.isStreamingPayload)(request)) {
+                    (_a = (context.logger instanceof smithy_client_1.NoOpLogger ? console : context.logger)) === null || _a === void 0 ? void 0 : _a.warn("An error was encountered in a non-retryable streaming request.");
+                    throw lastError;
+                }
                 try {
                     retryToken = await retryStrategy.refreshRetryTokenForRetry(retryToken, retryErrorInfo);
                 }
@@ -31991,6 +32951,12 @@ const set_socket_timeout_1 = __nccwpck_require__(42618);
 const write_request_body_1 = __nccwpck_require__(73766);
 exports.DEFAULT_REQUEST_TIMEOUT = 0;
 class NodeHttpHandler {
+    static create(instanceOrOptions) {
+        if (typeof (instanceOrOptions === null || instanceOrOptions === void 0 ? void 0 : instanceOrOptions.handle) === "function") {
+            return instanceOrOptions;
+        }
+        return new NodeHttpHandler(instanceOrOptions);
+    }
     constructor(options) {
         this.metadata = { handlerProtocol: "http/1.1" };
         this.configProvider = new Promise((resolve, reject) => {
@@ -32285,6 +33251,12 @@ const get_transformed_headers_1 = __nccwpck_require__(70508);
 const node_http2_connection_manager_1 = __nccwpck_require__(5771);
 const write_request_body_1 = __nccwpck_require__(73766);
 class NodeHttp2Handler {
+    static create(instanceOrOptions) {
+        if (typeof (instanceOrOptions === null || instanceOrOptions === void 0 ? void 0 : instanceOrOptions.handle) === "function") {
+            return instanceOrOptions;
+        }
+        return new NodeHttp2Handler(instanceOrOptions);
+    }
     constructor(options) {
         this.metadata = { handlerProtocol: "h2" };
         this.connectionManager = new node_http2_connection_manager_1.NodeHttp2ConnectionManager({});
@@ -33209,14 +34181,15 @@ const types_1 = __nccwpck_require__(55756);
 const loadSharedConfigFiles_1 = __nccwpck_require__(41879);
 const getConfigData = (data) => Object.entries(data)
     .filter(([key]) => {
-    const sections = key.split(loadSharedConfigFiles_1.CONFIG_PREFIX_SEPARATOR);
-    if (sections.length === 2 && Object.values(types_1.IniSectionType).includes(sections[0])) {
-        return true;
+    const indexOfSeparator = key.indexOf(loadSharedConfigFiles_1.CONFIG_PREFIX_SEPARATOR);
+    if (indexOfSeparator === -1) {
+        return false;
     }
-    return false;
+    return Object.values(types_1.IniSectionType).includes(key.substring(0, indexOfSeparator));
 })
     .reduce((acc, [key, value]) => {
-    const updatedKey = key.startsWith(types_1.IniSectionType.PROFILE) ? key.split(loadSharedConfigFiles_1.CONFIG_PREFIX_SEPARATOR)[1] : key;
+    const indexOfSeparator = key.indexOf(loadSharedConfigFiles_1.CONFIG_PREFIX_SEPARATOR);
+    const updatedKey = key.substring(0, indexOfSeparator) === types_1.IniSectionType.PROFILE ? key.substring(indexOfSeparator + 1) : key;
     acc[updatedKey] = value;
     return acc;
 }, {
@@ -35315,7 +36288,7 @@ const _json = (obj) => {
         return {};
     }
     if (Array.isArray(obj)) {
-        return obj.filter((_) => _ != null);
+        return obj.filter((_) => _ != null).map(exports._json);
     }
     if (typeof obj === "object") {
         const target = {};
@@ -35383,7 +36356,63 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 /***/ }),
 
-/***/ 48960:
+/***/ 93242:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.HttpApiKeyAuthLocation = void 0;
+var HttpApiKeyAuthLocation;
+(function (HttpApiKeyAuthLocation) {
+    HttpApiKeyAuthLocation["HEADER"] = "header";
+    HttpApiKeyAuthLocation["QUERY"] = "query";
+})(HttpApiKeyAuthLocation = exports.HttpApiKeyAuthLocation || (exports.HttpApiKeyAuthLocation = {}));
+
+
+/***/ }),
+
+/***/ 81851:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 91530:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 74020:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 52263:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 79467:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -35395,6 +36424,23 @@ var HttpAuthLocation;
     HttpAuthLocation["HEADER"] = "header";
     HttpAuthLocation["QUERY"] = "query";
 })(HttpAuthLocation = exports.HttpAuthLocation || (exports.HttpAuthLocation = {}));
+
+
+/***/ }),
+
+/***/ 11239:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const tslib_1 = __nccwpck_require__(4351);
+tslib_1.__exportStar(__nccwpck_require__(79467), exports);
+tslib_1.__exportStar(__nccwpck_require__(93242), exports);
+tslib_1.__exportStar(__nccwpck_require__(81851), exports);
+tslib_1.__exportStar(__nccwpck_require__(91530), exports);
+tslib_1.__exportStar(__nccwpck_require__(74020), exports);
+tslib_1.__exportStar(__nccwpck_require__(52263), exports);
 
 
 /***/ }),
@@ -35713,6 +36759,26 @@ var FieldPosition;
 
 /***/ }),
 
+/***/ 12842:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 197:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
 /***/ 7545:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -35740,8 +36806,20 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __nccwpck_require__(4351);
+tslib_1.__exportStar(__nccwpck_require__(197), exports);
 tslib_1.__exportStar(__nccwpck_require__(7545), exports);
 tslib_1.__exportStar(__nccwpck_require__(49123), exports);
+tslib_1.__exportStar(__nccwpck_require__(84476), exports);
+
+
+/***/ }),
+
+/***/ 84476:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 
 /***/ }),
@@ -35754,7 +36832,7 @@ tslib_1.__exportStar(__nccwpck_require__(49123), exports);
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const tslib_1 = __nccwpck_require__(4351);
 tslib_1.__exportStar(__nccwpck_require__(74075), exports);
-tslib_1.__exportStar(__nccwpck_require__(48960), exports);
+tslib_1.__exportStar(__nccwpck_require__(11239), exports);
 tslib_1.__exportStar(__nccwpck_require__(63274), exports);
 tslib_1.__exportStar(__nccwpck_require__(78340), exports);
 tslib_1.__exportStar(__nccwpck_require__(4744), exports);
@@ -35767,6 +36845,7 @@ tslib_1.__exportStar(__nccwpck_require__(21550), exports);
 tslib_1.__exportStar(__nccwpck_require__(88508), exports);
 tslib_1.__exportStar(__nccwpck_require__(47447), exports);
 tslib_1.__exportStar(__nccwpck_require__(18883), exports);
+tslib_1.__exportStar(__nccwpck_require__(12842), exports);
 tslib_1.__exportStar(__nccwpck_require__(28006), exports);
 tslib_1.__exportStar(__nccwpck_require__(52866), exports);
 tslib_1.__exportStar(__nccwpck_require__(17756), exports);
@@ -35783,6 +36862,7 @@ tslib_1.__exportStar(__nccwpck_require__(28564), exports);
 tslib_1.__exportStar(__nccwpck_require__(61285), exports);
 tslib_1.__exportStar(__nccwpck_require__(50364), exports);
 tslib_1.__exportStar(__nccwpck_require__(69304), exports);
+tslib_1.__exportStar(__nccwpck_require__(46098), exports);
 tslib_1.__exportStar(__nccwpck_require__(10375), exports);
 tslib_1.__exportStar(__nccwpck_require__(66894), exports);
 tslib_1.__exportStar(__nccwpck_require__(57887), exports);
@@ -35948,6 +37028,16 @@ var RequestHandlerProtocol;
 /***/ }),
 
 /***/ 69304:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+
+/***/ }),
+
+/***/ 46098:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -44382,7 +45472,7 @@ exports.unescape = unescape;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@aws-sdk/client-s3","description":"AWS SDK for JavaScript S3 Client for Node.js, Browser and React Native","version":"3.449.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:docs":"typedoc","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo s3","test":"yarn test:unit","test:e2e":"yarn test:e2e:node && yarn test:e2e:browser","test:e2e:browser":"ts-mocha test/**/*.browser.ispec.ts && karma start karma.conf.js","test:e2e:node":"jest --c jest.config.e2e.js","test:unit":"ts-mocha test/unit/**/*.spec.ts"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha1-browser":"3.0.0","@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/client-sts":"3.449.0","@aws-sdk/core":"3.445.0","@aws-sdk/credential-provider-node":"3.449.0","@aws-sdk/middleware-bucket-endpoint":"3.449.0","@aws-sdk/middleware-expect-continue":"3.449.0","@aws-sdk/middleware-flexible-checksums":"3.449.0","@aws-sdk/middleware-host-header":"3.449.0","@aws-sdk/middleware-location-constraint":"3.449.0","@aws-sdk/middleware-logger":"3.449.0","@aws-sdk/middleware-recursion-detection":"3.449.0","@aws-sdk/middleware-sdk-s3":"3.449.0","@aws-sdk/middleware-signing":"3.449.0","@aws-sdk/middleware-ssec":"3.449.0","@aws-sdk/middleware-user-agent":"3.449.0","@aws-sdk/region-config-resolver":"3.433.0","@aws-sdk/signature-v4-multi-region":"3.449.0","@aws-sdk/types":"3.449.0","@aws-sdk/util-endpoints":"3.449.0","@aws-sdk/util-user-agent-browser":"3.449.0","@aws-sdk/util-user-agent-node":"3.449.0","@aws-sdk/xml-builder":"3.310.0","@smithy/config-resolver":"^2.0.16","@smithy/eventstream-serde-browser":"^2.0.12","@smithy/eventstream-serde-config-resolver":"^2.0.12","@smithy/eventstream-serde-node":"^2.0.12","@smithy/fetch-http-handler":"^2.2.4","@smithy/hash-blob-browser":"^2.0.12","@smithy/hash-node":"^2.0.12","@smithy/hash-stream-node":"^2.0.12","@smithy/invalid-dependency":"^2.0.12","@smithy/md5-js":"^2.0.12","@smithy/middleware-content-length":"^2.0.14","@smithy/middleware-endpoint":"^2.1.3","@smithy/middleware-retry":"^2.0.18","@smithy/middleware-serde":"^2.0.12","@smithy/middleware-stack":"^2.0.6","@smithy/node-config-provider":"^2.1.3","@smithy/node-http-handler":"^2.1.8","@smithy/protocol-http":"^3.0.8","@smithy/smithy-client":"^2.1.12","@smithy/types":"^2.4.0","@smithy/url-parser":"^2.0.12","@smithy/util-base64":"^2.0.0","@smithy/util-body-length-browser":"^2.0.0","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.16","@smithy/util-defaults-mode-node":"^2.0.21","@smithy/util-endpoints":"^1.0.2","@smithy/util-retry":"^2.0.5","@smithy/util-stream":"^2.0.17","@smithy/util-utf8":"^2.0.0","@smithy/util-waiter":"^2.0.12","fast-xml-parser":"4.2.5","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/chai":"^4.2.11","@types/mocha":"^8.0.4","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typedoc":"0.23.23","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-s3","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-s3"}}');
+module.exports = JSON.parse('{"name":"@aws-sdk/client-s3","description":"AWS SDK for JavaScript S3 Client for Node.js, Browser and React Native","version":"3.470.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo s3","test":"yarn test:unit","test:e2e":"yarn test:e2e:node && yarn test:e2e:browser","test:e2e:browser":"ts-mocha test/**/*.browser.ispec.ts && karma start karma.conf.js","test:e2e:node":"jest --c jest.config.e2e.js","test:unit":"ts-mocha test/unit/**/*.spec.ts"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha1-browser":"3.0.0","@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/client-sts":"3.470.0","@aws-sdk/core":"3.468.0","@aws-sdk/credential-provider-node":"3.470.0","@aws-sdk/middleware-bucket-endpoint":"3.470.0","@aws-sdk/middleware-expect-continue":"3.468.0","@aws-sdk/middleware-flexible-checksums":"3.468.0","@aws-sdk/middleware-host-header":"3.468.0","@aws-sdk/middleware-location-constraint":"3.468.0","@aws-sdk/middleware-logger":"3.468.0","@aws-sdk/middleware-recursion-detection":"3.468.0","@aws-sdk/middleware-sdk-s3":"3.470.0","@aws-sdk/middleware-signing":"3.468.0","@aws-sdk/middleware-ssec":"3.468.0","@aws-sdk/middleware-user-agent":"3.470.0","@aws-sdk/region-config-resolver":"3.470.0","@aws-sdk/signature-v4-multi-region":"3.470.0","@aws-sdk/types":"3.468.0","@aws-sdk/util-endpoints":"3.470.0","@aws-sdk/util-user-agent-browser":"3.468.0","@aws-sdk/util-user-agent-node":"3.470.0","@aws-sdk/xml-builder":"3.465.0","@smithy/config-resolver":"^2.0.21","@smithy/eventstream-serde-browser":"^2.0.15","@smithy/eventstream-serde-config-resolver":"^2.0.15","@smithy/eventstream-serde-node":"^2.0.15","@smithy/fetch-http-handler":"^2.3.1","@smithy/hash-blob-browser":"^2.0.16","@smithy/hash-node":"^2.0.17","@smithy/hash-stream-node":"^2.0.17","@smithy/invalid-dependency":"^2.0.15","@smithy/md5-js":"^2.0.17","@smithy/middleware-content-length":"^2.0.17","@smithy/middleware-endpoint":"^2.2.3","@smithy/middleware-retry":"^2.0.24","@smithy/middleware-serde":"^2.0.15","@smithy/middleware-stack":"^2.0.9","@smithy/node-config-provider":"^2.1.8","@smithy/node-http-handler":"^2.2.1","@smithy/protocol-http":"^3.0.11","@smithy/smithy-client":"^2.1.18","@smithy/types":"^2.7.0","@smithy/url-parser":"^2.0.15","@smithy/util-base64":"^2.0.1","@smithy/util-body-length-browser":"^2.0.1","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.22","@smithy/util-defaults-mode-node":"^2.0.29","@smithy/util-endpoints":"^1.0.7","@smithy/util-retry":"^2.0.8","@smithy/util-stream":"^2.0.23","@smithy/util-utf8":"^2.0.2","@smithy/util-waiter":"^2.0.15","fast-xml-parser":"4.2.5","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/chai":"^4.2.11","@types/mocha":"^8.0.4","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-s3","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-s3"}}');
 
 /***/ }),
 
@@ -44390,7 +45480,7 @@ module.exports = JSON.parse('{"name":"@aws-sdk/client-s3","description":"AWS SDK
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@aws-sdk/client-sso","description":"AWS SDK for JavaScript Sso Client for Node.js, Browser and React Native","version":"3.449.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:docs":"typedoc","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sso"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/core":"3.445.0","@aws-sdk/middleware-host-header":"3.449.0","@aws-sdk/middleware-logger":"3.449.0","@aws-sdk/middleware-recursion-detection":"3.449.0","@aws-sdk/middleware-user-agent":"3.449.0","@aws-sdk/region-config-resolver":"3.433.0","@aws-sdk/types":"3.449.0","@aws-sdk/util-endpoints":"3.449.0","@aws-sdk/util-user-agent-browser":"3.449.0","@aws-sdk/util-user-agent-node":"3.449.0","@smithy/config-resolver":"^2.0.16","@smithy/fetch-http-handler":"^2.2.4","@smithy/hash-node":"^2.0.12","@smithy/invalid-dependency":"^2.0.12","@smithy/middleware-content-length":"^2.0.14","@smithy/middleware-endpoint":"^2.1.3","@smithy/middleware-retry":"^2.0.18","@smithy/middleware-serde":"^2.0.12","@smithy/middleware-stack":"^2.0.6","@smithy/node-config-provider":"^2.1.3","@smithy/node-http-handler":"^2.1.8","@smithy/protocol-http":"^3.0.8","@smithy/smithy-client":"^2.1.12","@smithy/types":"^2.4.0","@smithy/url-parser":"^2.0.12","@smithy/util-base64":"^2.0.0","@smithy/util-body-length-browser":"^2.0.0","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.16","@smithy/util-defaults-mode-node":"^2.0.21","@smithy/util-endpoints":"^1.0.2","@smithy/util-retry":"^2.0.5","@smithy/util-utf8":"^2.0.0","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typedoc":"0.23.23","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sso","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sso"}}');
+module.exports = JSON.parse('{"name":"@aws-sdk/client-sso","description":"AWS SDK for JavaScript Sso Client for Node.js, Browser and React Native","version":"3.470.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sso"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/core":"3.468.0","@aws-sdk/middleware-host-header":"3.468.0","@aws-sdk/middleware-logger":"3.468.0","@aws-sdk/middleware-recursion-detection":"3.468.0","@aws-sdk/middleware-user-agent":"3.470.0","@aws-sdk/region-config-resolver":"3.470.0","@aws-sdk/types":"3.468.0","@aws-sdk/util-endpoints":"3.470.0","@aws-sdk/util-user-agent-browser":"3.468.0","@aws-sdk/util-user-agent-node":"3.470.0","@smithy/config-resolver":"^2.0.21","@smithy/fetch-http-handler":"^2.3.1","@smithy/hash-node":"^2.0.17","@smithy/invalid-dependency":"^2.0.15","@smithy/middleware-content-length":"^2.0.17","@smithy/middleware-endpoint":"^2.2.3","@smithy/middleware-retry":"^2.0.24","@smithy/middleware-serde":"^2.0.15","@smithy/middleware-stack":"^2.0.9","@smithy/node-config-provider":"^2.1.8","@smithy/node-http-handler":"^2.2.1","@smithy/protocol-http":"^3.0.11","@smithy/smithy-client":"^2.1.18","@smithy/types":"^2.7.0","@smithy/url-parser":"^2.0.15","@smithy/util-base64":"^2.0.1","@smithy/util-body-length-browser":"^2.0.1","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.22","@smithy/util-defaults-mode-node":"^2.0.29","@smithy/util-endpoints":"^1.0.7","@smithy/util-retry":"^2.0.8","@smithy/util-utf8":"^2.0.2","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sso","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sso"}}');
 
 /***/ }),
 
@@ -44398,7 +45488,7 @@ module.exports = JSON.parse('{"name":"@aws-sdk/client-sso","description":"AWS SD
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"@aws-sdk/client-sts","description":"AWS SDK for JavaScript Sts Client for Node.js, Browser and React Native","version":"3.449.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:docs":"typedoc","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sts","test":"yarn test:unit","test:unit":"jest"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/core":"3.445.0","@aws-sdk/credential-provider-node":"3.449.0","@aws-sdk/middleware-host-header":"3.449.0","@aws-sdk/middleware-logger":"3.449.0","@aws-sdk/middleware-recursion-detection":"3.449.0","@aws-sdk/middleware-sdk-sts":"3.449.0","@aws-sdk/middleware-signing":"3.449.0","@aws-sdk/middleware-user-agent":"3.449.0","@aws-sdk/region-config-resolver":"3.433.0","@aws-sdk/types":"3.449.0","@aws-sdk/util-endpoints":"3.449.0","@aws-sdk/util-user-agent-browser":"3.449.0","@aws-sdk/util-user-agent-node":"3.449.0","@smithy/config-resolver":"^2.0.16","@smithy/fetch-http-handler":"^2.2.4","@smithy/hash-node":"^2.0.12","@smithy/invalid-dependency":"^2.0.12","@smithy/middleware-content-length":"^2.0.14","@smithy/middleware-endpoint":"^2.1.3","@smithy/middleware-retry":"^2.0.18","@smithy/middleware-serde":"^2.0.12","@smithy/middleware-stack":"^2.0.6","@smithy/node-config-provider":"^2.1.3","@smithy/node-http-handler":"^2.1.8","@smithy/protocol-http":"^3.0.8","@smithy/smithy-client":"^2.1.12","@smithy/types":"^2.4.0","@smithy/url-parser":"^2.0.12","@smithy/util-base64":"^2.0.0","@smithy/util-body-length-browser":"^2.0.0","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.16","@smithy/util-defaults-mode-node":"^2.0.21","@smithy/util-endpoints":"^1.0.2","@smithy/util-retry":"^2.0.5","@smithy/util-utf8":"^2.0.0","fast-xml-parser":"4.2.5","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typedoc":"0.23.23","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sts","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sts"}}');
+module.exports = JSON.parse('{"name":"@aws-sdk/client-sts","description":"AWS SDK for JavaScript Sts Client for Node.js, Browser and React Native","version":"3.470.0","scripts":{"build":"concurrently \'yarn:build:cjs\' \'yarn:build:es\' \'yarn:build:types\'","build:cjs":"tsc -p tsconfig.cjs.json","build:es":"tsc -p tsconfig.es.json","build:include:deps":"lerna run --scope $npm_package_name --include-dependencies build","build:types":"tsc -p tsconfig.types.json","build:types:downlevel":"downlevel-dts dist-types dist-types/ts3.4","clean":"rimraf ./dist-* && rimraf *.tsbuildinfo","extract:docs":"api-extractor run --local","generate:client":"node ../../scripts/generate-clients/single-service --solo sts","test":"yarn test:unit","test:unit":"jest"},"main":"./dist-cjs/index.js","types":"./dist-types/index.d.ts","module":"./dist-es/index.js","sideEffects":false,"dependencies":{"@aws-crypto/sha256-browser":"3.0.0","@aws-crypto/sha256-js":"3.0.0","@aws-sdk/core":"3.468.0","@aws-sdk/credential-provider-node":"3.470.0","@aws-sdk/middleware-host-header":"3.468.0","@aws-sdk/middleware-logger":"3.468.0","@aws-sdk/middleware-recursion-detection":"3.468.0","@aws-sdk/middleware-sdk-sts":"3.468.0","@aws-sdk/middleware-signing":"3.468.0","@aws-sdk/middleware-user-agent":"3.470.0","@aws-sdk/region-config-resolver":"3.470.0","@aws-sdk/types":"3.468.0","@aws-sdk/util-endpoints":"3.470.0","@aws-sdk/util-user-agent-browser":"3.468.0","@aws-sdk/util-user-agent-node":"3.470.0","@smithy/config-resolver":"^2.0.21","@smithy/fetch-http-handler":"^2.3.1","@smithy/hash-node":"^2.0.17","@smithy/invalid-dependency":"^2.0.15","@smithy/middleware-content-length":"^2.0.17","@smithy/middleware-endpoint":"^2.2.3","@smithy/middleware-retry":"^2.0.24","@smithy/middleware-serde":"^2.0.15","@smithy/middleware-stack":"^2.0.9","@smithy/node-config-provider":"^2.1.8","@smithy/node-http-handler":"^2.2.1","@smithy/protocol-http":"^3.0.11","@smithy/smithy-client":"^2.1.18","@smithy/types":"^2.7.0","@smithy/url-parser":"^2.0.15","@smithy/util-base64":"^2.0.1","@smithy/util-body-length-browser":"^2.0.1","@smithy/util-body-length-node":"^2.1.0","@smithy/util-defaults-mode-browser":"^2.0.22","@smithy/util-defaults-mode-node":"^2.0.29","@smithy/util-endpoints":"^1.0.7","@smithy/util-retry":"^2.0.8","@smithy/util-utf8":"^2.0.2","fast-xml-parser":"4.2.5","tslib":"^2.5.0"},"devDependencies":{"@smithy/service-client-documentation-generator":"^2.0.0","@tsconfig/node14":"1.0.3","@types/node":"^14.14.31","concurrently":"7.0.0","downlevel-dts":"0.10.1","rimraf":"3.0.2","typescript":"~4.9.5"},"engines":{"node":">=14.0.0"},"typesVersions":{"<4.0":{"dist-types/*":["dist-types/ts3.4/*"]}},"files":["dist-*/**"],"author":{"name":"AWS SDK for JavaScript Team","url":"https://aws.amazon.com/javascript/"},"license":"Apache-2.0","browser":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.browser"},"react-native":{"./dist-es/runtimeConfig":"./dist-es/runtimeConfig.native"},"homepage":"https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sts","repository":{"type":"git","url":"https://github.com/aws/aws-sdk-js-v3.git","directory":"clients/client-sts"}}');
 
 /***/ }),
 
