@@ -81,10 +81,14 @@ you can provide a cache-control input to update it.
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "spa-s3-policy",
       "Effect": "Allow",
-      "Action": ["s3:PutObject", "s3:ListBucket", "s3:DeleteObject"],
-      "Resource": "*"
+      "Action": ["s3:ListBucket"],
+      "Resource": "arn:aws:s3:::mybucket"
+    },
+    {
+      "Effect": "Allow",
+      "Action": ["s3:PutObject", "s3:DeleteObject"],
+      "Resource": "arn:aws:s3:::mybucket/prefix/*"
     }
   ]
 }
