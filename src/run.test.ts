@@ -61,9 +61,8 @@ describe('chore', () => {
 
       const s3files = await client
         .send(new s3.ListObjectsV2Command({ Bucket: bucket, Prefix: prefix }))
-        .then(
-          v =>
-            v.Contents?.map(f => path.relative(prefix, f.Key as string)).sort()
+        .then(v =>
+          v.Contents?.map(f => path.relative(prefix, f.Key as string)).sort()
         )
       expect(Object.keys(checks).sort()).toEqual(s3files)
 
@@ -111,9 +110,8 @@ describe('chore', () => {
 
       const s3files = await client
         .send(new s3.ListObjectsV2Command({ Bucket: bucket, Prefix: prefix }))
-        .then(
-          v =>
-            v.Contents?.map(f => path.relative(prefix, f.Key as string)).sort()
+        .then(v =>
+          v.Contents?.map(f => path.relative(prefix, f.Key as string)).sort()
         )
       expect(Object.keys(checks).sort()).toEqual(s3files)
 
