@@ -11,6 +11,7 @@ export async function run({
   dirPath,
   isDelete,
   cacheControlJson,
+  cacheControlMergePolicy,
   defaultCacheControl
 }: {
   bucket: string
@@ -18,9 +19,13 @@ export async function run({
   dirPath: string
   isDelete: boolean
   cacheControlJson: CacheControl.Pattern
+  cacheControlMergePolicy: string
   defaultCacheControl: string
 }): Promise<void> {
-  const cacheControls = CacheControl.Merge(cacheControlJson)
+  const cacheControls = CacheControl.Merge(
+    cacheControlJson,
+    cacheControlMergePolicy as CacheControl.MergePolicy
+  )
 
   const s3c = new S3Provider(bucket, prefix)
 

@@ -43,6 +43,7 @@ describe('chore', () => {
         dirPath,
         isDelete: true,
         cacheControlJson: { 'index.html': 'no-cache' },
+        cacheControlMergePolicy: 'upsert',
         defaultCacheControl: 'no-cache'
       })
 
@@ -91,6 +92,7 @@ describe('chore', () => {
         dirPath,
         isDelete: true,
         cacheControlJson: {},
+        cacheControlMergePolicy: 'upsert',
         defaultCacheControl: 'no-cache'
       })
 

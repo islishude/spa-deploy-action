@@ -40385,8 +40385,8 @@ exports.builtin = new Map(Object.entries({
     '*.ico': exports.defaultPolicy,
     '*.svg': exports.defaultPolicy
 }));
-function Merge(i) {
-    const merged = new Map(exports.builtin);
+function Merge(i, policy) {
+    const merged = policy === 'upsert' ? new Map(exports.builtin) : new Map();
     for (const [key, value] of Object.entries(i)) {
         merged.set(key, value);
     }
@@ -40442,6 +40442,7 @@ const prefix = core.getInput('s3-bucket-prefix');
 const dirPath = core.getInput('dir-path', { required: true });
 const isDelete = core.getBooleanInput('delete');
 const defaultCacheControl = core.getInput('default-cachec-control');
+const cacheControlMergePolicy = core.getInput('cachec-control-merge-policy');
 const cacheControlJson = JSON.parse(core.getInput('cache-control'));
 (0, run_1.run)({
     bucket,
@@ -40449,6 +40450,7 @@ const cacheControlJson = JSON.parse(core.getInput('cache-control'));
     dirPath,
     isDelete,
     cacheControlJson,
+    cacheControlMergePolicy,
     defaultCacheControl
 }).catch(err => {
     if (err instanceof Error)
@@ -40597,8 +40599,8 @@ const path_1 = __importDefault(__nccwpck_require__(71017));
 const mime_types_1 = __nccwpck_require__(43583);
 const aws_1 = __importDefault(__nccwpck_require__(7287));
 const CacheControl = __importStar(__nccwpck_require__(2513));
-async function run({ bucket, prefix, dirPath, isDelete, cacheControlJson, defaultCacheControl }) {
-    const cacheControls = CacheControl.Merge(cacheControlJson);
+async function run({ bucket, prefix, dirPath, isDelete, cacheControlJson, cacheControlMergePolicy, defaultCacheControl }) {
+    const cacheControls = CacheControl.Merge(cacheControlJson, cacheControlMergePolicy);
     const s3c = new aws_1.default(bucket, prefix);
     const [localFiles, remoteFiles] = await Promise.all([
         promises_1.default

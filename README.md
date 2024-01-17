@@ -47,16 +47,15 @@ jobs:
 
 ## Inputs
 
-| Name                  | Type   | Default | Required | Description                                                 |
-| --------------------- | ------ | ------- | -------- | ----------------------------------------------------------- |
-| dir-path              | string |         | yes      | directory path for deploying                                |
-| s3-bucket             | string |         | yes      | aws s3 bucket name                                          |
-| s3-bucket-prefix      | string |         | no       | aws s3 bucket prefix to deploy                              |
-| delete                | bool   | true    | no       | files that exist in the s3 but not in the local are deleted |
-| cache-control         | json   | {}      | no       | file glob and cache control directive pairs                 |
-| default-cache-control | string |         | no       | use if no matched with cache-control                        |
-
-glob matcher uses [minimatch](https://github.com/isaacs/minimatch).
+| Name                       | Type   | Default | Required | Description                                                                                                         |
+| -------------------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
+| dir-path                   | string |         | yes      | directory path for deploying                                                                                        |
+| s3-bucket                  | string |         | yes      | aws s3 bucket name                                                                                                  |
+| s3-bucket-prefix           | string |         | no       | aws s3 bucket prefix to deploy                                                                                      |
+| delete                     | bool   | true    | no       | files that exist in the s3 but not in the local are deleted                                                         |
+| cache-control              | json   | {}      | no       | file glob and cache control directive pairs, the glob matcher uses [minimatch](https://github.com/isaacs/minimatch) |
+| cache-control-merge-policy | string | upsert  | no       | used for merge built-in and your custom cache-control                                                               |
+| default-cache-control      | string |         | no       | use if no matched with cache-control                                                                                |
 
 ## Built-in cache control mapping
 
@@ -73,6 +72,14 @@ glob matcher uses [minimatch](https://github.com/isaacs/minimatch).
 ```
 
 you can provide a cache-control input to update it.
+
+if you use the default `cache-control-merge-policy: 'upsert'`, the action will
+update an existing key if a specified value already exists in the built-in cache
+control mapping, and insert a new key-value if the specified value doesn't
+already exist
+
+if you use `cache-control-merge-policy: 'replace'`, the action will use the
+`cache-control` input you provided.
 
 ## Required AWS IAM Policy
 

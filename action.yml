@@ -1,6 +1,9 @@
 name: spa-deploy-action
 description: deploy your spa with corret cache-control
 author: islishude <islishude@gmail.com>
+branding:
+  icon: "anchor"
+  color: "blue"
 
 inputs:
   dir-path:
@@ -13,10 +16,14 @@ inputs:
     description: aws S3 bucket prefix
   delete:
     description: files that exist in the s3 but not in the local are deleted.
-    default: 'true'
+    default: "true"
   cache-control:
     description: file glob and cache control directive pairs
-    default: '{}'
+    default: "{}"
+  cache-control-merge-policy:
+    description: "used for merge built-in and your custom cache-control"
+    default: "upsert"
+    required: true
   default-cache-control:
     description: use if no cache control globbing matched
 
