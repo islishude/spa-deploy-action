@@ -35867,7 +35867,7 @@ exports["default"] = _default;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Get = exports.Merge = exports.builtin = exports.indexHtmlPolicy = exports.optimizedPolicy = exports.defaultPolicy = void 0;
-const minimatch_1 = __nccwpck_require__(1953);
+const minimatch_1 = __nccwpck_require__(4501);
 exports.defaultPolicy = 'public,max-age=86400,stale-while-revalidate=2592000';
 exports.optimizedPolicy = 'public,max-age=31536000,immutable';
 exports.indexHtmlPolicy = 'public,max-age=60,stale-while-revalidate=2592000';
@@ -36273,7 +36273,7 @@ module.exports = require("util");
 
 /***/ }),
 
-/***/ 903:
+/***/ 4149:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -36294,7 +36294,7 @@ exports.assertValidPattern = assertValidPattern;
 
 /***/ }),
 
-/***/ 3839:
+/***/ 5136:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -36302,8 +36302,8 @@ exports.assertValidPattern = assertValidPattern;
 // parse a single path portion
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AST = void 0;
-const brace_expressions_js_1 = __nccwpck_require__(5822);
-const unescape_js_1 = __nccwpck_require__(7305);
+const brace_expressions_js_1 = __nccwpck_require__(1812);
+const unescape_js_1 = __nccwpck_require__(5698);
 const types = new Set(['!', '?', '+', '*', '@']);
 const isExtglobType = (c) => types.has(c);
 // Patterns that get prepended to bind to the start of either the
@@ -36638,6 +36638,9 @@ class AST {
             _glob: glob,
         });
     }
+    get options() {
+        return this.#options;
+    }
     // returns the string match, the regexp source, whether there's magic
     // in the regexp (so a regular expression is required) and whether or
     // not the uflag is needed for the regular expression (for posix classes)
@@ -36890,7 +36893,7 @@ exports.AST = AST;
 
 /***/ }),
 
-/***/ 5822:
+/***/ 1812:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -37049,7 +37052,7 @@ exports.parseClass = parseClass;
 
 /***/ }),
 
-/***/ 9004:
+/***/ 2804:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -37078,7 +37081,7 @@ exports.escape = escape;
 
 /***/ }),
 
-/***/ 1953:
+/***/ 4501:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -37089,10 +37092,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.unescape = exports.escape = exports.AST = exports.Minimatch = exports.match = exports.makeRe = exports.braceExpand = exports.defaults = exports.filter = exports.GLOBSTAR = exports.sep = exports.minimatch = void 0;
 const brace_expansion_1 = __importDefault(__nccwpck_require__(3717));
-const assert_valid_pattern_js_1 = __nccwpck_require__(903);
-const ast_js_1 = __nccwpck_require__(3839);
-const escape_js_1 = __nccwpck_require__(9004);
-const unescape_js_1 = __nccwpck_require__(7305);
+const assert_valid_pattern_js_1 = __nccwpck_require__(4149);
+const ast_js_1 = __nccwpck_require__(5136);
+const escape_js_1 = __nccwpck_require__(2804);
+const unescape_js_1 = __nccwpck_require__(5698);
 const minimatch = (p, pattern, options = {}) => {
     (0, assert_valid_pattern_js_1.assertValidPattern)(pattern);
     // shortcut: comments match nothing.
@@ -37428,6 +37431,7 @@ class Minimatch {
             globParts = this.levelOneOptimize(globParts);
         }
         else {
+            // just collapse multiple ** portions into one
             globParts = this.adjascentGlobstarOptimize(globParts);
         }
         return globParts;
@@ -37917,7 +37921,11 @@ class Minimatch {
             fastTest = dotStarTest;
         }
         const re = ast_js_1.AST.fromGlob(pattern, this.options).toMMPattern();
-        return fastTest ? Object.assign(re, { test: fastTest }) : re;
+        if (fastTest && typeof re === 'object') {
+            // Avoids overriding in frozen environments
+            Reflect.defineProperty(re, 'test', { value: fastTest });
+        }
+        return re;
     }
     makeRe() {
         if (this.regexp || this.regexp === false)
@@ -38081,11 +38089,11 @@ class Minimatch {
 }
 exports.Minimatch = Minimatch;
 /* c8 ignore start */
-var ast_js_2 = __nccwpck_require__(3839);
+var ast_js_2 = __nccwpck_require__(5136);
 Object.defineProperty(exports, "AST", ({ enumerable: true, get: function () { return ast_js_2.AST; } }));
-var escape_js_2 = __nccwpck_require__(9004);
+var escape_js_2 = __nccwpck_require__(2804);
 Object.defineProperty(exports, "escape", ({ enumerable: true, get: function () { return escape_js_2.escape; } }));
-var unescape_js_2 = __nccwpck_require__(7305);
+var unescape_js_2 = __nccwpck_require__(5698);
 Object.defineProperty(exports, "unescape", ({ enumerable: true, get: function () { return unescape_js_2.unescape; } }));
 /* c8 ignore stop */
 exports.minimatch.AST = ast_js_1.AST;
@@ -38096,7 +38104,7 @@ exports.minimatch.unescape = unescape_js_1.unescape;
 
 /***/ }),
 
-/***/ 7305:
+/***/ 5698:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
