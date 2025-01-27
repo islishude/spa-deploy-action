@@ -3,6 +3,7 @@
   "description": "deploy your single page application to S3 with correct cache control",
   "version": "0.0.1",
   "author": "islishude <islishude@gmail.com>",
+  "type": "module",
   "private": true,
   "homepage": "https://github.com/islishude/spa-deploy-action",
   "repository": {
@@ -29,7 +30,7 @@
     "format:write": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
-    "package": "ncc build src/index.ts --license licenses.txt",
+    "package": "npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "package:watch": "npm run package -- --watch",
     "pretest": "docker compose down && docker compose up -d --wait",
     "test": "(jest && make-coverage-badge --output-path ./badges/coverage.svg) || make-coverage-badge --output-path ./badges/coverage.svg",
@@ -37,35 +38,6 @@
     "all": "npm run format:write && npm run lint && npm run test && npm run package"
   },
   "license": "MIT",
-  "jest": {
-    "preset": "ts-jest",
-    "verbose": true,
-    "clearMocks": true,
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "js",
-      "ts"
-    ],
-    "testMatch": [
-      "**/*.test.ts"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/dist/"
-    ],
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "coverageReporters": [
-      "json-summary",
-      "text",
-      "lcov"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/**"
-    ]
-  },
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@aws-sdk/client-s3": "^3.637.0",
@@ -73,11 +45,16 @@
     "minimatch": "^10.0.1"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.5",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.1",
     "@types/jest": "^29.5.14",
     "@types/mime-types": "^2.1.2",
     "@types/node": "^22.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.12.2",
-    "@typescript-eslint/parser": "^8.19.0",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
     "@vercel/ncc": "^0.38.3",
     "eslint": "^9.19.0",
     "eslint-plugin-github": "^5.1.5",
@@ -89,7 +66,12 @@
     "make-coverage-badge": "^1.2.0",
     "prettier": "^3.3.3",
     "prettier-eslint": "^16.3.0",
+    "rollup": "^4.31.0",
     "ts-jest": "^29.2.5",
+    "ts-jest-resolver": "^2.0.1",
     "typescript": "^5.7.2"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
   }
 }

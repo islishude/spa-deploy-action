@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import { run } from './run'
+import { run } from './run.js'
 
 const bucket = core.getInput('s3-bucket', { required: true })
 const prefix = core.getInput('s3-bucket-prefix')
@@ -17,6 +17,6 @@ run({
   cacheControlJson,
   cacheControlMergePolicy,
   defaultCacheControl
-}).catch(err => {
+}).catch((err: Error) => {
   if (err instanceof Error) core.setFailed(err.message)
 })

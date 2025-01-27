@@ -26,7 +26,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install Dependencies
@@ -44,3 +44,6 @@ jobs:
       - name: Test
         id: npm-ci-test
         run: npm run ci-test
+        env:
+          NODE_OPTIONS: --experimental-vm-modules
+          NODE_NO_WARNINGS: 1

@@ -1,9 +1,9 @@
 import * as core from '@actions/core'
 import * as s3 from '@aws-sdk/client-s3'
-import path from 'path'
 import fs from 'fs'
+import path from 'path'
 
-import type { Provider } from '../index'
+import type { Provider } from '../index.js'
 
 export default class S3Provider implements Provider {
   private client: s3.S3Client
@@ -23,9 +23,9 @@ export default class S3Provider implements Provider {
     const files: string[] = []
 
     let pageKey: string | undefined = undefined
+    let loop = true
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (loop) {
       const s3files: s3.ListObjectsV2Output = await this.client.send(
         new s3.ListObjectsV2Command({
           Bucket: this.bucket,
@@ -46,9 +46,7 @@ export default class S3Provider implements Provider {
       }
 
       pageKey = s3files.NextContinuationToken
-      if (!pageKey) {
-        break
-      }
+      loop = pageKey !== undefined
     }
 
     return files
