@@ -37333,8 +37333,9 @@ class S3Provider {
     }
     async listObjects() {
         const files = [];
-        let pageKey = 'true';
-        while (pageKey) {
+        let pageKey = undefined;
+        let loop = true;
+        while (loop) {
             const s3files = await this.client.send(new s3.ListObjectsV2Command({
                 Bucket: this.bucket,
                 Prefix: this.prefix,
@@ -37351,6 +37352,7 @@ class S3Provider {
                 }
             }
             pageKey = s3files.NextContinuationToken;
+            loop = pageKey !== undefined;
         }
         return files;
     }

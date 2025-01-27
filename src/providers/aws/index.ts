@@ -22,8 +22,10 @@ export default class S3Provider implements Provider {
   async listObjects(): Promise<string[]> {
     const files: string[] = []
 
-    let pageKey: string | undefined = 'true'
-    while (pageKey) {
+    let pageKey: string | undefined = undefined
+    let loop = true
+
+    while (loop) {
       const s3files: s3.ListObjectsV2Output = await this.client.send(
         new s3.ListObjectsV2Command({
           Bucket: this.bucket,
@@ -44,6 +46,7 @@ export default class S3Provider implements Provider {
       }
 
       pageKey = s3files.NextContinuationToken
+      loop = pageKey !== undefined
     }
 
     return files
