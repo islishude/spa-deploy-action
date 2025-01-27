@@ -37316,8 +37316,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7484));
 const s3 = __importStar(__nccwpck_require__(3711));
-const path_1 = __importDefault(__nccwpck_require__(6928));
 const fs_1 = __importDefault(__nccwpck_require__(9896));
+const path_1 = __importDefault(__nccwpck_require__(6928));
 class S3Provider {
     bucket;
     prefix;
@@ -37333,9 +37333,8 @@ class S3Provider {
     }
     async listObjects() {
         const files = [];
-        let pageKey = undefined;
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
+        let pageKey = 'true';
+        while (pageKey) {
             const s3files = await this.client.send(new s3.ListObjectsV2Command({
                 Bucket: this.bucket,
                 Prefix: this.prefix,
@@ -37352,9 +37351,6 @@ class S3Provider {
                 }
             }
             pageKey = s3files.NextContinuationToken;
-            if (!pageKey) {
-                break;
-            }
         }
         return files;
     }
