@@ -1,4 +1,4 @@
-import type { Provider } from '../index';
+import type { Provider } from '../index.js';
 export default class S3Provider implements Provider {
     private bucket;
     private prefix?;

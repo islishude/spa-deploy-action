@@ -3,7 +3,7 @@ import * as s3 from '@aws-sdk/client-s3'
 import fs from 'fs'
 import path from 'path'
 
-import type { Provider } from '../index'
+import type { Provider } from '../index.js'
 
 export default class S3Provider implements Provider {
   private client: s3.S3Client

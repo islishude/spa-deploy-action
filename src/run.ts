@@ -1,9 +1,9 @@
+import { contentType } from 'mime-types'
 import fs from 'node:fs/promises'
 import path from 'path'
-import { contentType } from 'mime-types'
 
-import S3Provider from './providers/aws'
-import * as CacheControl from './cache-control'
+import * as CacheControl from './cache-control.js'
+import S3Provider from './providers/aws/index.js'
 
 export async function run({
   bucket,

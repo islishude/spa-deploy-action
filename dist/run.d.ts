@@ -1,4 +1,4 @@
-import * as CacheControl from './cache-control';
+import * as CacheControl from './cache-control.js';
 export declare function run({ bucket, prefix, dirPath, isDelete, cacheControlJson, cacheControlMergePolicy, defaultCacheControl }: {
     bucket: string;
     prefix: string;
