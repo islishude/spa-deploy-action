@@ -2,8 +2,8 @@ import require$$0$1, { homedir, platform as platform$1, release } from 'os';
 import require$$0$2, { createHash, createHmac } from 'crypto';
 import require$$1, { promises, lstatSync, fstatSync, readFileSync } from 'fs';
 import path$1, { sep as sep$1, join } from 'path';
-import require$$2, { Agent, request as request$1 } from 'http';
-import require$$3, { Agent as Agent$1, request } from 'https';
+import require$$2, { Agent as Agent$1, request as request$1 } from 'http';
+import require$$3, { Agent, request } from 'https';
 import 'net';
 import require$$1$1 from 'tls';
 import require$$4 from 'events';
@@ -38,7 +38,7 @@ function requireUtils () {
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	Object.defineProperty(utils, "__esModule", { value: true });
-	utils.toCommandProperties = utils.toCommandValue = undefined;
+	utils.toCommandProperties = utils.toCommandValue = void 0;
 	/**
 	 * Sanitizes an input into a string so it can be passed into issueCommand safely
 	 * @param input input to sanitize into a string
@@ -82,7 +82,7 @@ var hasRequiredCommand;
 function requireCommand () {
 	if (hasRequiredCommand) return command;
 	hasRequiredCommand = 1;
-	var __createBinding = (command.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (command && command.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    var desc = Object.getOwnPropertyDescriptor(m, k);
 	    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -93,12 +93,12 @@ function requireCommand () {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (command.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (command && command.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (command.__importStar) || function (mod) {
+	var __importStar = (command && command.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -106,7 +106,7 @@ function requireCommand () {
 	    return result;
 	};
 	Object.defineProperty(command, "__esModule", { value: true });
-	command.issue = command.issueCommand = undefined;
+	command.issue = command.issueCommand = void 0;
 	const os = __importStar(require$$0$1);
 	const utils_1 = requireUtils();
 	/**
@@ -188,7 +188,7 @@ function requireFileCommand () {
 	if (hasRequiredFileCommand) return fileCommand;
 	hasRequiredFileCommand = 1;
 	// For internal use, subject to change.
-	var __createBinding = (fileCommand.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (fileCommand && fileCommand.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    var desc = Object.getOwnPropertyDescriptor(m, k);
 	    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -199,12 +199,12 @@ function requireFileCommand () {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (fileCommand.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (fileCommand && fileCommand.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (fileCommand.__importStar) || function (mod) {
+	var __importStar = (fileCommand && fileCommand.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -212,7 +212,7 @@ function requireFileCommand () {
 	    return result;
 	};
 	Object.defineProperty(fileCommand, "__esModule", { value: true });
-	fileCommand.prepareKeyValueMessage = fileCommand.issueFileCommand = undefined;
+	fileCommand.prepareKeyValueMessage = fileCommand.issueFileCommand = void 0;
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const crypto = __importStar(require$$0$2);
@@ -263,7 +263,7 @@ function requireProxy () {
 	if (hasRequiredProxy) return proxy;
 	hasRequiredProxy = 1;
 	Object.defineProperty(proxy, "__esModule", { value: true });
-	proxy.checkBypass = proxy.getProxyUrl = undefined;
+	proxy.checkBypass = proxy.getProxyUrl = void 0;
 	function getProxyUrl(reqUrl) {
 	    const usingSsl = reqUrl.protocol === 'https:';
 	    if (checkBypass(reqUrl)) {
@@ -633,26 +633,26 @@ function requireLib () {
 	hasRequiredLib = 1;
 	(function (exports) {
 		/* eslint-disable @typescript-eslint/no-explicit-any */
-		var __createBinding = (lib.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+		var __createBinding = (lib && lib.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 		}) : (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    o[k2] = m[k];
 		}));
-		var __setModuleDefault = (lib.__setModuleDefault) || (Object.create ? (function(o, v) {
+		var __setModuleDefault = (lib && lib.__setModuleDefault) || (Object.create ? (function(o, v) {
 		    Object.defineProperty(o, "default", { enumerable: true, value: v });
 		}) : function(o, v) {
 		    o["default"] = v;
 		});
-		var __importStar = (lib.__importStar) || function (mod) {
+		var __importStar = (lib && lib.__importStar) || function (mod) {
 		    if (mod && mod.__esModule) return mod;
 		    var result = {};
 		    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 		    __setModuleDefault(result, mod);
 		    return result;
 		};
-		var __awaiter = (lib.__awaiter) || function (thisArg, _arguments, P, generator) {
+		var __awaiter = (lib && lib.__awaiter) || function (thisArg, _arguments, P, generator) {
 		    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 		    return new (P || (P = Promise))(function (resolve, reject) {
 		        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -662,7 +662,7 @@ function requireLib () {
 		    });
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = undefined;
+		exports.HttpClient = exports.isHttps = exports.HttpClientResponse = exports.HttpClientError = exports.getProxyUrl = exports.MediaTypes = exports.Headers = exports.HttpCodes = void 0;
 		const http = __importStar(require$$2);
 		const https = __importStar(require$$3);
 		const pm = __importStar(requireProxy());
@@ -744,8 +744,8 @@ function requireLib () {
 		        this.message = message;
 		    }
 		    readBody() {
-		        return __awaiter(this, undefined, undefined, function* () {
-		            return new Promise((resolve) => __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
+		            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
 		                let output = Buffer.alloc(0);
 		                this.message.on('data', (chunk) => {
 		                    output = Buffer.concat([output, chunk]);
@@ -757,8 +757,8 @@ function requireLib () {
 		        });
 		    }
 		    readBodyBuffer() {
-		        return __awaiter(this, undefined, undefined, function* () {
-		            return new Promise((resolve) => __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
+		            return new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
 		                const chunks = [];
 		                this.message.on('data', (chunk) => {
 		                    chunks.push(chunk);
@@ -815,42 +815,42 @@ function requireLib () {
 		        }
 		    }
 		    options(requestUrl, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('OPTIONS', requestUrl, null, additionalHeaders || {});
 		        });
 		    }
 		    get(requestUrl, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('GET', requestUrl, null, additionalHeaders || {});
 		        });
 		    }
 		    del(requestUrl, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('DELETE', requestUrl, null, additionalHeaders || {});
 		        });
 		    }
 		    post(requestUrl, data, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('POST', requestUrl, data, additionalHeaders || {});
 		        });
 		    }
 		    patch(requestUrl, data, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('PATCH', requestUrl, data, additionalHeaders || {});
 		        });
 		    }
 		    put(requestUrl, data, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('PUT', requestUrl, data, additionalHeaders || {});
 		        });
 		    }
 		    head(requestUrl, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request('HEAD', requestUrl, null, additionalHeaders || {});
 		        });
 		    }
 		    sendStream(verb, requestUrl, stream, additionalHeaders) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.request(verb, requestUrl, stream, additionalHeaders);
 		        });
 		    }
@@ -859,14 +859,14 @@ function requireLib () {
 		     * Be aware that not found returns a null.  Other errors (4xx, 5xx) reject the promise
 		     */
 		    getJson(requestUrl, additionalHeaders = {}) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
 		            const res = yield this.get(requestUrl, additionalHeaders);
 		            return this._processResponse(res, this.requestOptions);
 		        });
 		    }
 		    postJson(requestUrl, obj, additionalHeaders = {}) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            const data = JSON.stringify(obj, null, 2);
 		            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
 		            additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
@@ -875,7 +875,7 @@ function requireLib () {
 		        });
 		    }
 		    putJson(requestUrl, obj, additionalHeaders = {}) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            const data = JSON.stringify(obj, null, 2);
 		            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
 		            additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
@@ -884,7 +884,7 @@ function requireLib () {
 		        });
 		    }
 		    patchJson(requestUrl, obj, additionalHeaders = {}) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            const data = JSON.stringify(obj, null, 2);
 		            additionalHeaders[Headers.Accept] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.Accept, MediaTypes.ApplicationJson);
 		            additionalHeaders[Headers.ContentType] = this._getExistingOrDefaultHeader(additionalHeaders, Headers.ContentType, MediaTypes.ApplicationJson);
@@ -898,7 +898,7 @@ function requireLib () {
 		     * Prefer get, del, post and patch
 		     */
 		    request(verb, requestUrl, data, headers) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            if (this._disposed) {
 		                throw new Error('Client has already been disposed.');
 		            }
@@ -994,7 +994,7 @@ function requireLib () {
 		     * @param data
 		     */
 		    requestRaw(info, data) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return new Promise((resolve, reject) => {
 		                function callbackForResult(err, res) {
 		                    if (err) {
@@ -1174,15 +1174,15 @@ function requireLib () {
 		        return agent;
 		    }
 		    _performExponentialBackoff(retryNumber) {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            retryNumber = Math.min(ExponentialBackoffCeiling, retryNumber);
 		            const ms = ExponentialBackoffTimeSlice * Math.pow(2, retryNumber);
 		            return new Promise(resolve => setTimeout(() => resolve(), ms));
 		        });
 		    }
 		    _processResponse(res, options) {
-		        return __awaiter(this, undefined, undefined, function* () {
-		            return new Promise((resolve, reject) => __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
+		            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
 		                const statusCode = res.message.statusCode || 0;
 		                const response = {
 		                    statusCode,
@@ -1260,7 +1260,7 @@ var hasRequiredAuth;
 function requireAuth () {
 	if (hasRequiredAuth) return auth;
 	hasRequiredAuth = 1;
-	var __awaiter = (auth.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter = (auth && auth.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1270,7 +1270,7 @@ function requireAuth () {
 	    });
 	};
 	Object.defineProperty(auth, "__esModule", { value: true });
-	auth.PersonalAccessTokenCredentialHandler = auth.BearerCredentialHandler = auth.BasicCredentialHandler = undefined;
+	auth.PersonalAccessTokenCredentialHandler = auth.BearerCredentialHandler = auth.BasicCredentialHandler = void 0;
 	class BasicCredentialHandler {
 	    constructor(username, password) {
 	        this.username = username;
@@ -1287,7 +1287,7 @@ function requireAuth () {
 	        return false;
 	    }
 	    handleAuthentication() {
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            throw new Error('not implemented');
 	        });
 	    }
@@ -1310,7 +1310,7 @@ function requireAuth () {
 	        return false;
 	    }
 	    handleAuthentication() {
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            throw new Error('not implemented');
 	        });
 	    }
@@ -1333,7 +1333,7 @@ function requireAuth () {
 	        return false;
 	    }
 	    handleAuthentication() {
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            throw new Error('not implemented');
 	        });
 	    }
@@ -1348,7 +1348,7 @@ var hasRequiredOidcUtils;
 function requireOidcUtils () {
 	if (hasRequiredOidcUtils) return oidcUtils;
 	hasRequiredOidcUtils = 1;
-	var __awaiter = (oidcUtils.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter = (oidcUtils && oidcUtils.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1358,7 +1358,7 @@ function requireOidcUtils () {
 	    });
 	};
 	Object.defineProperty(oidcUtils, "__esModule", { value: true });
-	oidcUtils.OidcClient = undefined;
+	oidcUtils.OidcClient = void 0;
 	const http_client_1 = requireLib();
 	const auth_1 = requireAuth();
 	const core_1 = requireCore();
@@ -1386,7 +1386,7 @@ function requireOidcUtils () {
 	    }
 	    static getCall(id_token_url) {
 	        var _a;
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            const httpclient = OidcClient.createHttpClient();
 	            const res = yield httpclient
 	                .getJson(id_token_url)
@@ -1395,7 +1395,7 @@ function requireOidcUtils () {
         Error Code : ${error.statusCode}\n 
         Error Message: ${error.message}`);
 	            });
-	            const id_token = (_a = res.result) === null || _a === undefined ? undefined : _a.value;
+	            const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
 	            if (!id_token) {
 	                throw new Error('Response json body do not have ID Token field');
 	            }
@@ -1403,7 +1403,7 @@ function requireOidcUtils () {
 	        });
 	    }
 	    static getIDToken(audience) {
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            try {
 	                // New ID Token is requested from action service
 	                let id_token_url = OidcClient.getIDTokenUrl();
@@ -1435,7 +1435,7 @@ function requireSummary () {
 	if (hasRequiredSummary) return summary;
 	hasRequiredSummary = 1;
 	(function (exports) {
-		var __awaiter = (summary.__awaiter) || function (thisArg, _arguments, P, generator) {
+		var __awaiter = (summary && summary.__awaiter) || function (thisArg, _arguments, P, generator) {
 		    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 		    return new (P || (P = Promise))(function (resolve, reject) {
 		        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1445,7 +1445,7 @@ function requireSummary () {
 		    });
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = undefined;
+		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
 		const os_1 = require$$0$1;
 		const fs_1 = require$$1;
 		const { access, appendFile, writeFile } = fs_1.promises;
@@ -1462,7 +1462,7 @@ function requireSummary () {
 		     * @returns step summary file path
 		     */
 		    filePath() {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            if (this._filePath) {
 		                return this._filePath;
 		            }
@@ -1506,8 +1506,8 @@ function requireSummary () {
 		     * @returns {Promise<Summary>} summary instance
 		     */
 		    write(options) {
-		        return __awaiter(this, undefined, undefined, function* () {
-		            const overwrite = !!(options === null || options === undefined ? undefined : options.overwrite);
+		        return __awaiter(this, void 0, void 0, function* () {
+		            const overwrite = !!(options === null || options === void 0 ? void 0 : options.overwrite);
 		            const filePath = yield this.filePath();
 		            const writeFunc = overwrite ? writeFile : appendFile;
 		            yield writeFunc(filePath, this._buffer, { encoding: 'utf8' });
@@ -1520,7 +1520,7 @@ function requireSummary () {
 		     * @returns {Summary} summary instance
 		     */
 		    clear() {
-		        return __awaiter(this, undefined, undefined, function* () {
+		        return __awaiter(this, void 0, void 0, function* () {
 		            return this.emptyBuffer().write({ overwrite: true });
 		        });
 		    }
@@ -1728,7 +1728,7 @@ var hasRequiredPathUtils;
 function requirePathUtils () {
 	if (hasRequiredPathUtils) return pathUtils;
 	hasRequiredPathUtils = 1;
-	var __createBinding = (pathUtils.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (pathUtils && pathUtils.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    var desc = Object.getOwnPropertyDescriptor(m, k);
 	    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -1739,12 +1739,12 @@ function requirePathUtils () {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (pathUtils.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (pathUtils && pathUtils.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (pathUtils.__importStar) || function (mod) {
+	var __importStar = (pathUtils && pathUtils.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
@@ -1752,7 +1752,7 @@ function requirePathUtils () {
 	    return result;
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
-	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = undefined;
+	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = void 0;
 	const path = __importStar(path$1);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
@@ -1808,26 +1808,26 @@ function requireIoUtil () {
 	if (hasRequiredIoUtil) return ioUtil;
 	hasRequiredIoUtil = 1;
 	(function (exports) {
-		var __createBinding = (ioUtil.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+		var __createBinding = (ioUtil && ioUtil.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 		}) : (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    o[k2] = m[k];
 		}));
-		var __setModuleDefault = (ioUtil.__setModuleDefault) || (Object.create ? (function(o, v) {
+		var __setModuleDefault = (ioUtil && ioUtil.__setModuleDefault) || (Object.create ? (function(o, v) {
 		    Object.defineProperty(o, "default", { enumerable: true, value: v });
 		}) : function(o, v) {
 		    o["default"] = v;
 		});
-		var __importStar = (ioUtil.__importStar) || function (mod) {
+		var __importStar = (ioUtil && ioUtil.__importStar) || function (mod) {
 		    if (mod && mod.__esModule) return mod;
 		    var result = {};
 		    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 		    __setModuleDefault(result, mod);
 		    return result;
 		};
-		var __awaiter = (ioUtil.__awaiter) || function (thisArg, _arguments, P, generator) {
+		var __awaiter = (ioUtil && ioUtil.__awaiter) || function (thisArg, _arguments, P, generator) {
 		    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 		    return new (P || (P = Promise))(function (resolve, reject) {
 		        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -1838,7 +1838,7 @@ function requireIoUtil () {
 		};
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = undefined;
+		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
 		const fs = __importStar(require$$1);
 		const path = __importStar(path$1);
 		_a = fs.promises
@@ -1850,7 +1850,7 @@ function requireIoUtil () {
 		exports.UV_FS_O_EXLOCK = 0x10000000;
 		exports.READONLY = fs.constants.O_RDONLY;
 		function exists(fsPath) {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        try {
 		            yield exports.stat(fsPath);
 		        }
@@ -1865,7 +1865,7 @@ function requireIoUtil () {
 		}
 		exports.exists = exists;
 		function isDirectory(fsPath, useStat = false) {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        const stats = useStat ? yield exports.stat(fsPath) : yield exports.lstat(fsPath);
 		        return stats.isDirectory();
 		    });
@@ -1894,7 +1894,7 @@ function requireIoUtil () {
 		 * @return if file exists and is executable, returns the file path. otherwise empty string.
 		 */
 		function tryGetExecutablePath(filePath, extensions) {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        let stats = undefined;
 		        try {
 		            // test file exists
@@ -1986,7 +1986,7 @@ function requireIoUtil () {
 		// Get the path of cmd.exe in windows
 		function getCmdPath() {
 		    var _a;
-		    return (_a = process.env['COMSPEC']) !== null && _a !== undefined ? _a : `cmd.exe`;
+		    return (_a = process.env['COMSPEC']) !== null && _a !== void 0 ? _a : `cmd.exe`;
 		}
 		exports.getCmdPath = getCmdPath;
 		
@@ -1999,26 +1999,26 @@ var hasRequiredIo;
 function requireIo () {
 	if (hasRequiredIo) return io;
 	hasRequiredIo = 1;
-	var __createBinding = (io.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (io && io.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 	}) : (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (io.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (io && io.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (io.__importStar) || function (mod) {
+	var __importStar = (io && io.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 	    __setModuleDefault(result, mod);
 	    return result;
 	};
-	var __awaiter = (io.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter = (io && io.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -2028,7 +2028,7 @@ function requireIo () {
 	    });
 	};
 	Object.defineProperty(io, "__esModule", { value: true });
-	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = undefined;
+	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = void 0;
 	const assert_1 = require$$5;
 	const path = __importStar(path$1);
 	const ioUtil = __importStar(requireIoUtil());
@@ -2041,7 +2041,7 @@ function requireIo () {
 	 * @param     options   optional. See CopyOptions.
 	 */
 	function cp(source, dest, options = {}) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        const { force, recursive, copySourceDirectory } = readCopyOptions(options);
 	        const destStat = (yield ioUtil.exists(dest)) ? yield ioUtil.stat(dest) : null;
 	        // Dest is an existing file, but not forcing
@@ -2082,7 +2082,7 @@ function requireIo () {
 	 * @param     options   optional. See MoveOptions.
 	 */
 	function mv(source, dest, options = {}) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        if (yield ioUtil.exists(dest)) {
 	            let destExists = true;
 	            if (yield ioUtil.isDirectory(dest)) {
@@ -2110,7 +2110,7 @@ function requireIo () {
 	 * @param inputPath path to remove
 	 */
 	function rmRF(inputPath) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        if (ioUtil.IS_WINDOWS) {
 	            // Check for invalid characters
 	            // https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
@@ -2141,7 +2141,7 @@ function requireIo () {
 	 * @returns Promise<void>
 	 */
 	function mkdirP(fsPath) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        assert_1.ok(fsPath, 'a path argument must be provided');
 	        yield ioUtil.mkdir(fsPath, { recursive: true });
 	    });
@@ -2156,7 +2156,7 @@ function requireIo () {
 	 * @returns   Promise<string>   path to tool
 	 */
 	function which(tool, check) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        if (!tool) {
 	            throw new Error("parameter 'tool' is required");
 	        }
@@ -2187,7 +2187,7 @@ function requireIo () {
 	 * @returns   Promise<string[]>  the paths of the tool
 	 */
 	function findInPath(tool) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        if (!tool) {
 	            throw new Error("parameter 'tool' is required");
 	        }
@@ -2247,7 +2247,7 @@ function requireIo () {
 	    return { force, recursive, copySourceDirectory };
 	}
 	function cpDirRecursive(sourceDir, destDir, currentDepth, force) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        // Ensure there is not a run away recursive copy
 	        if (currentDepth >= 255)
 	            return;
@@ -2272,7 +2272,7 @@ function requireIo () {
 	}
 	// Buffered file copy
 	function copyFile(srcFile, destFile, force) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        if ((yield ioUtil.lstat(srcFile)).isSymbolicLink()) {
 	            // unlink/re-link it
 	            try {
@@ -2305,26 +2305,26 @@ var hasRequiredToolrunner;
 function requireToolrunner () {
 	if (hasRequiredToolrunner) return toolrunner;
 	hasRequiredToolrunner = 1;
-	var __createBinding = (toolrunner.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (toolrunner && toolrunner.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 	}) : (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (toolrunner.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (toolrunner && toolrunner.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (toolrunner.__importStar) || function (mod) {
+	var __importStar = (toolrunner && toolrunner.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 	    __setModuleDefault(result, mod);
 	    return result;
 	};
-	var __awaiter = (toolrunner.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter = (toolrunner && toolrunner.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -2334,7 +2334,7 @@ function requireToolrunner () {
 	    });
 	};
 	Object.defineProperty(toolrunner, "__esModule", { value: true });
-	toolrunner.argStringToArray = toolrunner.ToolRunner = undefined;
+	toolrunner.argStringToArray = toolrunner.ToolRunner = void 0;
 	const os = __importStar(require$$0$1);
 	const events = __importStar(require$$4);
 	const child = __importStar(require$$2$1);
@@ -2687,7 +2687,7 @@ function requireToolrunner () {
 	     * @returns   number
 	     */
 	    exec() {
-	        return __awaiter(this, undefined, undefined, function* () {
+	        return __awaiter(this, void 0, void 0, function* () {
 	            // root the tool path if it is unrooted and contains relative pathing
 	            if (!ioUtil.isRooted(this.toolPath) &&
 	                (this.toolPath.includes('/') ||
@@ -2698,7 +2698,7 @@ function requireToolrunner () {
 	            // if the tool is only a file name, then resolve it from the PATH
 	            // otherwise verify it exists (add extension on Windows if necessary)
 	            this.toolPath = yield io.which(this.toolPath, true);
-	            return new Promise((resolve, reject) => __awaiter(this, undefined, undefined, function* () {
+	            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
 	                this._debug(`exec tool: ${this.toolPath}`);
 	                this._debug('arguments:');
 	                for (const arg of this.args) {
@@ -2930,26 +2930,26 @@ var hasRequiredExec;
 function requireExec () {
 	if (hasRequiredExec) return exec;
 	hasRequiredExec = 1;
-	var __createBinding = (exec.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+	var __createBinding = (exec && exec.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
 	}) : (function(o, m, k, k2) {
 	    if (k2 === undefined) k2 = k;
 	    o[k2] = m[k];
 	}));
-	var __setModuleDefault = (exec.__setModuleDefault) || (Object.create ? (function(o, v) {
+	var __setModuleDefault = (exec && exec.__setModuleDefault) || (Object.create ? (function(o, v) {
 	    Object.defineProperty(o, "default", { enumerable: true, value: v });
 	}) : function(o, v) {
 	    o["default"] = v;
 	});
-	var __importStar = (exec.__importStar) || function (mod) {
+	var __importStar = (exec && exec.__importStar) || function (mod) {
 	    if (mod && mod.__esModule) return mod;
 	    var result = {};
 	    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 	    __setModuleDefault(result, mod);
 	    return result;
 	};
-	var __awaiter = (exec.__awaiter) || function (thisArg, _arguments, P, generator) {
+	var __awaiter = (exec && exec.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 	    return new (P || (P = Promise))(function (resolve, reject) {
 	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -2959,7 +2959,7 @@ function requireExec () {
 	    });
 	};
 	Object.defineProperty(exec, "__esModule", { value: true });
-	exec.getExecOutput = exec.exec = undefined;
+	exec.getExecOutput = exec.exec = void 0;
 	const string_decoder_1 = require$$0$3;
 	const tr = __importStar(requireToolrunner());
 	/**
@@ -2973,7 +2973,7 @@ function requireExec () {
 	 * @returns   Promise<number>    exit code
 	 */
 	function exec$1(commandLine, args, options) {
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        const commandArgs = tr.argStringToArray(commandLine);
 	        if (commandArgs.length === 0) {
 	            throw new Error(`Parameter 'commandLine' cannot be null or empty.`);
@@ -2998,14 +2998,14 @@ function requireExec () {
 	 */
 	function getExecOutput(commandLine, args, options) {
 	    var _a, _b;
-	    return __awaiter(this, undefined, undefined, function* () {
+	    return __awaiter(this, void 0, void 0, function* () {
 	        let stdout = '';
 	        let stderr = '';
 	        //Using string decoder covers the case where a mult-byte character is split
 	        const stdoutDecoder = new string_decoder_1.StringDecoder('utf8');
 	        const stderrDecoder = new string_decoder_1.StringDecoder('utf8');
-	        const originalStdoutListener = (_a = options === null || options === undefined ? undefined : options.listeners) === null || _a === undefined ? undefined : _a.stdout;
-	        const originalStdErrListener = (_b = options === null || options === undefined ? undefined : options.listeners) === null || _b === undefined ? undefined : _b.stderr;
+	        const originalStdoutListener = (_a = options === null || options === void 0 ? void 0 : options.listeners) === null || _a === void 0 ? void 0 : _a.stdout;
+	        const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
 	        const stdErrListener = (data) => {
 	            stderr += stderrDecoder.write(data);
 	            if (originalStdErrListener) {
@@ -3018,7 +3018,7 @@ function requireExec () {
 	                originalStdoutListener(data);
 	            }
 	        };
-	        const listeners = Object.assign(Object.assign({}, options === null || options === undefined ? undefined : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
+	        const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
 	        const exitCode = yield exec$1(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
 	        //flush any remaining characters
 	        stdout += stdoutDecoder.end();
@@ -3041,7 +3041,7 @@ function requirePlatform () {
 	if (hasRequiredPlatform) return platform;
 	hasRequiredPlatform = 1;
 	(function (exports) {
-		var __createBinding = (platform.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+		var __createBinding = (platform && platform.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    var desc = Object.getOwnPropertyDescriptor(m, k);
 		    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -3052,19 +3052,19 @@ function requirePlatform () {
 		    if (k2 === undefined) k2 = k;
 		    o[k2] = m[k];
 		}));
-		var __setModuleDefault = (platform.__setModuleDefault) || (Object.create ? (function(o, v) {
+		var __setModuleDefault = (platform && platform.__setModuleDefault) || (Object.create ? (function(o, v) {
 		    Object.defineProperty(o, "default", { enumerable: true, value: v });
 		}) : function(o, v) {
 		    o["default"] = v;
 		});
-		var __importStar = (platform.__importStar) || function (mod) {
+		var __importStar = (platform && platform.__importStar) || function (mod) {
 		    if (mod && mod.__esModule) return mod;
 		    var result = {};
 		    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 		    __setModuleDefault(result, mod);
 		    return result;
 		};
-		var __awaiter = (platform.__awaiter) || function (thisArg, _arguments, P, generator) {
+		var __awaiter = (platform && platform.__awaiter) || function (thisArg, _arguments, P, generator) {
 		    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 		    return new (P || (P = Promise))(function (resolve, reject) {
 		        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -3073,14 +3073,14 @@ function requirePlatform () {
 		        step((generator = generator.apply(thisArg, _arguments || [])).next());
 		    });
 		};
-		var __importDefault = (platform.__importDefault) || function (mod) {
+		var __importDefault = (platform && platform.__importDefault) || function (mod) {
 		    return (mod && mod.__esModule) ? mod : { "default": mod };
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.getDetails = exports.isLinux = exports.isMacOS = exports.isWindows = exports.arch = exports.platform = undefined;
+		exports.getDetails = exports.isLinux = exports.isMacOS = exports.isWindows = exports.arch = exports.platform = void 0;
 		const os_1 = __importDefault(require$$0$1);
 		const exec = __importStar(requireExec());
-		const getWindowsInfo = () => __awaiter(undefined, undefined, undefined, function* () {
+		const getWindowsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
 		    const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', undefined, {
 		        silent: true
 		    });
@@ -3092,19 +3092,19 @@ function requirePlatform () {
 		        version: version.trim()
 		    };
 		});
-		const getMacOsInfo = () => __awaiter(undefined, undefined, undefined, function* () {
+		const getMacOsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
 		    var _a, _b, _c, _d;
 		    const { stdout } = yield exec.getExecOutput('sw_vers', undefined, {
 		        silent: true
 		    });
-		    const version = (_b = (_a = stdout.match(/ProductVersion:\s*(.+)/)) === null || _a === undefined ? undefined : _a[1]) !== null && _b !== undefined ? _b : '';
-		    const name = (_d = (_c = stdout.match(/ProductName:\s*(.+)/)) === null || _c === undefined ? undefined : _c[1]) !== null && _d !== undefined ? _d : '';
+		    const version = (_b = (_a = stdout.match(/ProductVersion:\s*(.+)/)) === null || _a === void 0 ? void 0 : _a[1]) !== null && _b !== void 0 ? _b : '';
+		    const name = (_d = (_c = stdout.match(/ProductName:\s*(.+)/)) === null || _c === void 0 ? void 0 : _c[1]) !== null && _d !== void 0 ? _d : '';
 		    return {
 		        name,
 		        version
 		    };
 		});
-		const getLinuxInfo = () => __awaiter(undefined, undefined, undefined, function* () {
+		const getLinuxInfo = () => __awaiter(void 0, void 0, void 0, function* () {
 		    const { stdout } = yield exec.getExecOutput('lsb_release', ['-i', '-r', '-s'], {
 		        silent: true
 		    });
@@ -3120,7 +3120,7 @@ function requirePlatform () {
 		exports.isMacOS = exports.platform === 'darwin';
 		exports.isLinux = exports.platform === 'linux';
 		function getDetails() {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        return Object.assign(Object.assign({}, (yield (exports.isWindows
 		            ? getWindowsInfo()
 		            : exports.isMacOS
@@ -3144,7 +3144,7 @@ function requireCore () {
 	if (hasRequiredCore) return core;
 	hasRequiredCore = 1;
 	(function (exports) {
-		var __createBinding = (core.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+		var __createBinding = (core && core.__createBinding) || (Object.create ? (function(o, m, k, k2) {
 		    if (k2 === undefined) k2 = k;
 		    var desc = Object.getOwnPropertyDescriptor(m, k);
 		    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
@@ -3155,19 +3155,19 @@ function requireCore () {
 		    if (k2 === undefined) k2 = k;
 		    o[k2] = m[k];
 		}));
-		var __setModuleDefault = (core.__setModuleDefault) || (Object.create ? (function(o, v) {
+		var __setModuleDefault = (core && core.__setModuleDefault) || (Object.create ? (function(o, v) {
 		    Object.defineProperty(o, "default", { enumerable: true, value: v });
 		}) : function(o, v) {
 		    o["default"] = v;
 		});
-		var __importStar = (core.__importStar) || function (mod) {
+		var __importStar = (core && core.__importStar) || function (mod) {
 		    if (mod && mod.__esModule) return mod;
 		    var result = {};
 		    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 		    __setModuleDefault(result, mod);
 		    return result;
 		};
-		var __awaiter = (core.__awaiter) || function (thisArg, _arguments, P, generator) {
+		var __awaiter = (core && core.__awaiter) || function (thisArg, _arguments, P, generator) {
 		    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
 		    return new (P || (P = Promise))(function (resolve, reject) {
 		        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -3177,7 +3177,7 @@ function requireCore () {
 		    });
 		};
 		Object.defineProperty(exports, "__esModule", { value: true });
-		exports.platform = exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = exports.markdownSummary = exports.summary = exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = undefined;
+		exports.platform = exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = exports.markdownSummary = exports.summary = exports.getIDToken = exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 		const command_1 = requireCommand();
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils();
@@ -3418,7 +3418,7 @@ function requireCore () {
 		 * @param fn The function to wrap in the group
 		 */
 		function group(name, fn) {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        startGroup(name);
 		        let result;
 		        try {
@@ -3460,7 +3460,7 @@ function requireCore () {
 		}
 		exports.getState = getState;
 		function getIDToken(aud) {
-		    return __awaiter(this, undefined, undefined, function* () {
+		    return __awaiter(this, void 0, void 0, function* () {
 		        return yield oidc_utils_1.OidcClient.getIDToken(aud);
 		    });
 		}
@@ -14881,8 +14881,8 @@ const unescape = (s, { windowsPathsNoEscape = false, } = {}) => {
 };
 
 // parse a single path portion
-const types$4 = new Set(['!', '?', '+', '*', '@']);
-const isExtglobType = (c) => types$4.has(c);
+const types = new Set(['!', '?', '+', '*', '@']);
+const isExtglobType = (c) => types.has(c);
 // Patterns that get prepended to bind to the start of either the
 // entire string, or just a single path portion, to prevent dots
 // and/or traversal patterns, when needed.
@@ -17401,16 +17401,16 @@ or increase socketAcquisitionWarningTimeout=(millis) in the NodeHttpHandler conf
             connectionTimeout,
             requestTimeout: requestTimeout ?? socketTimeout,
             httpAgent: (() => {
-                if (httpAgent instanceof Agent || typeof httpAgent?.destroy === "function") {
+                if (httpAgent instanceof Agent$1 || typeof httpAgent?.destroy === "function") {
                     return httpAgent;
                 }
-                return new Agent({ keepAlive, maxSockets, ...httpAgent });
+                return new Agent$1({ keepAlive, maxSockets, ...httpAgent });
             })(),
             httpsAgent: (() => {
-                if (httpsAgent instanceof Agent$1 || typeof httpsAgent?.destroy === "function") {
+                if (httpsAgent instanceof Agent || typeof httpsAgent?.destroy === "function") {
                     return httpsAgent;
                 }
-                return new Agent$1({ keepAlive, maxSockets, ...httpsAgent });
+                return new Agent({ keepAlive, maxSockets, ...httpsAgent });
             })(),
             logger: console,
         };
@@ -18506,7 +18506,7 @@ const applyInstruction = (target, source, instructions, targetKey) => {
     if (typeof value === "function") {
         let _value;
         const defaultFilterPassed = filter === undefined && (_value = value()) != null;
-        const customFilterPassed = (typeof filter === "function" && !!filter(undefined)) || (typeof filter !== "function" && !!filter);
+        const customFilterPassed = (typeof filter === "function" && !!filter(void 0)) || (typeof filter !== "function" && !!filter);
         if (defaultFilterPassed) {
             target[targetKey] = _value;
         }
@@ -20098,11 +20098,6 @@ const getHttpAuthSchemeEndpointRuleSetPlugin = (config, { httpAuthSchemeParamete
 });
 
 ({
-    step: "serialize",
-    tags: ["HTTP_AUTH_SCHEME"],
-    name: "httpAuthSchemeMiddleware",
-    override: true,
-    relation: "before",
     toMiddleware: serializerMiddlewareOption.name,
 });
 
@@ -21656,11 +21651,8 @@ var partitions = [
 		}
 	}
 ];
-var version$4 = "1.1";
 var partitionsInfo = {
-	partitions: partitions,
-	version: version$4
-};
+	partitions: partitions};
 
 let selectedPartitionsInfo = partitionsInfo;
 const partition = (value) => {
@@ -22795,7 +22787,8 @@ function requireDocTypeReader () {
 	                else if( hasBody && isElement(xmlData, i))  i += 8;//Not supported
 	                else if( hasBody && isAttlist(xmlData, i))  i += 8;//Not supported
 	                else if( hasBody && isNotation(xmlData, i)) i += 9;//Not supported
-	                else comment = true;
+	                else if( isComment)                         comment = true;
+	                else                                        throw new Error("Invalid DOCTYPE");
 
 	                angleBracketsCount++;
 	                exp = "";
@@ -22853,6 +22846,13 @@ function requireDocTypeReader () {
 	        val += xmlData[i];
 	    }
 	    return [entityName, val, i];
+	}
+
+	function isComment(xmlData, i){
+	    if(xmlData[i+1] === '!' &&
+	    xmlData[i+2] === '-' &&
+	    xmlData[i+3] === '-') return true
+	    return false
 	}
 	function isEntity(xmlData, i){
 	    if(xmlData[i+1] === '!' &&
@@ -24401,7 +24401,7 @@ class SignatureV4MultiRegion {
 
 const ce = "required", cf = "type", cg = "conditions", ch = "fn", ci = "argv", cj = "ref", ck = "assign", cl = "url", cm = "properties", cn = "backend", co = "authSchemes", cp = "disableDoubleEncoding", cq = "signingName", cr = "signingRegion", cs = "headers", ct = "signingRegionSet";
 const a$3 = false, b$3 = true, c$3 = "isSet", d$3 = "booleanEquals", e$3 = "error", f$3 = "aws.partition", g$3 = "stringEquals", h$3 = "getAttr", i$3 = "name", j$3 = "substring", k$3 = "bucketSuffix", l$3 = "parseURL", m$3 = "{url#scheme}://{url#authority}/{uri_encoded_bucket}{url#path}", n$3 = "endpoint", o$3 = "tree", p$3 = "aws.isVirtualHostableS3Bucket", q$3 = "{url#scheme}://{Bucket}.{url#authority}{url#path}", r$3 = "not", s$3 = "{url#scheme}://{url#authority}{url#path}", t$3 = "hardwareType", u$3 = "regionPrefix", v$3 = "bucketAliasSuffix", w$3 = "outpostId", x$3 = "isValidHostLabel", y$1 = "sigv4a", z$1 = "s3-outposts", A$1 = "s3", B$1 = "{url#scheme}://{url#authority}{url#normalizedPath}{Bucket}", C$1 = "https://{Bucket}.s3-accelerate.{partitionResult#dnsSuffix}", D$1 = "https://{Bucket}.s3.{partitionResult#dnsSuffix}", E$1 = "aws.parseArn", F$1 = "bucketArn", G$1 = "arnType", H$1 = "", I$1 = "s3-object-lambda", J$1 = "accesspoint", K = "accessPointName", L = "{url#scheme}://{accessPointName}-{bucketArn#accountId}.{url#authority}{url#path}", M = "mrapPartition", N = "outpostType", O = "arnPrefix", P = "{url#scheme}://{url#authority}{url#normalizedPath}{uri_encoded_bucket}", Q = "https://s3.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", R = "https://s3.{partitionResult#dnsSuffix}", S = { [ce]: false, [cf]: "String" }, T = { [ce]: true, "default": false, [cf]: "Boolean" }, U = { [ce]: false, [cf]: "Boolean" }, V = { [ch]: d$3, [ci]: [{ [cj]: "Accelerate" }, true] }, W = { [ch]: d$3, [ci]: [{ [cj]: "UseFIPS" }, true] }, X = { [ch]: d$3, [ci]: [{ [cj]: "UseDualStack" }, true] }, Y = { [ch]: c$3, [ci]: [{ [cj]: "Endpoint" }] }, Z = { [ch]: f$3, [ci]: [{ [cj]: "Region" }], [ck]: "partitionResult" }, aa = { [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [{ [cj]: "partitionResult" }, i$3] }, "aws-cn"] }, ab = { [ch]: c$3, [ci]: [{ [cj]: "Bucket" }] }, ac = { [cj]: "Bucket" }, ad = { [ch]: l$3, [ci]: [{ [cj]: "Endpoint" }], [ck]: "url" }, ae = { [ch]: d$3, [ci]: [{ [ch]: h$3, [ci]: [{ [cj]: "url" }, "isIp"] }, true] }, af = { [cj]: "url" }, ag = { [ch]: "uriEncode", [ci]: [ac], [ck]: "uri_encoded_bucket" }, ah = { [cn]: "S3Express", [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: "s3express", [cr]: "{Region}" }] }, ai = {}, aj = { [ch]: p$3, [ci]: [ac, false] }, ak = { [e$3]: "S3Express bucket name is not a valid virtual hostable name.", [cf]: e$3 }, al = { [cn]: "S3Express", [co]: [{ [cp]: true, [i$3]: "sigv4-s3express", [cq]: "s3express", [cr]: "{Region}" }] }, am = { [ch]: c$3, [ci]: [{ [cj]: "UseS3ExpressControlEndpoint" }] }, an = { [ch]: d$3, [ci]: [{ [cj]: "UseS3ExpressControlEndpoint" }, true] }, ao = { [ch]: r$3, [ci]: [Y] }, ap = { [e$3]: "Unrecognized S3Express bucket name format.", [cf]: e$3 }, aq = { [ch]: r$3, [ci]: [ab] }, ar = { [cj]: t$3 }, as = { [cg]: [ao], [e$3]: "Expected a endpoint to be specified but no endpoint was found", [cf]: e$3 }, at = { [co]: [{ [cp]: true, [i$3]: y$1, [cq]: z$1, [ct]: ["*"] }, { [cp]: true, [i$3]: "sigv4", [cq]: z$1, [cr]: "{Region}" }] }, au = { [ch]: d$3, [ci]: [{ [cj]: "ForcePathStyle" }, false] }, av = { [cj]: "ForcePathStyle" }, aw = { [ch]: d$3, [ci]: [{ [cj]: "Accelerate" }, false] }, ax = { [ch]: g$3, [ci]: [{ [cj]: "Region" }, "aws-global"] }, ay = { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: A$1, [cr]: "us-east-1" }] }, az = { [ch]: r$3, [ci]: [ax] }, aA = { [ch]: d$3, [ci]: [{ [cj]: "UseGlobalEndpoint" }, true] }, aB = { [cl]: "https://{Bucket}.s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cm]: { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: A$1, [cr]: "{Region}" }] }, [cs]: {} }, aC = { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: A$1, [cr]: "{Region}" }] }, aD = { [ch]: d$3, [ci]: [{ [cj]: "UseGlobalEndpoint" }, false] }, aE = { [ch]: d$3, [ci]: [{ [cj]: "UseDualStack" }, false] }, aF = { [cl]: "https://{Bucket}.s3-fips.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, aG = { [ch]: d$3, [ci]: [{ [cj]: "UseFIPS" }, false] }, aH = { [cl]: "https://{Bucket}.s3-accelerate.dualstack.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, aI = { [cl]: "https://{Bucket}.s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, aJ = { [ch]: d$3, [ci]: [{ [ch]: h$3, [ci]: [af, "isIp"] }, false] }, aK = { [cl]: B$1, [cm]: aC, [cs]: {} }, aL = { [cl]: q$3, [cm]: aC, [cs]: {} }, aM = { [n$3]: aL, [cf]: n$3 }, aN = { [cl]: C$1, [cm]: aC, [cs]: {} }, aO = { [cl]: "https://{Bucket}.s3.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, aP = { [e$3]: "Invalid region: region was not a valid DNS name.", [cf]: e$3 }, aQ = { [cj]: F$1 }, aR = { [cj]: G$1 }, aS = { [ch]: h$3, [ci]: [aQ, "service"] }, aT = { [cj]: K }, aU = { [cg]: [X], [e$3]: "S3 Object Lambda does not support Dual-stack", [cf]: e$3 }, aV = { [cg]: [V], [e$3]: "S3 Object Lambda does not support S3 Accelerate", [cf]: e$3 }, aW = { [cg]: [{ [ch]: c$3, [ci]: [{ [cj]: "DisableAccessPoints" }] }, { [ch]: d$3, [ci]: [{ [cj]: "DisableAccessPoints" }, true] }], [e$3]: "Access points are not supported for this operation", [cf]: e$3 }, aX = { [cg]: [{ [ch]: c$3, [ci]: [{ [cj]: "UseArnRegion" }] }, { [ch]: d$3, [ci]: [{ [cj]: "UseArnRegion" }, false] }, { [ch]: r$3, [ci]: [{ [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "region"] }, "{Region}"] }] }], [e$3]: "Invalid configuration: region from ARN `{bucketArn#region}` does not match client region `{Region}` and UseArnRegion is `false`", [cf]: e$3 }, aY = { [ch]: h$3, [ci]: [{ [cj]: "bucketPartition" }, i$3] }, aZ = { [ch]: h$3, [ci]: [aQ, "accountId"] }, ba = { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: I$1, [cr]: "{bucketArn#region}" }] }, bb = { [e$3]: "Invalid ARN: The access point name may only contain a-z, A-Z, 0-9 and `-`. Found: `{accessPointName}`", [cf]: e$3 }, bc = { [e$3]: "Invalid ARN: The account id may only contain a-z, A-Z, 0-9 and `-`. Found: `{bucketArn#accountId}`", [cf]: e$3 }, bd = { [e$3]: "Invalid region in ARN: `{bucketArn#region}` (invalid DNS name)", [cf]: e$3 }, be = { [e$3]: "Client was configured for partition `{partitionResult#name}` but ARN (`{Bucket}`) has `{bucketPartition#name}`", [cf]: e$3 }, bf = { [e$3]: "Invalid ARN: The ARN may only contain a single resource component after `accesspoint`.", [cf]: e$3 }, bg = { [e$3]: "Invalid ARN: Expected a resource of the format `accesspoint:<accesspoint name>` but no name was provided", [cf]: e$3 }, bh = { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: A$1, [cr]: "{bucketArn#region}" }] }, bi = { [co]: [{ [cp]: true, [i$3]: y$1, [cq]: z$1, [ct]: ["*"] }, { [cp]: true, [i$3]: "sigv4", [cq]: z$1, [cr]: "{bucketArn#region}" }] }, bj = { [ch]: E$1, [ci]: [ac] }, bk = { [cl]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: aC, [cs]: {} }, bl = { [cl]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: aC, [cs]: {} }, bm = { [cl]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: aC, [cs]: {} }, bn = { [cl]: P, [cm]: aC, [cs]: {} }, bo = { [cl]: "https://s3.{Region}.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: aC, [cs]: {} }, bp = { [cj]: "UseObjectLambdaEndpoint" }, bq = { [co]: [{ [cp]: true, [i$3]: "sigv4", [cq]: I$1, [cr]: "{Region}" }] }, br = { [cl]: "https://s3-fips.dualstack.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, bs = { [cl]: "https://s3-fips.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, bt = { [cl]: "https://s3.dualstack.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, bu = { [cl]: s$3, [cm]: aC, [cs]: {} }, bv = { [cl]: "https://s3.{Region}.{partitionResult#dnsSuffix}", [cm]: aC, [cs]: {} }, bw = [{ [cj]: "Region" }], bx = [{ [cj]: "Endpoint" }], by = [ac], bz = [X], bA = [V], bB = [Y, ad], bC = [{ [ch]: c$3, [ci]: [{ [cj]: "DisableS3ExpressSessionAuth" }] }, { [ch]: d$3, [ci]: [{ [cj]: "DisableS3ExpressSessionAuth" }, true] }], bD = [ae], bE = [ag], bF = [aj], bG = [W], bH = [{ [ch]: j$3, [ci]: [ac, 6, 14, true], [ck]: "s3expressAvailabilityZoneId" }, { [ch]: j$3, [ci]: [ac, 14, 16, true], [ck]: "s3expressAvailabilityZoneDelim" }, { [ch]: g$3, [ci]: [{ [cj]: "s3expressAvailabilityZoneDelim" }, "--"] }], bI = [{ [cg]: [W], [n$3]: { [cl]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [cm]: ah, [cs]: {} }, [cf]: n$3 }, { [n$3]: { [cl]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [cm]: ah, [cs]: {} }, [cf]: n$3 }], bJ = [{ [ch]: j$3, [ci]: [ac, 6, 15, true], [ck]: "s3expressAvailabilityZoneId" }, { [ch]: j$3, [ci]: [ac, 15, 17, true], [ck]: "s3expressAvailabilityZoneDelim" }, { [ch]: g$3, [ci]: [{ [cj]: "s3expressAvailabilityZoneDelim" }, "--"] }], bK = [{ [cg]: [W], [n$3]: { [cl]: "https://{Bucket}.s3express-fips-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [cm]: al, [cs]: {} }, [cf]: n$3 }, { [n$3]: { [cl]: "https://{Bucket}.s3express-{s3expressAvailabilityZoneId}.{Region}.amazonaws.com", [cm]: al, [cs]: {} }, [cf]: n$3 }], bL = [ab], bM = [{ [ch]: x$3, [ci]: [{ [cj]: w$3 }, false] }], bN = [{ [ch]: g$3, [ci]: [{ [cj]: u$3 }, "beta"] }], bO = ["*"], bP = [Z], bQ = [{ [ch]: x$3, [ci]: [{ [cj]: "Region" }, false] }], bR = [{ [ch]: g$3, [ci]: [{ [cj]: "Region" }, "us-east-1"] }], bS = [{ [ch]: g$3, [ci]: [aR, J$1] }], bT = [{ [ch]: h$3, [ci]: [aQ, "resourceId[1]"], [ck]: K }, { [ch]: r$3, [ci]: [{ [ch]: g$3, [ci]: [aT, H$1] }] }], bU = [aQ, "resourceId[1]"], bV = [{ [ch]: r$3, [ci]: [{ [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "region"] }, H$1] }] }], bW = [{ [ch]: r$3, [ci]: [{ [ch]: c$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[2]"] }] }] }], bX = [aQ, "resourceId[2]"], bY = [{ [ch]: f$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "region"] }], [ck]: "bucketPartition" }], bZ = [{ [ch]: g$3, [ci]: [aY, { [ch]: h$3, [ci]: [{ [cj]: "partitionResult" }, i$3] }] }], ca = [{ [ch]: x$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "region"] }, true] }], cb = [{ [ch]: x$3, [ci]: [aZ, false] }], cc = [{ [ch]: x$3, [ci]: [aT, false] }], cd = [{ [ch]: x$3, [ci]: [{ [cj]: "Region" }, true] }];
-const _data$3 = { version: "1.0", parameters: { Bucket: S, Region: S, UseFIPS: T, UseDualStack: T, Endpoint: S, ForcePathStyle: T, Accelerate: T, UseGlobalEndpoint: T, UseObjectLambdaEndpoint: U, Key: S, Prefix: S, CopySource: S, DisableAccessPoints: U, DisableMultiRegionAccessPoints: T, UseArnRegion: U, UseS3ExpressControlEndpoint: U, DisableS3ExpressSessionAuth: U }, rules: [{ [cg]: [{ [ch]: c$3, [ci]: bw }], rules: [{ [cg]: [V, W], error: "Accelerate cannot be used with FIPS", [cf]: e$3 }, { [cg]: [X, Y], error: "Cannot set dual-stack in combination with a custom endpoint.", [cf]: e$3 }, { [cg]: [Y, W], error: "A custom endpoint cannot be combined with FIPS", [cf]: e$3 }, { [cg]: [Y, V], error: "A custom endpoint cannot be combined with S3 Accelerate", [cf]: e$3 }, { [cg]: [W, Z, aa], error: "Partition does not support FIPS", [cf]: e$3 }, { [cg]: [ab, { [ch]: j$3, [ci]: [ac, 0, 6, b$3], [ck]: k$3 }, { [ch]: g$3, [ci]: [{ [cj]: k$3 }, "--x-s3"] }], rules: [{ [cg]: bz, error: "S3Express does not support Dual-stack.", [cf]: e$3 }, { [cg]: bA, error: "S3Express does not support S3 Accelerate.", [cf]: e$3 }, { [cg]: bB, rules: [{ [cg]: bC, rules: [{ [cg]: bD, rules: [{ [cg]: bE, rules: [{ endpoint: { [cl]: m$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ endpoint: { [cl]: q$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: bD, rules: [{ [cg]: bE, rules: [{ endpoint: { [cl]: m$3, [cm]: al, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ endpoint: { [cl]: q$3, [cm]: al, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: [am, an], rules: [{ [cg]: [ag, ao], rules: [{ [cg]: bG, endpoint: { [cl]: "https://s3express-control-fips.{Region}.amazonaws.com/{uri_encoded_bucket}", [cm]: ah, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3express-control.{Region}.amazonaws.com/{uri_encoded_bucket}", [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ [cg]: bC, rules: [{ [cg]: bH, rules: bI, [cf]: o$3 }, { [cg]: bJ, rules: bI, [cf]: o$3 }, ap], [cf]: o$3 }, { [cg]: bH, rules: bK, [cf]: o$3 }, { [cg]: bJ, rules: bK, [cf]: o$3 }, ap], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: [aq, am, an], rules: [{ [cg]: bB, endpoint: { [cl]: s$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://s3express-control-fips.{Region}.amazonaws.com", [cm]: ah, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3express-control.{Region}.amazonaws.com", [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [ab, { [ch]: j$3, [ci]: [ac, 49, 50, b$3], [ck]: t$3 }, { [ch]: j$3, [ci]: [ac, 8, 12, b$3], [ck]: u$3 }, { [ch]: j$3, [ci]: [ac, 0, 7, b$3], [ck]: v$3 }, { [ch]: j$3, [ci]: [ac, 32, 49, b$3], [ck]: w$3 }, { [ch]: f$3, [ci]: bw, [ck]: "regionPartition" }, { [ch]: g$3, [ci]: [{ [cj]: v$3 }, "--op-s3"] }], rules: [{ [cg]: bM, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [ar, "e"] }], rules: [{ [cg]: bN, rules: [as, { [cg]: bB, endpoint: { [cl]: "https://{Bucket}.ec2.{url#authority}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { endpoint: { [cl]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: g$3, [ci]: [ar, "o"] }], rules: [{ [cg]: bN, rules: [as, { [cg]: bB, endpoint: { [cl]: "https://{Bucket}.op-{outpostId}.{url#authority}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { endpoint: { [cl]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Unrecognized hardware type: \"Expected hardware type o or e but got {hardwareType}\"", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [cf]: e$3 }], [cf]: o$3 }, { [cg]: bL, rules: [{ [cg]: [Y, { [ch]: r$3, [ci]: [{ [ch]: c$3, [ci]: [{ [ch]: l$3, [ci]: bx }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [cf]: e$3 }, { [cg]: [au, aj], rules: [{ [cg]: bP, rules: [{ [cg]: bQ, rules: [{ [cg]: [V, aa], error: "S3 Accelerate cannot be used in this region", [cf]: e$3 }, { [cg]: [X, W, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, W, aw, ao, az, aA], rules: [{ endpoint: aB, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, W, aw, ao, az, aD], endpoint: aB, [cf]: n$3 }, { [cg]: [aE, W, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, W, aw, ao, az, aA], rules: [{ endpoint: aF, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, W, aw, ao, az, aD], endpoint: aF, [cf]: n$3 }, { [cg]: [X, aG, V, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, aG, V, ao, az, aA], rules: [{ endpoint: aH, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, aG, V, ao, az, aD], endpoint: aH, [cf]: n$3 }, { [cg]: [X, aG, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, aG, aw, ao, az, aA], rules: [{ endpoint: aI, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, aG, aw, ao, az, aD], endpoint: aI, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, ax], endpoint: { [cl]: B$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, ax], endpoint: { [cl]: q$3, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, az, aA], rules: [{ [cg]: bR, endpoint: aK, [cf]: n$3 }, { endpoint: aK, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, az, aA], rules: [{ [cg]: bR, endpoint: aL, [cf]: n$3 }, aM], [cf]: o$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, az, aD], endpoint: aK, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, az, aD], endpoint: aL, [cf]: n$3 }, { [cg]: [aE, aG, V, ao, ax], endpoint: { [cl]: C$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, V, ao, az, aA], rules: [{ [cg]: bR, endpoint: aN, [cf]: n$3 }, { endpoint: aN, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, V, ao, az, aD], endpoint: aN, [cf]: n$3 }, { [cg]: [aE, aG, aw, ao, ax], endpoint: { [cl]: D$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, ao, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: D$1, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: aO, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, aw, ao, az, aD], endpoint: aO, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [Y, ad, { [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [af, "scheme"] }, "http"] }, { [ch]: p$3, [ci]: [ac, b$3] }, au, aG, aE, aw], rules: [{ [cg]: bP, rules: [{ [cg]: bQ, rules: [aM], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [au, { [ch]: E$1, [ci]: by, [ck]: F$1 }], rules: [{ [cg]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[0]"], [ck]: G$1 }, { [ch]: r$3, [ci]: [{ [ch]: g$3, [ci]: [aR, H$1] }] }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aS, I$1] }], rules: [{ [cg]: bS, rules: [{ [cg]: bT, rules: [aU, aV, { [cg]: bV, rules: [aW, { [cg]: bW, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: bZ, rules: [{ [cg]: ca, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aZ, H$1] }], error: "Invalid ARN: Missing account id", [cf]: e$3 }, { [cg]: cb, rules: [{ [cg]: cc, rules: [{ [cg]: bB, endpoint: { [cl]: L, [cm]: ba, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: ba, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: ba, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, bb], [cf]: o$3 }, bc], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, bf], [cf]: o$3 }, { error: "Invalid ARN: bucket ARN is missing a region", [cf]: e$3 }], [cf]: o$3 }, bg], [cf]: o$3 }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [cf]: e$3 }], [cf]: o$3 }, { [cg]: bS, rules: [{ [cg]: bT, rules: [{ [cg]: bV, rules: [{ [cg]: bS, rules: [{ [cg]: bV, rules: [aW, { [cg]: bW, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aY, "{partitionResult#name}"] }], rules: [{ [cg]: ca, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aS, A$1] }], rules: [{ [cg]: cb, rules: [{ [cg]: cc, rules: [{ [cg]: bA, error: "Access Points do not support S3 Accelerate", [cf]: e$3 }, { [cg]: [W, X], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, aE], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, X], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad], endpoint: { [cl]: L, [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, bb], [cf]: o$3 }, bc], [cf]: o$3 }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [cf]: e$3 }], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, bf], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: x$3, [ci]: [aT, b$3] }], rules: [{ [cg]: bz, error: "S3 MRAP does not support dual-stack", [cf]: e$3 }, { [cg]: bG, error: "S3 MRAP does not support FIPS", [cf]: e$3 }, { [cg]: bA, error: "S3 MRAP does not support S3 Accelerate", [cf]: e$3 }, { [cg]: [{ [ch]: d$3, [ci]: [{ [cj]: "DisableMultiRegionAccessPoints" }, b$3] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [cf]: e$3 }, { [cg]: [{ [ch]: f$3, [ci]: bw, [ck]: M }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [{ [cj]: M }, i$3] }, { [ch]: h$3, [ci]: [aQ, "partition"] }] }], rules: [{ endpoint: { [cl]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [cm]: { [co]: [{ [cp]: b$3, name: y$1, [cq]: A$1, [ct]: bO }] }, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [cf]: e$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "Invalid Access Point Name", [cf]: e$3 }], [cf]: o$3 }, bg], [cf]: o$3 }, { [cg]: [{ [ch]: g$3, [ci]: [aS, z$1] }], rules: [{ [cg]: bz, error: "S3 Outposts does not support Dual-stack", [cf]: e$3 }, { [cg]: bG, error: "S3 Outposts does not support FIPS", [cf]: e$3 }, { [cg]: bA, error: "S3 Outposts does not support S3 Accelerate", [cf]: e$3 }, { [cg]: [{ [ch]: c$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [cf]: e$3 }, { [cg]: [{ [ch]: h$3, [ci]: bU, [ck]: w$3 }], rules: [{ [cg]: bM, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: bZ, rules: [{ [cg]: ca, rules: [{ [cg]: cb, rules: [{ [cg]: [{ [ch]: h$3, [ci]: bX, [ck]: N }], rules: [{ [cg]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[3]"], [ck]: K }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [{ [cj]: N }, J$1] }], rules: [{ [cg]: bB, endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [cm]: bi, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bi, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: expected an access point name", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: Expected a 4-component resource", [cf]: e$3 }], [cf]: o$3 }, bc], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: The Outpost Id was not set", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: No ARN type specified", [cf]: e$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: j$3, [ci]: [ac, 0, 4, a$3], [ck]: O }, { [ch]: g$3, [ci]: [{ [cj]: O }, "arn:"] }, { [ch]: r$3, [ci]: [{ [ch]: c$3, [ci]: [bj] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [cf]: e$3 }, { [cg]: [{ [ch]: d$3, [ci]: [av, b$3] }, bj], error: "Path-style addressing cannot be used with ARN buckets", [cf]: e$3 }, { [cg]: bE, rules: [{ [cg]: bP, rules: [{ [cg]: [aw], rules: [{ [cg]: [X, ao, W, ax], endpoint: { [cl]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, ao, W, az, aA], rules: [{ endpoint: bk, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, ao, W, az, aD], endpoint: bk, [cf]: n$3 }, { [cg]: [aE, ao, W, ax], endpoint: { [cl]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, ao, W, az, aA], rules: [{ endpoint: bl, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, ao, W, az, aD], endpoint: bl, [cf]: n$3 }, { [cg]: [X, ao, aG, ax], endpoint: { [cl]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, ao, aG, az, aA], rules: [{ endpoint: bm, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, ao, aG, az, aD], endpoint: bm, [cf]: n$3 }, { [cg]: [aE, Y, ad, aG, ax], endpoint: { [cl]: P, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, Y, ad, aG, az, aA], rules: [{ [cg]: bR, endpoint: bn, [cf]: n$3 }, { endpoint: bn, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, Y, ad, aG, az, aD], endpoint: bn, [cf]: n$3 }, { [cg]: [aE, ao, aG, ax], endpoint: { [cl]: Q, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, ao, aG, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: Q, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: bo, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, ao, aG, az, aD], endpoint: bo, [cf]: n$3 }], [cf]: o$3 }, { error: "Path-style addressing cannot be used with S3 Accelerate", [cf]: e$3 }], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: c$3, [ci]: [bp] }, { [ch]: d$3, [ci]: [bp, b$3] }], rules: [{ [cg]: bP, rules: [{ [cg]: cd, rules: [aU, aV, { [cg]: bB, endpoint: { [cl]: s$3, [cm]: bq, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [cm]: bq, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [cm]: bq, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [aq], rules: [{ [cg]: bP, rules: [{ [cg]: cd, rules: [{ [cg]: [W, X, ao, ax], endpoint: { [cl]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, X, ao, az, aA], rules: [{ endpoint: br, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [W, X, ao, az, aD], endpoint: br, [cf]: n$3 }, { [cg]: [W, aE, ao, ax], endpoint: { [cl]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, aE, ao, az, aA], rules: [{ endpoint: bs, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [W, aE, ao, az, aD], endpoint: bs, [cf]: n$3 }, { [cg]: [aG, X, ao, ax], endpoint: { [cl]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, X, ao, az, aA], rules: [{ endpoint: bt, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, X, ao, az, aD], endpoint: bt, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad, ax], endpoint: { [cl]: s$3, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad, az, aA], rules: [{ [cg]: bR, endpoint: bu, [cf]: n$3 }, { endpoint: bu, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, aE, Y, ad, az, aD], endpoint: bu, [cf]: n$3 }, { [cg]: [aG, aE, ao, ax], endpoint: { [cl]: R, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, ao, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: R, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: bv, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, aE, ao, az, aD], endpoint: bv, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "A region must be set when sending requests to S3.", [cf]: e$3 }] };
+const _data$3 = { parameters: { Bucket: S, Region: S, UseFIPS: T, UseDualStack: T, Endpoint: S, ForcePathStyle: T, Accelerate: T, UseGlobalEndpoint: T, UseObjectLambdaEndpoint: U, Key: S, Prefix: S, CopySource: S, DisableAccessPoints: U, DisableMultiRegionAccessPoints: T, UseArnRegion: U, UseS3ExpressControlEndpoint: U, DisableS3ExpressSessionAuth: U }, rules: [{ [cg]: [{ [ch]: c$3, [ci]: bw }], rules: [{ [cg]: [V, W], error: "Accelerate cannot be used with FIPS", [cf]: e$3 }, { [cg]: [X, Y], error: "Cannot set dual-stack in combination with a custom endpoint.", [cf]: e$3 }, { [cg]: [Y, W], error: "A custom endpoint cannot be combined with FIPS", [cf]: e$3 }, { [cg]: [Y, V], error: "A custom endpoint cannot be combined with S3 Accelerate", [cf]: e$3 }, { [cg]: [W, Z, aa], error: "Partition does not support FIPS", [cf]: e$3 }, { [cg]: [ab, { [ch]: j$3, [ci]: [ac, 0, 6, b$3], [ck]: k$3 }, { [ch]: g$3, [ci]: [{ [cj]: k$3 }, "--x-s3"] }], rules: [{ [cg]: bz, error: "S3Express does not support Dual-stack.", [cf]: e$3 }, { [cg]: bA, error: "S3Express does not support S3 Accelerate.", [cf]: e$3 }, { [cg]: bB, rules: [{ [cg]: bC, rules: [{ [cg]: bD, rules: [{ [cg]: bE, rules: [{ endpoint: { [cl]: m$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ endpoint: { [cl]: q$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: bD, rules: [{ [cg]: bE, rules: [{ endpoint: { [cl]: m$3, [cm]: al, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ endpoint: { [cl]: q$3, [cm]: al, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: [am, an], rules: [{ [cg]: [ag, ao], rules: [{ [cg]: bG, endpoint: { [cl]: "https://s3express-control-fips.{Region}.amazonaws.com/{uri_encoded_bucket}", [cm]: ah, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3express-control.{Region}.amazonaws.com/{uri_encoded_bucket}", [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: bF, rules: [{ [cg]: bC, rules: [{ [cg]: bH, rules: bI, [cf]: o$3 }, { [cg]: bJ, rules: bI, [cf]: o$3 }, ap], [cf]: o$3 }, { [cg]: bH, rules: bK, [cf]: o$3 }, { [cg]: bJ, rules: bK, [cf]: o$3 }, ap], [cf]: o$3 }, ak], [cf]: o$3 }, { [cg]: [aq, am, an], rules: [{ [cg]: bB, endpoint: { [cl]: s$3, [cm]: ah, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://s3express-control-fips.{Region}.amazonaws.com", [cm]: ah, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3express-control.{Region}.amazonaws.com", [cm]: ah, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [ab, { [ch]: j$3, [ci]: [ac, 49, 50, b$3], [ck]: t$3 }, { [ch]: j$3, [ci]: [ac, 8, 12, b$3], [ck]: u$3 }, { [ch]: j$3, [ci]: [ac, 0, 7, b$3], [ck]: v$3 }, { [ch]: j$3, [ci]: [ac, 32, 49, b$3], [ck]: w$3 }, { [ch]: f$3, [ci]: bw, [ck]: "regionPartition" }, { [ch]: g$3, [ci]: [{ [cj]: v$3 }, "--op-s3"] }], rules: [{ [cg]: bM, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [ar, "e"] }], rules: [{ [cg]: bN, rules: [as, { [cg]: bB, endpoint: { [cl]: "https://{Bucket}.ec2.{url#authority}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { endpoint: { [cl]: "https://{Bucket}.ec2.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: g$3, [ci]: [ar, "o"] }], rules: [{ [cg]: bN, rules: [as, { [cg]: bB, endpoint: { [cl]: "https://{Bucket}.op-{outpostId}.{url#authority}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { endpoint: { [cl]: "https://{Bucket}.op-{outpostId}.s3-outposts.{Region}.{regionPartition#dnsSuffix}", [cm]: at, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Unrecognized hardware type: \"Expected hardware type o or e but got {hardwareType}\"", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: The outpost Id must only contain a-z, A-Z, 0-9 and `-`.", [cf]: e$3 }], [cf]: o$3 }, { [cg]: bL, rules: [{ [cg]: [Y, { [ch]: r$3, [ci]: [{ [ch]: c$3, [ci]: [{ [ch]: l$3, [ci]: bx }] }] }], error: "Custom endpoint `{Endpoint}` was not a valid URI", [cf]: e$3 }, { [cg]: [au, aj], rules: [{ [cg]: bP, rules: [{ [cg]: bQ, rules: [{ [cg]: [V, aa], error: "S3 Accelerate cannot be used in this region", [cf]: e$3 }, { [cg]: [X, W, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, W, aw, ao, az, aA], rules: [{ endpoint: aB, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, W, aw, ao, az, aD], endpoint: aB, [cf]: n$3 }, { [cg]: [aE, W, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, W, aw, ao, az, aA], rules: [{ endpoint: aF, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, W, aw, ao, az, aD], endpoint: aF, [cf]: n$3 }, { [cg]: [X, aG, V, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3-accelerate.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, aG, V, ao, az, aA], rules: [{ endpoint: aH, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, aG, V, ao, az, aD], endpoint: aH, [cf]: n$3 }, { [cg]: [X, aG, aw, ao, ax], endpoint: { [cl]: "https://{Bucket}.s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, aG, aw, ao, az, aA], rules: [{ endpoint: aI, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, aG, aw, ao, az, aD], endpoint: aI, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, ax], endpoint: { [cl]: B$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, ax], endpoint: { [cl]: q$3, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, az, aA], rules: [{ [cg]: bR, endpoint: aK, [cf]: n$3 }, { endpoint: aK, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, az, aA], rules: [{ [cg]: bR, endpoint: aL, [cf]: n$3 }, aM], [cf]: o$3 }, { [cg]: [aE, aG, aw, Y, ad, ae, az, aD], endpoint: aK, [cf]: n$3 }, { [cg]: [aE, aG, aw, Y, ad, aJ, az, aD], endpoint: aL, [cf]: n$3 }, { [cg]: [aE, aG, V, ao, ax], endpoint: { [cl]: C$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, V, ao, az, aA], rules: [{ [cg]: bR, endpoint: aN, [cf]: n$3 }, { endpoint: aN, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, V, ao, az, aD], endpoint: aN, [cf]: n$3 }, { [cg]: [aE, aG, aw, ao, ax], endpoint: { [cl]: D$1, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, aG, aw, ao, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: D$1, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: aO, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, aG, aw, ao, az, aD], endpoint: aO, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [Y, ad, { [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [af, "scheme"] }, "http"] }, { [ch]: p$3, [ci]: [ac, b$3] }, au, aG, aE, aw], rules: [{ [cg]: bP, rules: [{ [cg]: bQ, rules: [aM], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [au, { [ch]: E$1, [ci]: by, [ck]: F$1 }], rules: [{ [cg]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[0]"], [ck]: G$1 }, { [ch]: r$3, [ci]: [{ [ch]: g$3, [ci]: [aR, H$1] }] }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aS, I$1] }], rules: [{ [cg]: bS, rules: [{ [cg]: bT, rules: [aU, aV, { [cg]: bV, rules: [aW, { [cg]: bW, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: bZ, rules: [{ [cg]: ca, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aZ, H$1] }], error: "Invalid ARN: Missing account id", [cf]: e$3 }, { [cg]: cb, rules: [{ [cg]: cc, rules: [{ [cg]: bB, endpoint: { [cl]: L, [cm]: ba, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: ba, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-object-lambda.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: ba, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, bb], [cf]: o$3 }, bc], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, bf], [cf]: o$3 }, { error: "Invalid ARN: bucket ARN is missing a region", [cf]: e$3 }], [cf]: o$3 }, bg], [cf]: o$3 }, { error: "Invalid ARN: Object Lambda ARNs only support `accesspoint` arn types, but found: `{arnType}`", [cf]: e$3 }], [cf]: o$3 }, { [cg]: bS, rules: [{ [cg]: bT, rules: [{ [cg]: bV, rules: [{ [cg]: bS, rules: [{ [cg]: bV, rules: [aW, { [cg]: bW, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aY, "{partitionResult#name}"] }], rules: [{ [cg]: ca, rules: [{ [cg]: [{ [ch]: g$3, [ci]: [aS, A$1] }], rules: [{ [cg]: cb, rules: [{ [cg]: cc, rules: [{ [cg]: bA, error: "Access Points do not support S3 Accelerate", [cf]: e$3 }, { [cg]: [W, X], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, aE], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint-fips.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, X], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.dualstack.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad], endpoint: { [cl]: L, [cm]: bh, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE], endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.s3-accesspoint.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bh, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, bb], [cf]: o$3 }, bc], [cf]: o$3 }, { error: "Invalid ARN: The ARN was not for the S3 service, found: {bucketArn#service}", [cf]: e$3 }], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, bf], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: x$3, [ci]: [aT, b$3] }], rules: [{ [cg]: bz, error: "S3 MRAP does not support dual-stack", [cf]: e$3 }, { [cg]: bG, error: "S3 MRAP does not support FIPS", [cf]: e$3 }, { [cg]: bA, error: "S3 MRAP does not support S3 Accelerate", [cf]: e$3 }, { [cg]: [{ [ch]: d$3, [ci]: [{ [cj]: "DisableMultiRegionAccessPoints" }, b$3] }], error: "Invalid configuration: Multi-Region Access Point ARNs are disabled.", [cf]: e$3 }, { [cg]: [{ [ch]: f$3, [ci]: bw, [ck]: M }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [{ [ch]: h$3, [ci]: [{ [cj]: M }, i$3] }, { [ch]: h$3, [ci]: [aQ, "partition"] }] }], rules: [{ endpoint: { [cl]: "https://{accessPointName}.accesspoint.s3-global.{mrapPartition#dnsSuffix}", [cm]: { [co]: [{ [cp]: b$3, name: y$1, [cq]: A$1, [ct]: bO }] }, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Client was configured for partition `{mrapPartition#name}` but bucket referred to partition `{bucketArn#partition}`", [cf]: e$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "Invalid Access Point Name", [cf]: e$3 }], [cf]: o$3 }, bg], [cf]: o$3 }, { [cg]: [{ [ch]: g$3, [ci]: [aS, z$1] }], rules: [{ [cg]: bz, error: "S3 Outposts does not support Dual-stack", [cf]: e$3 }, { [cg]: bG, error: "S3 Outposts does not support FIPS", [cf]: e$3 }, { [cg]: bA, error: "S3 Outposts does not support S3 Accelerate", [cf]: e$3 }, { [cg]: [{ [ch]: c$3, [ci]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[4]"] }] }], error: "Invalid Arn: Outpost Access Point ARN contains sub resources", [cf]: e$3 }, { [cg]: [{ [ch]: h$3, [ci]: bU, [ck]: w$3 }], rules: [{ [cg]: bM, rules: [aX, { [cg]: bY, rules: [{ [cg]: bP, rules: [{ [cg]: bZ, rules: [{ [cg]: ca, rules: [{ [cg]: cb, rules: [{ [cg]: [{ [ch]: h$3, [ci]: bX, [ck]: N }], rules: [{ [cg]: [{ [ch]: h$3, [ci]: [aQ, "resourceId[3]"], [ck]: K }], rules: [{ [cg]: [{ [ch]: g$3, [ci]: [{ [cj]: N }, J$1] }], rules: [{ [cg]: bB, endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.{url#authority}", [cm]: bi, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://{accessPointName}-{bucketArn#accountId}.{outpostId}.s3-outposts.{bucketArn#region}.{bucketPartition#dnsSuffix}", [cm]: bi, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, { error: "Expected an outpost type `accesspoint`, found {outpostType}", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: expected an access point name", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: Expected a 4-component resource", [cf]: e$3 }], [cf]: o$3 }, bc], [cf]: o$3 }, bd], [cf]: o$3 }, be], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "Invalid ARN: The outpost Id may only contain a-z, A-Z, 0-9 and `-`. Found: `{outpostId}`", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: The Outpost Id was not set", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: Unrecognized format: {Bucket} (type: {arnType})", [cf]: e$3 }], [cf]: o$3 }, { error: "Invalid ARN: No ARN type specified", [cf]: e$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: j$3, [ci]: [ac, 0, 4, a$3], [ck]: O }, { [ch]: g$3, [ci]: [{ [cj]: O }, "arn:"] }, { [ch]: r$3, [ci]: [{ [ch]: c$3, [ci]: [bj] }] }], error: "Invalid ARN: `{Bucket}` was not a valid ARN", [cf]: e$3 }, { [cg]: [{ [ch]: d$3, [ci]: [av, b$3] }, bj], error: "Path-style addressing cannot be used with ARN buckets", [cf]: e$3 }, { [cg]: bE, rules: [{ [cg]: bP, rules: [{ [cg]: [aw], rules: [{ [cg]: [X, ao, W, ax], endpoint: { [cl]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, ao, W, az, aA], rules: [{ endpoint: bk, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, ao, W, az, aD], endpoint: bk, [cf]: n$3 }, { [cg]: [aE, ao, W, ax], endpoint: { [cl]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, ao, W, az, aA], rules: [{ endpoint: bl, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, ao, W, az, aD], endpoint: bl, [cf]: n$3 }, { [cg]: [X, ao, aG, ax], endpoint: { [cl]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}/{uri_encoded_bucket}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [X, ao, aG, az, aA], rules: [{ endpoint: bm, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [X, ao, aG, az, aD], endpoint: bm, [cf]: n$3 }, { [cg]: [aE, Y, ad, aG, ax], endpoint: { [cl]: P, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, Y, ad, aG, az, aA], rules: [{ [cg]: bR, endpoint: bn, [cf]: n$3 }, { endpoint: bn, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, Y, ad, aG, az, aD], endpoint: bn, [cf]: n$3 }, { [cg]: [aE, ao, aG, ax], endpoint: { [cl]: Q, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aE, ao, aG, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: Q, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: bo, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aE, ao, aG, az, aD], endpoint: bo, [cf]: n$3 }], [cf]: o$3 }, { error: "Path-style addressing cannot be used with S3 Accelerate", [cf]: e$3 }], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [{ [ch]: c$3, [ci]: [bp] }, { [ch]: d$3, [ci]: [bp, b$3] }], rules: [{ [cg]: bP, rules: [{ [cg]: cd, rules: [aU, aV, { [cg]: bB, endpoint: { [cl]: s$3, [cm]: bq, [cs]: ai }, [cf]: n$3 }, { [cg]: bG, endpoint: { [cl]: "https://s3-object-lambda-fips.{Region}.{partitionResult#dnsSuffix}", [cm]: bq, [cs]: ai }, [cf]: n$3 }, { endpoint: { [cl]: "https://s3-object-lambda.{Region}.{partitionResult#dnsSuffix}", [cm]: bq, [cs]: ai }, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }, { [cg]: [aq], rules: [{ [cg]: bP, rules: [{ [cg]: cd, rules: [{ [cg]: [W, X, ao, ax], endpoint: { [cl]: "https://s3-fips.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, X, ao, az, aA], rules: [{ endpoint: br, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [W, X, ao, az, aD], endpoint: br, [cf]: n$3 }, { [cg]: [W, aE, ao, ax], endpoint: { [cl]: "https://s3-fips.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [W, aE, ao, az, aA], rules: [{ endpoint: bs, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [W, aE, ao, az, aD], endpoint: bs, [cf]: n$3 }, { [cg]: [aG, X, ao, ax], endpoint: { [cl]: "https://s3.dualstack.us-east-1.{partitionResult#dnsSuffix}", [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, X, ao, az, aA], rules: [{ endpoint: bt, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, X, ao, az, aD], endpoint: bt, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad, ax], endpoint: { [cl]: s$3, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, Y, ad, az, aA], rules: [{ [cg]: bR, endpoint: bu, [cf]: n$3 }, { endpoint: bu, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, aE, Y, ad, az, aD], endpoint: bu, [cf]: n$3 }, { [cg]: [aG, aE, ao, ax], endpoint: { [cl]: R, [cm]: ay, [cs]: ai }, [cf]: n$3 }, { [cg]: [aG, aE, ao, az, aA], rules: [{ [cg]: bR, endpoint: { [cl]: R, [cm]: aC, [cs]: ai }, [cf]: n$3 }, { endpoint: bv, [cf]: n$3 }], [cf]: o$3 }, { [cg]: [aG, aE, ao, az, aD], endpoint: bv, [cf]: n$3 }], [cf]: o$3 }, aP], [cf]: o$3 }], [cf]: o$3 }], [cf]: o$3 }, { error: "A region must be set when sending requests to S3.", [cf]: e$3 }] };
 const ruleSet$3 = _data$3;
 
 const defaultEndpointResolver$3 = (endpointParams, context = {}) => {
@@ -24814,10 +24814,10 @@ const se_ListObjectsV2Command = async (input, context) => {
         [_lt]: [, "2"],
         [_de]: [, input[_D]],
         [_et]: [, input[_ET]],
-        [_mk]: [() => input.MaxKeys !== undefined, () => input[_MK].toString()],
+        [_mk]: [() => input.MaxKeys !== void 0, () => input[_MK].toString()],
         [_pr]: [, input[_P$1]],
         [_ct_]: [, input[_CTo]],
-        [_fo]: [() => input.FetchOwner !== undefined, () => input[_FO].toString()],
+        [_fo]: [() => input.FetchOwner !== void 0, () => input[_FO].toString()],
         [_sa]: [, input[_SA]],
     });
     let body;
@@ -24901,7 +24901,7 @@ const de_DeleteObjectCommand = async (output, context) => {
     }
     const contents = map({
         $metadata: deserializeMetadata$3(output),
-        [_DM]: [() => undefined !== output.headers[_xadm], () => parseBoolean(output.headers[_xadm])],
+        [_DM]: [() => void 0 !== output.headers[_xadm], () => parseBoolean(output.headers[_xadm])],
         [_VI]: [, output.headers[_xavi]],
         [_RC]: [, output.headers[_xarc]],
     });
@@ -24979,7 +24979,7 @@ const de_PutObjectCommand = async (output, context) => {
         [_SSECKMD]: [, output.headers[_xasseckm]],
         [_SSEKMSKI]: [, output.headers[_xasseakki]],
         [_SSEKMSEC]: [, output.headers[_xassec]],
-        [_BKE]: [() => undefined !== output.headers[_xassebke], () => parseBoolean(output.headers[_xassebke])],
+        [_BKE]: [() => void 0 !== output.headers[_xassebke], () => parseBoolean(output.headers[_xassebke])],
         [_RC]: [, output.headers[_xarc]],
     });
     await collectBody$1(output.body, context);
@@ -25363,156 +25363,15 @@ class CreateSessionCommand extends Command
 })
     .s("AmazonS3", "CreateSession", {})
     .n("S3Client", "CreateSessionCommand")
-    .f(undefined, CreateSessionOutputFilterSensitiveLog)
+    .f(void 0, CreateSessionOutputFilterSensitiveLog)
     .ser(se_CreateSessionCommand)
     .de(de_CreateSessionCommand)
     .build() {
 }
 
-var name$3 = "@aws-sdk/client-s3";
-var description$3 = "AWS SDK for JavaScript S3 Client for Node.js, Browser and React Native";
 var version$3 = "3.637.0";
-var scripts$3 = {
-	build: "concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
-	"build:cjs": "node ../../scripts/compilation/inline client-s3",
-	"build:es": "tsc -p tsconfig.es.json",
-	"build:include:deps": "lerna run --scope $npm_package_name --include-dependencies build",
-	"build:types": "tsc -p tsconfig.types.json",
-	"build:types:downlevel": "downlevel-dts dist-types dist-types/ts3.4",
-	clean: "rimraf ./dist-* && rimraf *.tsbuildinfo",
-	"extract:docs": "api-extractor run --local",
-	"generate:client": "node ../../scripts/generate-clients/single-service --solo s3",
-	test: "yarn test:unit",
-	"test:e2e": "yarn test:e2e:node && yarn test:e2e:browser",
-	"test:e2e:browser": "ts-mocha test/**/*.browser.ispec.ts && karma start karma.conf.js",
-	"test:e2e:node": "jest --c jest.config.e2e.js",
-	"test:unit": "ts-mocha test/unit/**/*.spec.ts"
-};
-var main$3 = "./dist-cjs/index.js";
-var types$3 = "./dist-types/index.d.ts";
-var module$3 = "./dist-es/index.js";
-var sideEffects$3 = false;
-var dependencies$3 = {
-	"@aws-crypto/sha1-browser": "5.2.0",
-	"@aws-crypto/sha256-browser": "5.2.0",
-	"@aws-crypto/sha256-js": "5.2.0",
-	"@aws-sdk/client-sso-oidc": "3.637.0",
-	"@aws-sdk/client-sts": "3.637.0",
-	"@aws-sdk/core": "3.635.0",
-	"@aws-sdk/credential-provider-node": "3.637.0",
-	"@aws-sdk/middleware-bucket-endpoint": "3.620.0",
-	"@aws-sdk/middleware-expect-continue": "3.620.0",
-	"@aws-sdk/middleware-flexible-checksums": "3.620.0",
-	"@aws-sdk/middleware-host-header": "3.620.0",
-	"@aws-sdk/middleware-location-constraint": "3.609.0",
-	"@aws-sdk/middleware-logger": "3.609.0",
-	"@aws-sdk/middleware-recursion-detection": "3.620.0",
-	"@aws-sdk/middleware-sdk-s3": "3.635.0",
-	"@aws-sdk/middleware-ssec": "3.609.0",
-	"@aws-sdk/middleware-user-agent": "3.637.0",
-	"@aws-sdk/region-config-resolver": "3.614.0",
-	"@aws-sdk/signature-v4-multi-region": "3.635.0",
-	"@aws-sdk/types": "3.609.0",
-	"@aws-sdk/util-endpoints": "3.637.0",
-	"@aws-sdk/util-user-agent-browser": "3.609.0",
-	"@aws-sdk/util-user-agent-node": "3.614.0",
-	"@aws-sdk/xml-builder": "3.609.0",
-	"@smithy/config-resolver": "^3.0.5",
-	"@smithy/core": "^2.4.0",
-	"@smithy/eventstream-serde-browser": "^3.0.6",
-	"@smithy/eventstream-serde-config-resolver": "^3.0.3",
-	"@smithy/eventstream-serde-node": "^3.0.5",
-	"@smithy/fetch-http-handler": "^3.2.4",
-	"@smithy/hash-blob-browser": "^3.1.2",
-	"@smithy/hash-node": "^3.0.3",
-	"@smithy/hash-stream-node": "^3.1.2",
-	"@smithy/invalid-dependency": "^3.0.3",
-	"@smithy/md5-js": "^3.0.3",
-	"@smithy/middleware-content-length": "^3.0.5",
-	"@smithy/middleware-endpoint": "^3.1.0",
-	"@smithy/middleware-retry": "^3.0.15",
-	"@smithy/middleware-serde": "^3.0.3",
-	"@smithy/middleware-stack": "^3.0.3",
-	"@smithy/node-config-provider": "^3.1.4",
-	"@smithy/node-http-handler": "^3.1.4",
-	"@smithy/protocol-http": "^4.1.0",
-	"@smithy/smithy-client": "^3.2.0",
-	"@smithy/types": "^3.3.0",
-	"@smithy/url-parser": "^3.0.3",
-	"@smithy/util-base64": "^3.0.0",
-	"@smithy/util-body-length-browser": "^3.0.0",
-	"@smithy/util-body-length-node": "^3.0.0",
-	"@smithy/util-defaults-mode-browser": "^3.0.15",
-	"@smithy/util-defaults-mode-node": "^3.0.15",
-	"@smithy/util-endpoints": "^2.0.5",
-	"@smithy/util-middleware": "^3.0.3",
-	"@smithy/util-retry": "^3.0.3",
-	"@smithy/util-stream": "^3.1.3",
-	"@smithy/util-utf8": "^3.0.0",
-	"@smithy/util-waiter": "^3.1.2",
-	tslib: "^2.6.2"
-};
-var devDependencies$3 = {
-	"@aws-sdk/signature-v4-crt": "3.635.0",
-	"@tsconfig/node16": "16.1.3",
-	"@types/chai": "^4.2.11",
-	"@types/mocha": "^8.0.4",
-	"@types/node": "^16.18.96",
-	concurrently: "7.0.0",
-	"downlevel-dts": "0.10.1",
-	rimraf: "3.0.2",
-	typescript: "~4.9.5"
-};
-var engines$3 = {
-	node: ">=16.0.0"
-};
-var typesVersions$3 = {
-	"<4.0": {
-		"dist-types/*": [
-			"dist-types/ts3.4/*"
-		]
-	}
-};
-var files$3 = [
-	"dist-*/**"
-];
-var author$3 = {
-	name: "AWS SDK for JavaScript Team",
-	url: "https://aws.amazon.com/javascript/"
-};
-var license$3 = "Apache-2.0";
-var browser$3 = {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.browser"
-};
-var homepage$3 = "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-s3";
-var repository$3 = {
-	type: "git",
-	url: "https://github.com/aws/aws-sdk-js-v3.git",
-	directory: "clients/client-s3"
-};
 var packageInfo$3 = {
-	name: name$3,
-	description: description$3,
-	version: version$3,
-	scripts: scripts$3,
-	main: main$3,
-	types: types$3,
-	module: module$3,
-	sideEffects: sideEffects$3,
-	dependencies: dependencies$3,
-	devDependencies: devDependencies$3,
-	engines: engines$3,
-	typesVersions: typesVersions$3,
-	files: files$3,
-	author: author$3,
-	license: license$3,
-	browser: browser$3,
-	"react-native": {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.native"
-},
-	homepage: homepage$3,
-	repository: repository$3
-};
+	version: version$3};
 
 const ENV_KEY = "AWS_ACCESS_KEY_ID";
 const ENV_SECRET = "AWS_SECRET_ACCESS_KEY";
@@ -25726,7 +25585,7 @@ function __generator(thisArg, body) {
             }
             op = body.call(thisArg, _);
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : undefined, done: true };
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 }
 
@@ -25735,7 +25594,7 @@ function __values(o) {
     if (m) return m.call(o);
     if (o && typeof o.length === "number") return {
         next: function () {
-            if (o && i >= o.length) o = undefined;
+            if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
@@ -25826,7 +25685,7 @@ var AwsCrc32 = /** @class */ (function () {
         this.crc32.update(convertToBuffer(toHash));
     };
     AwsCrc32.prototype.digest = function () {
-        return __awaiter(this, undefined, undefined, function () {
+        return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, numToUint8(this.crc32.digest())];
             });
@@ -26915,7 +26774,7 @@ class DeleteObjectCommand extends Command
 })
     .s("AmazonS3", "DeleteObject", {})
     .n("S3Client", "DeleteObjectCommand")
-    .f(undefined, undefined)
+    .f(void 0, void 0)
     .ser(se_DeleteObjectCommand)
     .de(de_DeleteObjectCommand)
     .build() {
@@ -26934,8 +26793,8 @@ var ChecksumLocation;
     ChecksumLocation["HEADER"] = "header";
     ChecksumLocation["TRAILER"] = "trailer";
 })(ChecksumLocation || (ChecksumLocation = {}));
-const DEFAULT_CHECKSUM_ALGORITHM = ChecksumAlgorithm.MD5;
-const S3_EXPRESS_DEFAULT_CHECKSUM_ALGORITHM = ChecksumAlgorithm.CRC32;
+ChecksumAlgorithm.MD5;
+ChecksumAlgorithm.CRC32;
 
 const CLIENT_SUPPORTED_ALGORITHMS = [
     ChecksumAlgorithm.CRC32,
@@ -26951,9 +26810,8 @@ const PRIORITY_ORDER_ALGORITHMS = [
 ];
 
 const getChecksumAlgorithmForRequest = (input, { requestChecksumRequired, requestAlgorithmMember }, isS3Express) => {
-    const defaultAlgorithm = isS3Express ? S3_EXPRESS_DEFAULT_CHECKSUM_ALGORITHM : DEFAULT_CHECKSUM_ALGORITHM;
-    if (!requestAlgorithmMember || !input[requestAlgorithmMember]) {
-        return requestChecksumRequired ? defaultAlgorithm : undefined;
+    if (!input[requestAlgorithmMember]) {
+        return undefined;
     }
     const checksumAlgorithm = input[requestAlgorithmMember];
     if (!CLIENT_SUPPORTED_ALGORITHMS.includes(checksumAlgorithm)) {
@@ -26989,7 +26847,7 @@ var AwsCrc32c = /** @class */ (function () {
         this.crc32c.update(convertToBuffer(toHash));
     };
     AwsCrc32c.prototype.digest = function () {
-        return __awaiter(this, undefined, undefined, function () {
+        return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, numToUint8(this.crc32c.digest())];
             });
@@ -27267,7 +27125,7 @@ class ListObjectsV2Command extends Command
 })
     .s("AmazonS3", "ListObjectsV2", {})
     .n("S3Client", "ListObjectsV2Command")
-    .f(undefined, undefined)
+    .f(void 0, void 0)
     .ser(se_ListObjectsV2Command)
     .de(de_ListObjectsV2Command)
     .build() {
@@ -28588,131 +28446,13 @@ const commonParams$2 = {
     UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" },
 };
 
-var name$2 = "@aws-sdk/client-sso-oidc";
-var description$2 = "AWS SDK for JavaScript Sso Oidc Client for Node.js, Browser and React Native";
 var version$2 = "3.637.0";
-var scripts$2 = {
-	build: "concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
-	"build:cjs": "node ../../scripts/compilation/inline client-sso-oidc",
-	"build:es": "tsc -p tsconfig.es.json",
-	"build:include:deps": "lerna run --scope $npm_package_name --include-dependencies build",
-	"build:types": "tsc -p tsconfig.types.json",
-	"build:types:downlevel": "downlevel-dts dist-types dist-types/ts3.4",
-	clean: "rimraf ./dist-* && rimraf *.tsbuildinfo",
-	"extract:docs": "api-extractor run --local",
-	"generate:client": "node ../../scripts/generate-clients/single-service --solo sso-oidc"
-};
-var main$2 = "./dist-cjs/index.js";
-var types$2 = "./dist-types/index.d.ts";
-var module$2 = "./dist-es/index.js";
-var sideEffects$2 = false;
-var dependencies$2 = {
-	"@aws-crypto/sha256-browser": "5.2.0",
-	"@aws-crypto/sha256-js": "5.2.0",
-	"@aws-sdk/core": "3.635.0",
-	"@aws-sdk/credential-provider-node": "3.637.0",
-	"@aws-sdk/middleware-host-header": "3.620.0",
-	"@aws-sdk/middleware-logger": "3.609.0",
-	"@aws-sdk/middleware-recursion-detection": "3.620.0",
-	"@aws-sdk/middleware-user-agent": "3.637.0",
-	"@aws-sdk/region-config-resolver": "3.614.0",
-	"@aws-sdk/types": "3.609.0",
-	"@aws-sdk/util-endpoints": "3.637.0",
-	"@aws-sdk/util-user-agent-browser": "3.609.0",
-	"@aws-sdk/util-user-agent-node": "3.614.0",
-	"@smithy/config-resolver": "^3.0.5",
-	"@smithy/core": "^2.4.0",
-	"@smithy/fetch-http-handler": "^3.2.4",
-	"@smithy/hash-node": "^3.0.3",
-	"@smithy/invalid-dependency": "^3.0.3",
-	"@smithy/middleware-content-length": "^3.0.5",
-	"@smithy/middleware-endpoint": "^3.1.0",
-	"@smithy/middleware-retry": "^3.0.15",
-	"@smithy/middleware-serde": "^3.0.3",
-	"@smithy/middleware-stack": "^3.0.3",
-	"@smithy/node-config-provider": "^3.1.4",
-	"@smithy/node-http-handler": "^3.1.4",
-	"@smithy/protocol-http": "^4.1.0",
-	"@smithy/smithy-client": "^3.2.0",
-	"@smithy/types": "^3.3.0",
-	"@smithy/url-parser": "^3.0.3",
-	"@smithy/util-base64": "^3.0.0",
-	"@smithy/util-body-length-browser": "^3.0.0",
-	"@smithy/util-body-length-node": "^3.0.0",
-	"@smithy/util-defaults-mode-browser": "^3.0.15",
-	"@smithy/util-defaults-mode-node": "^3.0.15",
-	"@smithy/util-endpoints": "^2.0.5",
-	"@smithy/util-middleware": "^3.0.3",
-	"@smithy/util-retry": "^3.0.3",
-	"@smithy/util-utf8": "^3.0.0",
-	tslib: "^2.6.2"
-};
-var devDependencies$2 = {
-	"@tsconfig/node16": "16.1.3",
-	"@types/node": "^16.18.96",
-	concurrently: "7.0.0",
-	"downlevel-dts": "0.10.1",
-	rimraf: "3.0.2",
-	typescript: "~4.9.5"
-};
-var engines$2 = {
-	node: ">=16.0.0"
-};
-var typesVersions$2 = {
-	"<4.0": {
-		"dist-types/*": [
-			"dist-types/ts3.4/*"
-		]
-	}
-};
-var files$2 = [
-	"dist-*/**"
-];
-var author$2 = {
-	name: "AWS SDK for JavaScript Team",
-	url: "https://aws.amazon.com/javascript/"
-};
-var license$2 = "Apache-2.0";
-var peerDependencies = {
-	"@aws-sdk/client-sts": "^3.637.0"
-};
-var browser$2 = {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.browser"
-};
-var homepage$2 = "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sso-oidc";
-var repository$2 = {
-	type: "git",
-	url: "https://github.com/aws/aws-sdk-js-v3.git",
-	directory: "clients/client-sso-oidc"
-};
 var packageInfo$2 = {
-	name: name$2,
-	description: description$2,
-	version: version$2,
-	scripts: scripts$2,
-	main: main$2,
-	types: types$2,
-	module: module$2,
-	sideEffects: sideEffects$2,
-	dependencies: dependencies$2,
-	devDependencies: devDependencies$2,
-	engines: engines$2,
-	typesVersions: typesVersions$2,
-	files: files$2,
-	author: author$2,
-	license: license$2,
-	peerDependencies: peerDependencies,
-	browser: browser$2,
-	"react-native": {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.native"
-},
-	homepage: homepage$2,
-	repository: repository$2
-};
+	version: version$2};
 
 const u$2 = "required", v$2 = "fn", w$2 = "argv", x$2 = "ref";
 const a$2 = true, b$2 = "isSet", c$2 = "booleanEquals", d$2 = "error", e$2 = "endpoint", f$2 = "tree", g$2 = "PartitionResult", h$2 = "getAttr", i$2 = { [u$2]: false, "type": "String" }, j$2 = { [u$2]: true, "default": false, "type": "Boolean" }, k$2 = { [x$2]: "Endpoint" }, l$2 = { [v$2]: c$2, [w$2]: [{ [x$2]: "UseFIPS" }, true] }, m$2 = { [v$2]: c$2, [w$2]: [{ [x$2]: "UseDualStack" }, true] }, n$2 = {}, o$2 = { [v$2]: h$2, [w$2]: [{ [x$2]: g$2 }, "supportsFIPS"] }, p$2 = { [x$2]: g$2 }, q$2 = { [v$2]: c$2, [w$2]: [true, { [v$2]: h$2, [w$2]: [p$2, "supportsDualStack"] }] }, r$2 = [l$2], s$2 = [m$2], t$2 = [{ [x$2]: "Region" }];
-const _data$2 = { version: "1.0", parameters: { Region: i$2, UseDualStack: j$2, UseFIPS: j$2, Endpoint: i$2 }, rules: [{ conditions: [{ [v$2]: b$2, [w$2]: [k$2] }], rules: [{ conditions: r$2, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d$2 }, { conditions: s$2, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d$2 }, { endpoint: { url: k$2, properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { conditions: [{ [v$2]: b$2, [w$2]: t$2 }], rules: [{ conditions: [{ [v$2]: "aws.partition", [w$2]: t$2, assign: g$2 }], rules: [{ conditions: [l$2, m$2], rules: [{ conditions: [{ [v$2]: c$2, [w$2]: [a$2, o$2] }, q$2], rules: [{ endpoint: { url: "https://oidc-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d$2 }], type: f$2 }, { conditions: r$2, rules: [{ conditions: [{ [v$2]: c$2, [w$2]: [o$2, a$2] }], rules: [{ conditions: [{ [v$2]: "stringEquals", [w$2]: [{ [v$2]: h$2, [w$2]: [p$2, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://oidc.{Region}.amazonaws.com", properties: n$2, headers: n$2 }, type: e$2 }, { endpoint: { url: "https://oidc-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "FIPS is enabled but this partition does not support FIPS", type: d$2 }], type: f$2 }, { conditions: s$2, rules: [{ conditions: [q$2], rules: [{ endpoint: { url: "https://oidc.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "DualStack is enabled but this partition does not support DualStack", type: d$2 }], type: f$2 }, { endpoint: { url: "https://oidc.{Region}.{PartitionResult#dnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }], type: f$2 }, { error: "Invalid Configuration: Missing Region", type: d$2 }] };
+const _data$2 = { parameters: { Region: i$2, UseDualStack: j$2, UseFIPS: j$2, Endpoint: i$2 }, rules: [{ conditions: [{ [v$2]: b$2, [w$2]: [k$2] }], rules: [{ conditions: r$2, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d$2 }, { conditions: s$2, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d$2 }, { endpoint: { url: k$2, properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { conditions: [{ [v$2]: b$2, [w$2]: t$2 }], rules: [{ conditions: [{ [v$2]: "aws.partition", [w$2]: t$2, assign: g$2 }], rules: [{ conditions: [l$2, m$2], rules: [{ conditions: [{ [v$2]: c$2, [w$2]: [a$2, o$2] }, q$2], rules: [{ endpoint: { url: "https://oidc-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d$2 }], type: f$2 }, { conditions: r$2, rules: [{ conditions: [{ [v$2]: c$2, [w$2]: [o$2, a$2] }], rules: [{ conditions: [{ [v$2]: "stringEquals", [w$2]: [{ [v$2]: h$2, [w$2]: [p$2, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://oidc.{Region}.amazonaws.com", properties: n$2, headers: n$2 }, type: e$2 }, { endpoint: { url: "https://oidc-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "FIPS is enabled but this partition does not support FIPS", type: d$2 }], type: f$2 }, { conditions: s$2, rules: [{ conditions: [q$2], rules: [{ endpoint: { url: "https://oidc.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }, { error: "DualStack is enabled but this partition does not support DualStack", type: d$2 }], type: f$2 }, { endpoint: { url: "https://oidc.{Region}.{PartitionResult#dnsSuffix}", properties: n$2, headers: n$2 }, type: e$2 }], type: f$2 }], type: f$2 }, { error: "Invalid Configuration: Missing Region", type: d$2 }] };
 const ruleSet$2 = _data$2;
 
 const defaultEndpointResolver$2 = (endpointParams, context = {}) => {
@@ -29512,126 +29252,13 @@ const commonParams$1 = {
     UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" },
 };
 
-var name$1 = "@aws-sdk/client-sso";
-var description$1 = "AWS SDK for JavaScript Sso Client for Node.js, Browser and React Native";
 var version$1 = "3.637.0";
-var scripts$1 = {
-	build: "concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
-	"build:cjs": "node ../../scripts/compilation/inline client-sso",
-	"build:es": "tsc -p tsconfig.es.json",
-	"build:include:deps": "lerna run --scope $npm_package_name --include-dependencies build",
-	"build:types": "tsc -p tsconfig.types.json",
-	"build:types:downlevel": "downlevel-dts dist-types dist-types/ts3.4",
-	clean: "rimraf ./dist-* && rimraf *.tsbuildinfo",
-	"extract:docs": "api-extractor run --local",
-	"generate:client": "node ../../scripts/generate-clients/single-service --solo sso"
-};
-var main$1 = "./dist-cjs/index.js";
-var types$1 = "./dist-types/index.d.ts";
-var module$1 = "./dist-es/index.js";
-var sideEffects$1 = false;
-var dependencies$1 = {
-	"@aws-crypto/sha256-browser": "5.2.0",
-	"@aws-crypto/sha256-js": "5.2.0",
-	"@aws-sdk/core": "3.635.0",
-	"@aws-sdk/middleware-host-header": "3.620.0",
-	"@aws-sdk/middleware-logger": "3.609.0",
-	"@aws-sdk/middleware-recursion-detection": "3.620.0",
-	"@aws-sdk/middleware-user-agent": "3.637.0",
-	"@aws-sdk/region-config-resolver": "3.614.0",
-	"@aws-sdk/types": "3.609.0",
-	"@aws-sdk/util-endpoints": "3.637.0",
-	"@aws-sdk/util-user-agent-browser": "3.609.0",
-	"@aws-sdk/util-user-agent-node": "3.614.0",
-	"@smithy/config-resolver": "^3.0.5",
-	"@smithy/core": "^2.4.0",
-	"@smithy/fetch-http-handler": "^3.2.4",
-	"@smithy/hash-node": "^3.0.3",
-	"@smithy/invalid-dependency": "^3.0.3",
-	"@smithy/middleware-content-length": "^3.0.5",
-	"@smithy/middleware-endpoint": "^3.1.0",
-	"@smithy/middleware-retry": "^3.0.15",
-	"@smithy/middleware-serde": "^3.0.3",
-	"@smithy/middleware-stack": "^3.0.3",
-	"@smithy/node-config-provider": "^3.1.4",
-	"@smithy/node-http-handler": "^3.1.4",
-	"@smithy/protocol-http": "^4.1.0",
-	"@smithy/smithy-client": "^3.2.0",
-	"@smithy/types": "^3.3.0",
-	"@smithy/url-parser": "^3.0.3",
-	"@smithy/util-base64": "^3.0.0",
-	"@smithy/util-body-length-browser": "^3.0.0",
-	"@smithy/util-body-length-node": "^3.0.0",
-	"@smithy/util-defaults-mode-browser": "^3.0.15",
-	"@smithy/util-defaults-mode-node": "^3.0.15",
-	"@smithy/util-endpoints": "^2.0.5",
-	"@smithy/util-middleware": "^3.0.3",
-	"@smithy/util-retry": "^3.0.3",
-	"@smithy/util-utf8": "^3.0.0",
-	tslib: "^2.6.2"
-};
-var devDependencies$1 = {
-	"@tsconfig/node16": "16.1.3",
-	"@types/node": "^16.18.96",
-	concurrently: "7.0.0",
-	"downlevel-dts": "0.10.1",
-	rimraf: "3.0.2",
-	typescript: "~4.9.5"
-};
-var engines$1 = {
-	node: ">=16.0.0"
-};
-var typesVersions$1 = {
-	"<4.0": {
-		"dist-types/*": [
-			"dist-types/ts3.4/*"
-		]
-	}
-};
-var files$1 = [
-	"dist-*/**"
-];
-var author$1 = {
-	name: "AWS SDK for JavaScript Team",
-	url: "https://aws.amazon.com/javascript/"
-};
-var license$1 = "Apache-2.0";
-var browser$1 = {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.browser"
-};
-var homepage$1 = "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sso";
-var repository$1 = {
-	type: "git",
-	url: "https://github.com/aws/aws-sdk-js-v3.git",
-	directory: "clients/client-sso"
-};
 var packageInfo$1 = {
-	name: name$1,
-	description: description$1,
-	version: version$1,
-	scripts: scripts$1,
-	main: main$1,
-	types: types$1,
-	module: module$1,
-	sideEffects: sideEffects$1,
-	dependencies: dependencies$1,
-	devDependencies: devDependencies$1,
-	engines: engines$1,
-	typesVersions: typesVersions$1,
-	files: files$1,
-	author: author$1,
-	license: license$1,
-	browser: browser$1,
-	"react-native": {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.native"
-},
-	homepage: homepage$1,
-	repository: repository$1
-};
+	version: version$1};
 
 const u$1 = "required", v$1 = "fn", w$1 = "argv", x$1 = "ref";
 const a$1 = true, b$1 = "isSet", c$1 = "booleanEquals", d$1 = "error", e$1 = "endpoint", f$1 = "tree", g$1 = "PartitionResult", h$1 = "getAttr", i$1 = { [u$1]: false, "type": "String" }, j$1 = { [u$1]: true, "default": false, "type": "Boolean" }, k$1 = { [x$1]: "Endpoint" }, l$1 = { [v$1]: c$1, [w$1]: [{ [x$1]: "UseFIPS" }, true] }, m$1 = { [v$1]: c$1, [w$1]: [{ [x$1]: "UseDualStack" }, true] }, n$1 = {}, o$1 = { [v$1]: h$1, [w$1]: [{ [x$1]: g$1 }, "supportsFIPS"] }, p$1 = { [x$1]: g$1 }, q$1 = { [v$1]: c$1, [w$1]: [true, { [v$1]: h$1, [w$1]: [p$1, "supportsDualStack"] }] }, r$1 = [l$1], s$1 = [m$1], t$1 = [{ [x$1]: "Region" }];
-const _data$1 = { version: "1.0", parameters: { Region: i$1, UseDualStack: j$1, UseFIPS: j$1, Endpoint: i$1 }, rules: [{ conditions: [{ [v$1]: b$1, [w$1]: [k$1] }], rules: [{ conditions: r$1, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d$1 }, { conditions: s$1, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d$1 }, { endpoint: { url: k$1, properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { conditions: [{ [v$1]: b$1, [w$1]: t$1 }], rules: [{ conditions: [{ [v$1]: "aws.partition", [w$1]: t$1, assign: g$1 }], rules: [{ conditions: [l$1, m$1], rules: [{ conditions: [{ [v$1]: c$1, [w$1]: [a$1, o$1] }, q$1], rules: [{ endpoint: { url: "https://portal.sso-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d$1 }], type: f$1 }, { conditions: r$1, rules: [{ conditions: [{ [v$1]: c$1, [w$1]: [o$1, a$1] }], rules: [{ conditions: [{ [v$1]: "stringEquals", [w$1]: [{ [v$1]: h$1, [w$1]: [p$1, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://portal.sso.{Region}.amazonaws.com", properties: n$1, headers: n$1 }, type: e$1 }, { endpoint: { url: "https://portal.sso-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "FIPS is enabled but this partition does not support FIPS", type: d$1 }], type: f$1 }, { conditions: s$1, rules: [{ conditions: [q$1], rules: [{ endpoint: { url: "https://portal.sso.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "DualStack is enabled but this partition does not support DualStack", type: d$1 }], type: f$1 }, { endpoint: { url: "https://portal.sso.{Region}.{PartitionResult#dnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }], type: f$1 }, { error: "Invalid Configuration: Missing Region", type: d$1 }] };
+const _data$1 = { parameters: { Region: i$1, UseDualStack: j$1, UseFIPS: j$1, Endpoint: i$1 }, rules: [{ conditions: [{ [v$1]: b$1, [w$1]: [k$1] }], rules: [{ conditions: r$1, error: "Invalid Configuration: FIPS and custom endpoint are not supported", type: d$1 }, { conditions: s$1, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", type: d$1 }, { endpoint: { url: k$1, properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { conditions: [{ [v$1]: b$1, [w$1]: t$1 }], rules: [{ conditions: [{ [v$1]: "aws.partition", [w$1]: t$1, assign: g$1 }], rules: [{ conditions: [l$1, m$1], rules: [{ conditions: [{ [v$1]: c$1, [w$1]: [a$1, o$1] }, q$1], rules: [{ endpoint: { url: "https://portal.sso-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", type: d$1 }], type: f$1 }, { conditions: r$1, rules: [{ conditions: [{ [v$1]: c$1, [w$1]: [o$1, a$1] }], rules: [{ conditions: [{ [v$1]: "stringEquals", [w$1]: [{ [v$1]: h$1, [w$1]: [p$1, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://portal.sso.{Region}.amazonaws.com", properties: n$1, headers: n$1 }, type: e$1 }, { endpoint: { url: "https://portal.sso-fips.{Region}.{PartitionResult#dnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "FIPS is enabled but this partition does not support FIPS", type: d$1 }], type: f$1 }, { conditions: s$1, rules: [{ conditions: [q$1], rules: [{ endpoint: { url: "https://portal.sso.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }, { error: "DualStack is enabled but this partition does not support DualStack", type: d$1 }], type: f$1 }, { endpoint: { url: "https://portal.sso.{Region}.{PartitionResult#dnsSuffix}", properties: n$1, headers: n$1 }, type: e$1 }], type: f$1 }], type: f$1 }, { error: "Invalid Configuration: Missing Region", type: d$1 }] };
 const ruleSet$1 = _data$1;
 
 const defaultEndpointResolver$1 = (endpointParams, context = {}) => {
@@ -30085,130 +29712,13 @@ const commonParams = {
     UseDualStack: { type: "builtInParams", name: "useDualstackEndpoint" },
 };
 
-var name = "@aws-sdk/client-sts";
-var description = "AWS SDK for JavaScript Sts Client for Node.js, Browser and React Native";
 var version = "3.637.0";
-var scripts = {
-	build: "concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
-	"build:cjs": "node ../../scripts/compilation/inline client-sts",
-	"build:es": "tsc -p tsconfig.es.json",
-	"build:include:deps": "lerna run --scope $npm_package_name --include-dependencies build",
-	"build:types": "rimraf ./dist-types tsconfig.types.tsbuildinfo && tsc -p tsconfig.types.json",
-	"build:types:downlevel": "downlevel-dts dist-types dist-types/ts3.4",
-	clean: "rimraf ./dist-* && rimraf *.tsbuildinfo",
-	"extract:docs": "api-extractor run --local",
-	"generate:client": "node ../../scripts/generate-clients/single-service --solo sts",
-	test: "yarn test:unit",
-	"test:unit": "jest"
-};
-var main = "./dist-cjs/index.js";
-var types = "./dist-types/index.d.ts";
-var module = "./dist-es/index.js";
-var sideEffects = false;
-var dependencies = {
-	"@aws-crypto/sha256-browser": "5.2.0",
-	"@aws-crypto/sha256-js": "5.2.0",
-	"@aws-sdk/client-sso-oidc": "3.637.0",
-	"@aws-sdk/core": "3.635.0",
-	"@aws-sdk/credential-provider-node": "3.637.0",
-	"@aws-sdk/middleware-host-header": "3.620.0",
-	"@aws-sdk/middleware-logger": "3.609.0",
-	"@aws-sdk/middleware-recursion-detection": "3.620.0",
-	"@aws-sdk/middleware-user-agent": "3.637.0",
-	"@aws-sdk/region-config-resolver": "3.614.0",
-	"@aws-sdk/types": "3.609.0",
-	"@aws-sdk/util-endpoints": "3.637.0",
-	"@aws-sdk/util-user-agent-browser": "3.609.0",
-	"@aws-sdk/util-user-agent-node": "3.614.0",
-	"@smithy/config-resolver": "^3.0.5",
-	"@smithy/core": "^2.4.0",
-	"@smithy/fetch-http-handler": "^3.2.4",
-	"@smithy/hash-node": "^3.0.3",
-	"@smithy/invalid-dependency": "^3.0.3",
-	"@smithy/middleware-content-length": "^3.0.5",
-	"@smithy/middleware-endpoint": "^3.1.0",
-	"@smithy/middleware-retry": "^3.0.15",
-	"@smithy/middleware-serde": "^3.0.3",
-	"@smithy/middleware-stack": "^3.0.3",
-	"@smithy/node-config-provider": "^3.1.4",
-	"@smithy/node-http-handler": "^3.1.4",
-	"@smithy/protocol-http": "^4.1.0",
-	"@smithy/smithy-client": "^3.2.0",
-	"@smithy/types": "^3.3.0",
-	"@smithy/url-parser": "^3.0.3",
-	"@smithy/util-base64": "^3.0.0",
-	"@smithy/util-body-length-browser": "^3.0.0",
-	"@smithy/util-body-length-node": "^3.0.0",
-	"@smithy/util-defaults-mode-browser": "^3.0.15",
-	"@smithy/util-defaults-mode-node": "^3.0.15",
-	"@smithy/util-endpoints": "^2.0.5",
-	"@smithy/util-middleware": "^3.0.3",
-	"@smithy/util-retry": "^3.0.3",
-	"@smithy/util-utf8": "^3.0.0",
-	tslib: "^2.6.2"
-};
-var devDependencies = {
-	"@tsconfig/node16": "16.1.3",
-	"@types/node": "^16.18.96",
-	concurrently: "7.0.0",
-	"downlevel-dts": "0.10.1",
-	rimraf: "3.0.2",
-	typescript: "~4.9.5"
-};
-var engines = {
-	node: ">=16.0.0"
-};
-var typesVersions = {
-	"<4.0": {
-		"dist-types/*": [
-			"dist-types/ts3.4/*"
-		]
-	}
-};
-var files = [
-	"dist-*/**"
-];
-var author = {
-	name: "AWS SDK for JavaScript Team",
-	url: "https://aws.amazon.com/javascript/"
-};
-var license = "Apache-2.0";
-var browser = {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.browser"
-};
-var homepage = "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-sts";
-var repository = {
-	type: "git",
-	url: "https://github.com/aws/aws-sdk-js-v3.git",
-	directory: "clients/client-sts"
-};
 var packageInfo = {
-	name: name,
-	description: description,
-	version: version,
-	scripts: scripts,
-	main: main,
-	types: types,
-	module: module,
-	sideEffects: sideEffects,
-	dependencies: dependencies,
-	devDependencies: devDependencies,
-	engines: engines,
-	typesVersions: typesVersions,
-	files: files,
-	author: author,
-	license: license,
-	browser: browser,
-	"react-native": {
-	"./dist-es/runtimeConfig": "./dist-es/runtimeConfig.native"
-},
-	homepage: homepage,
-	repository: repository
-};
+	version: version};
 
 const F = "required", G = "type", H = "fn", I = "argv", J = "ref";
 const a = false, b = true, c = "booleanEquals", d = "stringEquals", e = "sigv4", f = "sts", g = "us-east-1", h = "endpoint", i = "https://sts.{Region}.{PartitionResult#dnsSuffix}", j = "tree", k = "error", l = "getAttr", m = { [F]: false, [G]: "String" }, n = { [F]: true, "default": false, [G]: "Boolean" }, o = { [J]: "Endpoint" }, p = { [H]: "isSet", [I]: [{ [J]: "Region" }] }, q = { [J]: "Region" }, r = { [H]: "aws.partition", [I]: [q], "assign": "PartitionResult" }, s = { [J]: "UseFIPS" }, t = { [J]: "UseDualStack" }, u = { "url": "https://sts.amazonaws.com", "properties": { "authSchemes": [{ "name": e, "signingName": f, "signingRegion": g }] }, "headers": {} }, v = {}, w = { "conditions": [{ [H]: d, [I]: [q, "aws-global"] }], [h]: u, [G]: h }, x = { [H]: c, [I]: [s, true] }, y = { [H]: c, [I]: [t, true] }, z = { [H]: l, [I]: [{ [J]: "PartitionResult" }, "supportsFIPS"] }, A = { [J]: "PartitionResult" }, B = { [H]: c, [I]: [true, { [H]: l, [I]: [A, "supportsDualStack"] }] }, C = [{ [H]: "isSet", [I]: [o] }], D = [x], E = [y];
-const _data = { version: "1.0", parameters: { Region: m, UseDualStack: n, UseFIPS: n, Endpoint: m, UseGlobalEndpoint: n }, rules: [{ conditions: [{ [H]: c, [I]: [{ [J]: "UseGlobalEndpoint" }, b] }, { [H]: "not", [I]: C }, p, r, { [H]: c, [I]: [s, a] }, { [H]: c, [I]: [t, a] }], rules: [{ conditions: [{ [H]: d, [I]: [q, "ap-northeast-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-south-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-southeast-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-southeast-2"] }], endpoint: u, [G]: h }, w, { conditions: [{ [H]: d, [I]: [q, "ca-central-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-central-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-north-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-2"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-3"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "sa-east-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, g] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-east-2"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-west-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-west-2"] }], endpoint: u, [G]: h }, { endpoint: { url: i, properties: { authSchemes: [{ name: e, signingName: f, signingRegion: "{Region}" }] }, headers: v }, [G]: h }], [G]: j }, { conditions: C, rules: [{ conditions: D, error: "Invalid Configuration: FIPS and custom endpoint are not supported", [G]: k }, { conditions: E, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", [G]: k }, { endpoint: { url: o, properties: v, headers: v }, [G]: h }], [G]: j }, { conditions: [p], rules: [{ conditions: [r], rules: [{ conditions: [x, y], rules: [{ conditions: [{ [H]: c, [I]: [b, z] }, B], rules: [{ endpoint: { url: "https://sts-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", [G]: k }], [G]: j }, { conditions: D, rules: [{ conditions: [{ [H]: c, [I]: [z, b] }], rules: [{ conditions: [{ [H]: d, [I]: [{ [H]: l, [I]: [A, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://sts.{Region}.amazonaws.com", properties: v, headers: v }, [G]: h }, { endpoint: { url: "https://sts-fips.{Region}.{PartitionResult#dnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "FIPS is enabled but this partition does not support FIPS", [G]: k }], [G]: j }, { conditions: E, rules: [{ conditions: [B], rules: [{ endpoint: { url: "https://sts.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "DualStack is enabled but this partition does not support DualStack", [G]: k }], [G]: j }, w, { endpoint: { url: i, properties: v, headers: v }, [G]: h }], [G]: j }], [G]: j }, { error: "Invalid Configuration: Missing Region", [G]: k }] };
+const _data = { parameters: { Region: m, UseDualStack: n, UseFIPS: n, Endpoint: m, UseGlobalEndpoint: n }, rules: [{ conditions: [{ [H]: c, [I]: [{ [J]: "UseGlobalEndpoint" }, b] }, { [H]: "not", [I]: C }, p, r, { [H]: c, [I]: [s, a] }, { [H]: c, [I]: [t, a] }], rules: [{ conditions: [{ [H]: d, [I]: [q, "ap-northeast-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-south-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-southeast-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "ap-southeast-2"] }], endpoint: u, [G]: h }, w, { conditions: [{ [H]: d, [I]: [q, "ca-central-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-central-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-north-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-2"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "eu-west-3"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "sa-east-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, g] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-east-2"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-west-1"] }], endpoint: u, [G]: h }, { conditions: [{ [H]: d, [I]: [q, "us-west-2"] }], endpoint: u, [G]: h }, { endpoint: { url: i, properties: { authSchemes: [{ name: e, signingName: f, signingRegion: "{Region}" }] }, headers: v }, [G]: h }], [G]: j }, { conditions: C, rules: [{ conditions: D, error: "Invalid Configuration: FIPS and custom endpoint are not supported", [G]: k }, { conditions: E, error: "Invalid Configuration: Dualstack and custom endpoint are not supported", [G]: k }, { endpoint: { url: o, properties: v, headers: v }, [G]: h }], [G]: j }, { conditions: [p], rules: [{ conditions: [r], rules: [{ conditions: [x, y], rules: [{ conditions: [{ [H]: c, [I]: [b, z] }, B], rules: [{ endpoint: { url: "https://sts-fips.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "FIPS and DualStack are enabled, but this partition does not support one or both", [G]: k }], [G]: j }, { conditions: D, rules: [{ conditions: [{ [H]: c, [I]: [z, b] }], rules: [{ conditions: [{ [H]: d, [I]: [{ [H]: l, [I]: [A, "name"] }, "aws-us-gov"] }], endpoint: { url: "https://sts.{Region}.amazonaws.com", properties: v, headers: v }, [G]: h }, { endpoint: { url: "https://sts-fips.{Region}.{PartitionResult#dnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "FIPS is enabled but this partition does not support FIPS", [G]: k }], [G]: j }, { conditions: E, rules: [{ conditions: [B], rules: [{ endpoint: { url: "https://sts.{Region}.{PartitionResult#dualStackDnsSuffix}", properties: v, headers: v }, [G]: h }], [G]: j }, { error: "DualStack is enabled but this partition does not support DualStack", [G]: k }], [G]: j }, w, { endpoint: { url: i, properties: v, headers: v }, [G]: h }], [G]: j }], [G]: j }, { error: "Invalid Configuration: Missing Region", [G]: k }] };
 const ruleSet = _data;
 
 const defaultEndpointResolver = (endpointParams, context = {}) => {
@@ -31052,7 +30562,7 @@ class AssumeRoleCommand extends Command
 })
     .s("AWSSecurityTokenServiceV20110615", "AssumeRole", {})
     .n("STSClient", "AssumeRoleCommand")
-    .f(undefined, AssumeRoleResponseFilterSensitiveLog)
+    .f(void 0, AssumeRoleResponseFilterSensitiveLog)
     .ser(se_AssumeRoleCommand)
     .de(de_AssumeRoleCommand)
     .build() {
