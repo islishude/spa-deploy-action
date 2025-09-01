@@ -1,4 +1,4 @@
-import * as CacheControl from './cache-control'
+import * as CacheControl from './cache-control.js'
 
 describe('cache-control', () => {
   it('merge:upsert', () => {

@@ -1,5 +1,5 @@
-import { run } from './run'
-import * as CacheControl from './cache-control'
+import * as CacheControl from './cache-control.js'
+import { run } from './run.js'
 
 import * as s3 from '@aws-sdk/client-s3'
 import fs from 'node:fs/promises'
@@ -54,7 +54,7 @@ describe('chore', () => {
           CacheControl.optimizedPolicy
         ],
         'js/index.js': [
-          'application/javascript; charset=utf-8',
+          'text/javascript; charset=utf-8',
           CacheControl.optimizedPolicy
         ],
         'index.html': ['text/html; charset=utf-8', 'no-cache']
@@ -100,7 +100,7 @@ describe('chore', () => {
         'favicon.ico': ['image/vnd.microsoft.icon', CacheControl.defaultPolicy],
         'index.css': ['text/css; charset=utf-8', CacheControl.optimizedPolicy],
         'index.js': [
-          'application/javascript; charset=utf-8',
+          'text/javascript; charset=utf-8',
           CacheControl.optimizedPolicy
         ],
         'index.html': [
