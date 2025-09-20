@@ -28,5 +28,5 @@ inputs:
     description: use if no cache control globbing matched
 
 runs:
-  using: node20
+  using: node24
   main: dist/index.js
