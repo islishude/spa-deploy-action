@@ -5,6 +5,27 @@ import path from 'path'
 import * as CacheControl from './cache-control.js'
 import S3Provider from './providers/aws/index.js'
 
+async function getAllFiles(dirPath: string): Promise<string[]> {
+  const files: string[] = []
+
+  async function walk(currentPath: string): Promise<void> {
+    const entries = await fs.readdir(currentPath, { withFileTypes: true })
+
+    for (const entry of entries) {
+      const fullPath = path.join(currentPath, entry.name)
+
+      if (entry.isDirectory()) {
+        await walk(fullPath)
+      } else if (entry.isFile()) {
+        files.push(path.relative(dirPath, fullPath))
+      }
+    }
+  }
+
+  await walk(dirPath)
+  return files
+}
+
 export async function run({
   bucket,
   prefix,
@@ -30,10 +51,7 @@ export async function run({
   const s3c = new S3Provider(bucket, prefix)
 
   const [localFiles, remoteFiles] = await Promise.all([
-    fs
-      .readdir(dirPath, { recursive: true, withFileTypes: true })
-      .then(i => i.filter(f => f.isFile()))
-      .then(i => i.map(f => path.relative(dirPath, path.join(f.path, f.name)))),
+    getAllFiles(dirPath),
     s3c.listObjects()
   ])
 

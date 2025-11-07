@@ -1,7 +1,7 @@
 {
   "name": "spa-deploy-action",
   "description": "deploy your single page application to S3 with correct cache control",
-  "version": "0.0.1",
+  "version": "1.2.1",
   "author": "islishude <islishude@gmail.com>",
   "type": "module",
   "private": true,
@@ -22,7 +22,7 @@
   ],
   "main": "dist/index.js",
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
@@ -52,7 +52,7 @@
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/jest": "^30.0.0",
     "@types/mime-types": "^3.0.1",
-    "@types/node": "^22.13.7",
+    "@types/node": "^24.10.0",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@vercel/ncc": "^0.38.4",

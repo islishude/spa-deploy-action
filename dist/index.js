@@ -29435,14 +29435,28 @@ class S3Provider {
     }
 }
 
+async function getAllFiles(dirPath) {
+    const files = [];
+    async function walk(currentPath) {
+        const entries = await fs.readdir(currentPath, { withFileTypes: true });
+        for (const entry of entries) {
+            const fullPath = path$1.join(currentPath, entry.name);
+            if (entry.isDirectory()) {
+                await walk(fullPath);
+            }
+            else if (entry.isFile()) {
+                files.push(path$1.relative(dirPath, fullPath));
+            }
+        }
+    }
+    await walk(dirPath);
+    return files;
+}
 async function run({ bucket, prefix, dirPath, isDelete, cacheControlJson, cacheControlMergePolicy, defaultCacheControl }) {
     const cacheControls = Merge(cacheControlJson, cacheControlMergePolicy);
     const s3c = new S3Provider(bucket, prefix);
     const [localFiles, remoteFiles] = await Promise.all([
-        fs
-            .readdir(dirPath, { recursive: true, withFileTypes: true })
-            .then(i => i.filter(f => f.isFile()))
-            .then(i => i.map(f => path$1.relative(dirPath, path$1.join(f.path, f.name)))),
+        getAllFiles(dirPath),
         s3c.listObjects()
     ]);
     const upload = async (filePath) => {
@@ -29462,7 +29476,7 @@ const bucket = coreExports.getInput('s3-bucket', { required: true });
 const prefix = coreExports.getInput('s3-bucket-prefix');
 const dirPath = coreExports.getInput('dir-path', { required: true });
 const isDelete = coreExports.getBooleanInput('delete');
-const defaultCacheControl = coreExports.getInput('default-cachec-control');
+const defaultCacheControl = coreExports.getInput('default-cache-control');
 const cacheControlMergePolicy = coreExports.getInput('cache-control-merge-policy');
 const cacheControlJson = JSON.parse(coreExports.getInput('cache-control'));
 run({
