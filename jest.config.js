@@ -21,8 +21,9 @@ export default {
   // },
   extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'js'],
-  preset: 'ts-jest/presets/default-esm',
+  preset: 'ts-jest',
   reporters: ['default'],
+  resolver: 'ts-jest-resolver',
   testEnvironment: 'node',
   testMatch: ['**/*.test.ts'],
   testPathIgnorePatterns: ['/dist/', '/node_modules/'],
@@ -30,16 +31,10 @@ export default {
     '^.+\\.ts$': [
       'ts-jest',
       {
-        useESM: true,
-        tsconfig: {
-          module: 'ESNext',
-          moduleResolution: 'bundler'
-        }
+        tsconfig: 'tsconfig.json',
+        useESM: true
       }
     ]
-  },
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   verbose: true
 }
