@@ -25,7 +25,7 @@ export default {
   reporters: ['default'],
   resolver: 'ts-jest-resolver',
   testEnvironment: 'node',
-  testMatch: ['src/**/*.test.ts'],
+  testMatch: ['**/*.test.ts'],
   testPathIgnorePatterns: ['/dist/', '/node_modules/'],
   transform: {
     '^.+\\.ts$': [
@@ -36,5 +36,5 @@ export default {
       }
     ]
   },
-  verbose: true
+  verbose: true,
 }
