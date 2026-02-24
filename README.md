@@ -3,61 +3,62 @@
 [![Lint and test](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml/badge.svg)](https://github.com/islishude/spa-deploy-action/actions/workflows/ci.yml)
 ![TestCoverage](./badges/coverage.svg)
 
-Deploy your single page application to S3 with correct cache control
+Deploy a Single Page Application (SPA) to S3 with sensible `Cache-Control`
+headers.
 
-## Usage
+## Quick start
 
 ```yaml
-name: Build and deploy your spa
+name: Build and deploy SPA
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  spa_build_deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::111111111111:role/my-github-actions-role
           aws-region: us-east-1
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Deploy
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Deploy to S3
         uses: islishude/spa-deploy-action@v1
         with:
-          dir-path: 'dist'
+          dir-path: dist
           s3-bucket: your-s3-bucket-name
 ```
 
 ## Inputs
 
-| Name                       | Type   | Default | Required | Description                                                                                                         |
-| -------------------------- | ------ | ------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| dir-path                   | string |         | yes      | directory path for deploying                                                                                        |
-| s3-bucket                  | string |         | yes      | aws s3 bucket name                                                                                                  |
-| s3-bucket-prefix           | string |         | no       | aws s3 bucket prefix to deploy                                                                                      |
-| delete                     | bool   | true    | no       | files that exist in the s3 but not in the local are deleted                                                         |
-| cache-control              | json   | {}      | no       | file glob and cache control directive pairs, the glob matcher uses [minimatch](https://github.com/isaacs/minimatch) |
-| cache-control-merge-policy | string | upsert  | no       | used for merge built-in and your custom cache-control                                                               |
-| default-cache-control      | string |         | no       | use if no matched with cache-control                                                                                |
+| Name                         | Default  | Required | Description                                                                                          |
+| ---------------------------- | -------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `dir-path`                   | -        | yes      | Local build directory to upload (for example `dist`).                                                |
+| `s3-bucket`                  | -        | yes      | Target S3 bucket name.                                                                               |
+| `s3-bucket-prefix`           | -        | no       | Target prefix inside bucket (for example `web`).                                                     |
+| `delete`                     | `true`   | no       | Delete S3 files that are not present in local directory.                                             |
+| `cache-control`              | `{}`     | no       | JSON map: file glob -> `Cache-Control` value. Uses [minimatch](https://github.com/isaacs/minimatch). |
+| `cache-control-merge-policy` | `upsert` | no       | `upsert` merges with built-in rules, `replace` uses only your rules.                                 |
+| `default-cache-control`      | -        | no       | Fallback `Cache-Control` when no glob matches.                                                       |
 
-## Built-in cache control mapping
+## Built-in cache-control rules
 
 ```json
 {
@@ -71,17 +72,32 @@ jobs:
 }
 ```
 
-you can provide a cache-control input to update it.
+## Custom cache-control examples
 
-if you use the default `cache-control-merge-policy: 'upsert'`, the action will
-update an existing key if a specified value already exists in the built-in cache
-control mapping, and insert a new key-value if the specified value doesn't
-already exist
+Use `upsert` (default): keep built-in rules and override a few.
 
-if you use `cache-control-merge-policy: 'replace'`, the action will use the
-`cache-control` input you provided.
+```yaml
+with:
+  cache-control: |
+    {
+      "index.html": "no-cache",
+      "*.json": "no-cache"
+    }
+  cache-control-merge-policy: upsert
+```
 
-## Required AWS IAM Policy
+Use `replace`: ignore built-in rules and only use yours.
+
+```yaml
+with:
+  cache-control: |
+    {
+      "**/*": "public,max-age=300"
+    }
+  cache-control-merge-policy: replace
+```
+
+## Required AWS IAM policy
 
 ```json
 {
@@ -100,3 +116,10 @@ if you use `cache-control-merge-policy: 'replace'`, the action will use the
   ]
 }
 ```
+
+## Troubleshooting
+
+- `AccessDenied`: check IAM policy and OIDC role trust policy.
+- Wrong files under bucket root: set `s3-bucket-prefix`.
+- Stale `index.html`: set `index.html` to `no-cache` or low max-age in
+  `cache-control`.
