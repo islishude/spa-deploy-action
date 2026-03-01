@@ -42,7 +42,7 @@
     "@actions/core": "^3.0.0",
     "@aws-sdk/client-s3": "^3.879.0",
     "mime-types": "^3.0.1",
-    "minimatch": "^10.0.1"
+    "minimatch": "^10.2.4"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
