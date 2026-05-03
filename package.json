@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@types/mime-types": "^3.0.1",
-    "@types/node": "^25.5.0",
+    "@types/node": "^25.6.0",
     "@vitest/coverage-v8": "^4.0.0",
     "make-coverage-badge": "^1.2.0",
     "oxfmt": "^0.45.0",
