@@ -1,13 +1,9 @@
-name: 'test'
+name: "test"
 
 services:
-  localstack:
-    image: localstack/localstack:4.13.1
+  s3mock:
+    image: ghcr.io/tyrchen/rustack:0.7.2
+    environment:
+      SERVICES: s3
     ports:
       - 4566:4566
-    healthcheck:
-      test: ['CMD-SHELL', 'awslocal s3 ls']
-      interval: 1s
-      timeout: 5s
-      retries: 5
-      start_period: 3s

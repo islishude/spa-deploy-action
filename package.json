@@ -1,43 +1,41 @@
 {
   "name": "spa-deploy-action",
-  "description": "deploy your single page application to S3 with correct cache control",
   "version": "1.2.1",
-  "author": "islishude <islishude@gmail.com>",
-  "type": "module",
   "private": true,
+  "description": "deploy your single page application to S3 with correct cache control",
+  "keywords": [
+    "actions",
+    "aws",
+    "deployment",
+    "s3",
+    "spa"
+  ],
   "homepage": "https://github.com/islishude/spa-deploy-action",
+  "bugs": {
+    "url": "https://github.com/islishude/spa-deploy-action/issues"
+  },
+  "license": "MIT",
+  "author": "islishude <islishude@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/islishude/spa-deploy-action.git"
   },
-  "bugs": {
-    "url": "https://github.com/islishude/spa-deploy-action/issues"
-  },
-  "keywords": [
-    "actions",
-    "aws",
-    "s3",
-    "spa",
-    "deployment"
-  ],
+  "type": "module",
   "main": "dist/index.js",
-  "engines": {
-    "node": ">=24"
-  },
   "scripts": {
     "bundle": "npm run format:write && npm run package",
-    "ci-test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "format:write": "prettier --write .",
-    "format:check": "prettier --check .",
-    "lint": "eslint .",
-    "package": "npx rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
-    "package:watch": "npm run package -- --watch",
+    "ci-test": "vitest run --coverage",
+    "format:write": "oxfmt --write",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run typecheck && vite build",
+    "package:watch": "npm run typecheck && vite build --watch",
     "pretest": "docker compose down && docker compose up -d --wait",
-    "test": "(NODE_OPTIONS=--experimental-vm-modules jest && make-coverage-badge --output-path ./badges/coverage.svg) || make-coverage-badge --output-path ./badges/coverage.svg",
+    "test": "vitest run --coverage; status=$?; make-coverage-badge --output-path ./badges/coverage.svg; exit $status",
     "posttest": "docker compose down",
     "all": "npm run format:write && npm run lint && npm run test && npm run package"
   },
-  "license": "MIT",
   "dependencies": {
     "@actions/core": "^3.0.0",
     "@aws-sdk/client-s3": "^3.1000.0",
@@ -45,32 +43,18 @@
     "minimatch": "^10.2.5"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.2",
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^10.0.1",
     "@github/local-action": "^7.0.1",
-    "@jest/globals": "^30.3.0",
-    "@rollup/plugin-commonjs": "^29.0.0",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-typescript": "^12.3.0",
-    "@types/jest": "^30.0.0",
     "@types/mime-types": "^3.0.1",
     "@types/node": "^25.5.0",
-    "@typescript-eslint/eslint-plugin": "^8.56.0",
-    "eslint": "^10.1.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-jest": "^29.15.0",
-    "eslint-plugin-prettier": "^5.5.5",
-    "jest": "^30.2.0",
+    "@vitest/coverage-v8": "^4.0.0",
     "make-coverage-badge": "^1.2.0",
-    "prettier": "^3.8.1",
-    "rollup": "^4.60.1",
-    "ts-jest": "^29.4.6",
-    "ts-jest-resolver": "^2.0.1",
-    "typescript": "^5.9.3"
+    "oxfmt": "^0.45.0",
+    "oxlint": "^1.60.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.0",
+    "vitest": "^4.0.0"
   },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "*"
+  "engines": {
+    "node": ">=24"
   }
 }

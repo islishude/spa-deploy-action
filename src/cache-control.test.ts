@@ -1,5 +1,7 @@
 import * as CacheControl from './cache-control.js'
 
+import { describe, expect, it } from 'vitest'
+
 describe('cache-control', () => {
   it('merge:upsert', () => {
     const merged = CacheControl.Merge({ 'index.html': 'no-cache' }, 'upsert')

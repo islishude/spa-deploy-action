@@ -6,6 +6,8 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { Readable } from 'node:stream'
 
+import { beforeAll, describe, expect, it } from 'vitest'
+
 async function streamToString(reader: Readable): Promise<string> {
   const chunks = []
   for await (const chunk of reader) {

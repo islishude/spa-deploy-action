@@ -1,14 +1,20 @@
-import { jest } from '@jest/globals'
+import type { run as runAction } from './run.js'
+
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+type RunAction = typeof runAction
 
 describe('index', () => {
   beforeEach(() => {
-    jest.resetModules()
-    jest.clearAllMocks()
+    vi.resetModules()
+    vi.clearAllMocks()
+    vi.doUnmock('@actions/core')
+    vi.doUnmock('./run.js')
   })
 
   it('should read inputs and call run with parsed options', async () => {
-    const run = jest.fn(async () => {})
-    const setFailed = jest.fn()
+    const run = vi.fn<RunAction>(async () => {})
+    const setFailed = vi.fn<(message: string) => void>()
 
     const inputMap: Record<string, string> = {
       's3-bucket': 'my-bucket',
@@ -19,15 +25,17 @@ describe('index', () => {
       'cache-control': '{"index.html":"no-cache"}'
     }
 
-    const getInput = jest.fn((name: string) => inputMap[name] ?? '')
-    const getBooleanInput = jest.fn(() => true)
+    const getInput = vi.fn<(name: string) => string>(
+      name => inputMap[name] ?? ''
+    )
+    const getBooleanInput = vi.fn<() => boolean>(() => true)
 
-    jest.unstable_mockModule('@actions/core', () => ({
+    vi.doMock('@actions/core', () => ({
       getInput,
       getBooleanInput,
       setFailed
     }))
-    jest.unstable_mockModule('./run.js', () => ({ run }))
+    vi.doMock('./run.js', () => ({ run }))
 
     await import('./index.js')
 
@@ -48,8 +56,8 @@ describe('index', () => {
   })
 
   it('should call setFailed when run rejects', async () => {
-    const run = jest.fn(() => Promise.reject(new Error('boom')))
-    const setFailed = jest.fn()
+    const run = vi.fn<RunAction>(() => Promise.reject(new Error('boom')))
+    const setFailed = vi.fn<(message: string) => void>()
 
     const inputMap: Record<string, string> = {
       's3-bucket': 'my-bucket',
@@ -60,12 +68,12 @@ describe('index', () => {
       'cache-control': '{}'
     }
 
-    jest.unstable_mockModule('@actions/core', () => ({
+    vi.doMock('@actions/core', () => ({
       getInput: (name: string) => inputMap[name] ?? '',
       getBooleanInput: () => false,
       setFailed
     }))
-    jest.unstable_mockModule('./run.js', () => ({ run }))
+    vi.doMock('./run.js', () => ({ run }))
 
     await import('./index.js')
     await Promise.resolve()
