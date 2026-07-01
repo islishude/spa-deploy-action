@@ -2,7 +2,7 @@
 
 The app bundles dependencies which contain the following licenses:
 
-## @actions/core - 3.0.0 (MIT)
+## @actions/core - 3.0.1 (MIT)
 
 The MIT License (MIT)
 
