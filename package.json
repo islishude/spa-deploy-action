@@ -37,7 +37,7 @@
     "all": "npm run format:write && npm run lint && npm run test && npm run package"
   },
   "dependencies": {
-    "@actions/core": "^3.0.0",
+    "@actions/core": "^3.0.1",
     "@aws-sdk/client-s3": "^3.1000.0",
     "mime-types": "^3.0.1",
     "minimatch": "^10.2.5"
