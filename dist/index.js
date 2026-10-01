@@ -26381,10 +26381,10 @@ var init_TypeRegistry = __esmMin((() => {
 			this.namespace = namespace;
 			this.schemas = schemas;
 			this.exceptions = exceptions;
+			if (!TypeRegistry.registries.has(namespace)) TypeRegistry.registries.set(namespace, this);
 		}
 		static for(namespace) {
-			if (!TypeRegistry.registries.has(namespace)) TypeRegistry.registries.set(namespace, new TypeRegistry(namespace));
-			return TypeRegistry.registries.get(namespace);
+			return TypeRegistry.registries.get(namespace) ?? new TypeRegistry(namespace);
 		}
 		copyFrom(other) {
 			const { schemas, exceptions } = this;
@@ -26393,7 +26393,7 @@ var init_TypeRegistry = __esmMin((() => {
 		}
 		register(shapeId, schema) {
 			const qualifiedName = this.normalizeShapeId(shapeId);
-			for (const r of [this, TypeRegistry.for(qualifiedName.split("#")[0])]) r.schemas.set(qualifiedName, schema);
+			for (const r of [this, TypeRegistry.for(qualifiedName.split("#")[0])]) if (!r.schemas.has(qualifiedName)) r.schemas.set(qualifiedName, schema);
 		}
 		getSchema(shapeId) {
 			const id = this.normalizeShapeId(shapeId);
@@ -26411,8 +26411,9 @@ var init_TypeRegistry = __esmMin((() => {
 		registerError(es, ctor) {
 			const $error = es;
 			const ns = $error[1];
-			for (const r of [this, TypeRegistry.for(ns)]) {
-				r.schemas.set(ns + "#" + $error[2], $error);
+			const qualifiedName = ns + "#" + $error[2];
+			for (const r of [this, TypeRegistry.for(ns)]) if (!r.schemas.has(qualifiedName) && !r.exceptions.has($error)) {
+				r.schemas.set(qualifiedName, $error);
 				r.exceptions.set($error, ctor);
 			}
 		}
@@ -26491,20 +26492,27 @@ var init_command = __esmMin((() => {
 			for (const mw of middlewareFn.bind(this)(CommandCtor, clientStack, configuration, options)) this.middlewareStack.use(mw);
 			const stack = clientStack.concat(this.middlewareStack);
 			const { logger } = configuration;
+			const additionalSmithyContext = additionalContext[SMITHY_CONTEXT_KEY];
 			const handlerExecutionContext = {
 				logger,
 				clientName,
 				commandName,
 				inputFilterSensitiveLog,
 				outputFilterSensitiveLog,
+				...additionalContext,
 				[SMITHY_CONTEXT_KEY]: {
+					...additionalSmithyContext,
 					commandInstance: this,
-					...smithyContext
-				},
-				...additionalContext
+					...smithyContext,
+					...options?.metricsRecorder === void 0 ? {} : { metricsRecorder: options.metricsRecorder }
+				}
 			};
 			const { requestHandler } = configuration;
 			let requestOptions = options ?? {};
+			if (requestOptions.metricsRecorder) {
+				requestOptions = { ...requestOptions };
+				delete requestOptions.metricsRecorder;
+			}
 			if (smithyContext.eventStream) requestOptions = {
 				isEventStream: true,
 				...requestOptions
@@ -26666,8 +26674,17 @@ var init_exceptions = __esmMin((() => {
 			const candidate = instance;
 			if (this === ServiceException) return ServiceException.isInstance(instance);
 			if (ServiceException.isInstance(instance)) {
-				if (candidate.name && this.name) return this.prototype.isPrototypeOf(instance) || candidate.name === this.name;
-				return this.prototype.isPrototypeOf(instance);
+				if (this.prototype.isPrototypeOf(instance)) return true;
+				const targetName = this.name;
+				if (!targetName || !candidate.name) return false;
+				if (candidate.name === targetName) return true;
+				let proto = Object.getPrototypeOf(candidate);
+				while (proto && proto !== Object.prototype) {
+					const ctorName = proto.constructor?.name;
+					if (ctorName && ctorName !== "Error" && ctorName === targetName) return true;
+					proto = Object.getPrototypeOf(proto);
+				}
+				return false;
 			}
 			return false;
 		}
@@ -29376,6 +29393,7 @@ var init_getAwsChunkedEncodingStream_browser = __esmMin((() => {
 		const { base64Encoder, bodyLengthChecker, checksumAlgorithmFn, checksumLocationName, streamHasher } = options;
 		const checksumRequired = base64Encoder !== void 0 && bodyLengthChecker !== void 0 && checksumAlgorithmFn !== void 0 && checksumLocationName !== void 0 && streamHasher !== void 0;
 		const digest = checksumRequired ? streamHasher(checksumAlgorithmFn, readableStream) : void 0;
+		Promise.resolve(digest).catch(() => {});
 		const reader = readableStream.getReader();
 		return new ReadableStream({ async pull(controller) {
 			const { value, done } = await reader.read();
@@ -29400,22 +29418,33 @@ function getAwsChunkedEncodingStream(stream, options) {
 	const { base64Encoder, bodyLengthChecker, checksumAlgorithmFn, checksumLocationName, streamHasher } = options;
 	const checksumRequired = base64Encoder !== void 0 && checksumAlgorithmFn !== void 0 && checksumLocationName !== void 0 && streamHasher !== void 0;
 	const digest = checksumRequired ? streamHasher(checksumAlgorithmFn, readable) : void 0;
-	const awsChunkedEncodingStream = new Readable({ read: () => {} });
+	Promise.resolve(digest).catch(() => {});
+	const awsChunkedEncodingStream = new Readable({ read() {
+		readable.resume();
+	} });
 	readable.on("data", (data) => {
 		const length = bodyLengthChecker(data) || 0;
 		if (length === 0) return;
 		awsChunkedEncodingStream.push(`${length.toString(16)}\r\n`);
 		awsChunkedEncodingStream.push(data);
-		awsChunkedEncodingStream.push("\r\n");
+		if (!awsChunkedEncodingStream.push("\r\n")) readable.pause();
 	});
+	readable.on("error", (err) => {
+		awsChunkedEncodingStream.destroy(err);
+	});
+	readable.pause();
 	readable.on("end", async () => {
-		awsChunkedEncodingStream.push(`0\r\n`);
-		if (checksumRequired) {
-			const checksum = base64Encoder(await digest);
-			awsChunkedEncodingStream.push(`${checksumLocationName}:${checksum}\r\n`);
-			awsChunkedEncodingStream.push(`\r\n`);
+		try {
+			awsChunkedEncodingStream.push(`0\r\n`);
+			if (checksumRequired) {
+				const checksum = base64Encoder(await digest);
+				awsChunkedEncodingStream.push(`${checksumLocationName}:${checksum}\r\n`);
+				awsChunkedEncodingStream.push(`\r\n`);
+			}
+			awsChunkedEncodingStream.push(null);
+		} catch (err) {
+			awsChunkedEncodingStream.destroy(err);
 		}
-		awsChunkedEncodingStream.push(null);
 	});
 	return awsChunkedEncodingStream;
 }
@@ -31049,7 +31078,7 @@ var init_HttpProtocol = __esmMin((() => {
 		constructor(options) {
 			super();
 			this.options = options;
-			this.compositeErrorRegistry = TypeRegistry.for(options.defaultNamespace);
+			this.compositeErrorRegistry = new TypeRegistry(options.defaultNamespace);
 			for (const etr of options.errorTypeRegistries ?? []) this.compositeErrorRegistry.copyFrom(etr);
 		}
 		getRequestType() {
@@ -31119,6 +31148,55 @@ var init_HttpProtocol = __esmMin((() => {
 				cfId: output.headers["x-amz-cf-id"]
 			};
 		}
+		resolveError(name, namespaces, registries) {
+			const defaultErrorSchema = [
+				-3,
+				"",
+				"Error",
+				0,
+				[],
+				[],
+				0
+			];
+			let schema;
+			for (const registry of registries) for (const ns of namespaces) try {
+				if (ns === "*") schema = registry.getSchema(name);
+				else schema = registry.getSchema(ns + "#" + name);
+				const errorCtor = registry.getErrorCtor(schema);
+				if (errorCtor) return [
+					schema,
+					errorCtor,
+					"modeled"
+				];
+				else {
+					const syntheticErrorSchema = registry.getBaseException();
+					if (syntheticErrorSchema) {
+						const syntheticErrorCtor = registry.getErrorCtor(syntheticErrorSchema);
+						if (syntheticErrorCtor) return [
+							schema,
+							syntheticErrorCtor,
+							"synthetic"
+						];
+					}
+				}
+			} catch (ignored) {}
+			for (const registry of registries) {
+				const syntheticErrorSchema = registry.getBaseException();
+				if (syntheticErrorSchema) {
+					const syntheticErrorCtor = registry.getErrorCtor(syntheticErrorSchema);
+					if (syntheticErrorCtor) return [
+						syntheticErrorSchema,
+						syntheticErrorCtor,
+						"synthetic"
+					];
+				}
+			}
+			return [
+				defaultErrorSchema,
+				Error,
+				"native"
+			];
+		}
 		async serializeEventStream({ eventStream, requestSchema, initialRequest }) {
 			return (await this.loadEventStreamCapability()).serializeEventStream({
 				eventStream,
@@ -31144,11 +31222,6 @@ var init_HttpProtocol = __esmMin((() => {
 				compositeErrorRegistry: this.compositeErrorRegistry
 			});
 		}
-		resolveEventStreamMarshaller(importedProvider) {
-			const context = this.serdeContext;
-			if (context.eventStreamMarshaller) return context.eventStreamMarshaller;
-			return importedProvider(this.serdeContext);
-		}
 		getDefaultContentType() {
 			throw new Error(`@smithy/core/protocols - ${this.constructor.name} getDefaultContentType() implementation missing.`);
 		}
@@ -31159,6 +31232,11 @@ var init_HttpProtocol = __esmMin((() => {
 			const context = this.serdeContext;
 			if (!context.eventStreamMarshaller) throw new Error("@smithy/core - HttpProtocol: eventStreamMarshaller missing in serdeContext.");
 			return context.eventStreamMarshaller;
+		}
+		resolveEventStreamMarshaller(importedProvider) {
+			const context = this.serdeContext;
+			if (context.eventStreamMarshaller) return context.eventStreamMarshaller;
+			return importedProvider(this.serdeContext);
 		}
 	};
 }));
@@ -31863,7 +31941,7 @@ var init_service_error_classification = __esmMin((() => {
 		return errorMessages.has(error.message);
 	};
 	isThrottlingError = (error) => error.$metadata?.httpStatusCode === 429 || THROTTLING_ERROR_CODES.includes(error.name) || error.$retryable?.throttling == true;
-	isTransientError = (error, depth = 0) => isRetryableByTrait(error) || isClockSkewCorrectedError(error) || error.name === "InvalidSignatureException" && error.message?.includes("Signature expired") || TRANSIENT_ERROR_CODES.includes(error.name) || NODEJS_TIMEOUT_ERROR_CODES$1.includes(error?.code || "") || NODEJS_NETWORK_ERROR_CODES.includes(error?.code || "") || TRANSIENT_ERROR_STATUS_CODES.includes(error.$metadata?.httpStatusCode || 0) || isBrowserNetworkError(error) || isNodeJsHttp2TransientError(error) || error.cause !== void 0 && depth <= 10 && isTransientError(error.cause, depth + 1);
+	isTransientError = (error, depth = 0) => error?.name !== "AbortError" && (isRetryableByTrait(error) || isClockSkewCorrectedError(error) || error.name === "InvalidSignatureException" && error.message?.includes("Signature expired") || TRANSIENT_ERROR_CODES.includes(error.name) || NODEJS_TIMEOUT_ERROR_CODES$1.includes(error?.code || "") || NODEJS_NETWORK_ERROR_CODES.includes(error?.code || "") || TRANSIENT_ERROR_STATUS_CODES.includes(error.$metadata?.httpStatusCode || 0) || isBrowserNetworkError(error) || isNodeJsHttp2TransientError(error) || error.cause !== void 0 && depth <= 10 && isTransientError(error.cause, depth + 1));
 	isServerError = (error) => {
 		if (error.$metadata?.httpStatusCode !== void 0) {
 			const statusCode = error.$metadata.httpStatusCode;
@@ -33998,6 +34076,7 @@ var regionRedirectEndpointMiddlewareOptions = {
 };
 //#endregion
 //#region node_modules/@aws-sdk/middleware-sdk-s3/dist-es/submodules/s3/middleware-region-redirect/region-redirect-middleware.js
+init_client();
 function regionRedirectMiddleware(clientConfig) {
 	return (next, context) => async (args) => {
 		try {
@@ -34013,6 +34092,7 @@ function regionRedirectMiddleware(clientConfig) {
 							const actualRegion = bucketRegionHeader;
 							context.logger?.debug(`Redirecting from ${await clientConfig.region()} to ${actualRegion}`);
 							context.__s3RegionRedirect = actualRegion;
+							setFeature(context, "S3_REGION_REDIRECT", "Ah");
 						} catch (e) {
 							throw new Error("Region redirect failed: " + e);
 						}
@@ -34445,7 +34525,7 @@ var init_getCanonicalHeaders = __esmMin((() => {
 			if (canonicalHeaderName in ALWAYS_UNSIGNABLE_HEADERS || unsignableHeaders?.has(canonicalHeaderName) || PROXY_HEADER_PATTERN.test(canonicalHeaderName) || SEC_HEADER_PATTERN.test(canonicalHeaderName)) {
 				if (!signableHeaders || signableHeaders && !signableHeaders.has(canonicalHeaderName)) continue;
 			}
-			canonical[canonicalHeaderName] = headers[headerName].trim().replace(/\s+/g, " ");
+			canonical[canonicalHeaderName] = headers[headerName].replace(/[\r\n]/g, " ").replace(/[ \t]+/g, " ").replace(/^ | $/g, "");
 		}
 		return canonical;
 	};
@@ -40572,6 +40652,9 @@ var _NSK = "NoSuchKey";
 var _NSU = "NoSuchUpload";
 var _O = "Owner";
 var _OAIATE = "ObjectAlreadyInActiveTierError";
+var _OLEH = "ObjectLockEventHold";
+var _OLEHDD = "ObjectLockEventHoldDurationDays";
+var _OLEHDY = "ObjectLockEventHoldDurationYears";
 var _OLLHS = "ObjectLockLegalHoldStatus";
 var _OLM = "ObjectLockMode";
 var _OLRUD = "ObjectLockRetainUntilDate";
@@ -40653,6 +40736,9 @@ var _xaimlmt = "x-amz-if-match-last-modified-time";
 var _xaims = "x-amz-if-match-size";
 var _xam = "x-amz-meta-";
 var _xam_ = "x-amz-mfa";
+var _xaoleh = "x-amz-object-lock-event-hold";
+var _xaolehdd = "x-amz-object-lock-event-hold-duration-days";
+var _xaolehdy = "x-amz-object-lock-event-hold-duration-years";
 var _xaollh = "x-amz-object-lock-legal-hold";
 var _xaolm = "x-amz-object-lock-mode";
 var _xaolrud = "x-amz-object-lock-retain-until-date";
@@ -40674,7 +40760,7 @@ var _xavi = "x-amz-version-id";
 var _xawob = "x-amz-write-offset-bytes";
 var _xawrl = "x-amz-website-redirect-location";
 var n0$4 = "com.amazonaws.s3";
-var _s_registry$4 = TypeRegistry.for(_s$4);
+var _s_registry$4 = new TypeRegistry(_s$4);
 var S3ServiceException$ = [
 	-3,
 	_s$4,
@@ -40684,7 +40770,7 @@ var S3ServiceException$ = [
 	[]
 ];
 _s_registry$4.registerError(S3ServiceException$, S3ServiceException);
-var n0_registry$4 = TypeRegistry.for(n0$4);
+var n0_registry$4 = new TypeRegistry(n0$4);
 var AccessDenied$ = [
 	-3,
 	n0$4,
@@ -41279,6 +41365,9 @@ var PutObjectRequest$ = [
 		_OLM,
 		_OLRUD,
 		_OLLHS,
+		_OLEH,
+		_OLEHDD,
+		_OLEHDY,
 		_EBO
 	],
 	[
@@ -41327,6 +41416,9 @@ var PutObjectRequest$ = [
 		[0, { [_hH$1]: _xaolm }],
 		[5, { [_hH$1]: _xaolrud }],
 		[0, { [_hH$1]: _xaollh }],
+		[0, { [_hH$1]: _xaoleh }],
+		[1, { [_hH$1]: _xaolehdd }],
+		[1, { [_hH$1]: _xaolehdy }],
 		[0, { [_hH$1]: _xaebo }]
 	],
 	2
@@ -41428,7 +41520,7 @@ var PutObject$ = [
 var CreateSessionCommand = class extends command$4(_ep4, _mw0$4, "CreateSession", CreateSession$) {};
 var package_default$1 = {
 	name: "@aws-sdk/client-s3",
-	version: "3.1121.0",
+	version: "3.1141.0",
 	description: "AWS SDK for JavaScript S3 Client for Node.js, Browser and React Native",
 	homepage: "https://github.com/aws/aws-sdk-js-v3/tree/main/clients/client-s3",
 	license: "Apache-2.0",
@@ -41470,20 +41562,20 @@ var package_default$1 = {
 		"test:index": "tsc -p tsconfig.test.json && node ./test/index-objects.spec.mjs"
 	},
 	dependencies: {
-		"@aws-sdk/checksums": "^3.1000.29",
-		"@aws-sdk/core": "^3.977.9",
-		"@aws-sdk/credential-provider-node": "^3.972.81",
-		"@aws-sdk/middleware-sdk-s3": "^3.972.75",
-		"@aws-sdk/signature-v4-multi-region": "^3.996.46",
-		"@aws-sdk/types": "^3.974.5",
-		"@smithy/core": "^3.33.3",
-		"@smithy/fetch-http-handler": "^5.7.2",
-		"@smithy/node-http-handler": "^4.11.3",
-		"@smithy/types": "^4.17.2",
+		"@aws-sdk/checksums": "^3.1001.1",
+		"@aws-sdk/core": "^3.978.1",
+		"@aws-sdk/credential-provider-node": "^3.972.84",
+		"@aws-sdk/middleware-sdk-s3": "^3.972.77",
+		"@aws-sdk/signature-v4-multi-region": "^3.996.47",
+		"@aws-sdk/types": "^3.974.6",
+		"@smithy/core": "^3.35.0",
+		"@smithy/fetch-http-handler": "^5.8.0",
+		"@smithy/node-http-handler": "^4.12.1",
+		"@smithy/types": "^4.19.0",
 		"tslib": "^2.6.2"
 	},
 	devDependencies: {
-		"@aws-sdk/signature-v4-crt": "3.1121.0",
+		"@aws-sdk/signature-v4-crt": "3.1141.0",
 		"@smithy/snapshot-testing": "^2.3.2",
 		"@tsconfig/node20": "20.1.8",
 		"@types/node": "^20.14.8",
@@ -42583,7 +42675,7 @@ function memoizeChain(providers, treatAsExpired) {
 			if (credentials) {
 				if (!passiveLock) passiveLock = chain(options).then((c) => {
 					credentials = c;
-				}).finally(() => {
+				}).catch(() => {}).finally(() => {
 					passiveLock = void 0;
 				});
 			} else {
@@ -42696,7 +42788,7 @@ var init_EndpointParameters$3 = __esmMin((() => {
 })), name, version, description, homepage, license, author, repository, files, main, module$1, browser, types, typesVersions, exports$1, scripts, dependencies, devDependencies, engines, package_default;
 var init_package = __esmMin((() => {
 	name = "@aws-sdk/nested-clients";
-	version = "3.997.44";
+	version = "3.997.46";
 	description = "Nested clients for AWS SDK packages.";
 	homepage = "https://github.com/aws/aws-sdk-js-v3/tree/main/packages/nested-clients";
 	license = "Apache-2.0";
@@ -42788,13 +42880,13 @@ var init_package = __esmMin((() => {
 		"test:watch": "yarn g:vitest watch"
 	};
 	dependencies = {
-		"@aws-sdk/core": "^3.977.9",
-		"@aws-sdk/signature-v4-multi-region": "^3.996.46",
-		"@aws-sdk/types": "^3.974.5",
-		"@smithy/core": "^3.33.3",
-		"@smithy/fetch-http-handler": "^5.7.2",
-		"@smithy/node-http-handler": "^4.11.3",
-		"@smithy/types": "^4.17.2",
+		"@aws-sdk/core": "^3.978.1",
+		"@aws-sdk/signature-v4-multi-region": "^3.996.47",
+		"@aws-sdk/types": "^3.974.6",
+		"@smithy/core": "^3.35.0",
+		"@smithy/fetch-http-handler": "^5.8.0",
+		"@smithy/node-http-handler": "^4.12.1",
+		"@smithy/types": "^4.19.0",
 		"tslib": "^2.6.2"
 	};
 	devDependencies = {
@@ -43200,7 +43292,7 @@ var init_schemas_0$3 = __esmMin((() => {
 	_se$1 = "server";
 	_tT$1 = "tokenType";
 	n0$3 = "com.amazonaws.ssooidc";
-	_s_registry$3 = TypeRegistry.for(_s$3);
+	_s_registry$3 = new TypeRegistry(_s$3);
 	SSOOIDCServiceException$ = [
 		-3,
 		_s$3,
@@ -43210,7 +43302,7 @@ var init_schemas_0$3 = __esmMin((() => {
 		[]
 	];
 	_s_registry$3.registerError(SSOOIDCServiceException$, SSOOIDCServiceException);
-	n0_registry$3 = TypeRegistry.for(n0$3);
+	n0_registry$3 = new TypeRegistry(n0$3);
 	AccessDeniedException$$1 = [
 		-3,
 		n0$3,
@@ -44201,7 +44293,7 @@ var init_schemas_0$2 = __esmMin((() => {
 	_sT$1 = "sessionToken";
 	_xasbt = "x-amz-sso_bearer_token";
 	n0$2 = "com.amazonaws.sso";
-	_s_registry$2 = TypeRegistry.for(_s$2);
+	_s_registry$2 = new TypeRegistry(_s$2);
 	SSOServiceException$ = [
 		-3,
 		_s$2,
@@ -44211,7 +44303,7 @@ var init_schemas_0$2 = __esmMin((() => {
 		[]
 	];
 	_s_registry$2.registerError(SSOServiceException$, SSOServiceException);
-	n0_registry$2 = TypeRegistry.for(n0$2);
+	n0_registry$2 = new TypeRegistry(n0$2);
 	InvalidRequestException$ = [
 		-3,
 		n0$2,
@@ -45260,7 +45352,7 @@ var init_errors$1 = __esmMin((() => {
 }));
 //#endregion
 //#region node_modules/@aws-sdk/nested-clients/dist-es/submodules/sts/schemas/schemas_0.js
-var _A, _AKI, _AR, _ARI, _ARR, _ARRs, _ARU, _ARWWI, _ARWWIR, _ARWWIRs, _Au, _C, _CA, _DS, _E, _EI, _ETE, _IDPCEE, _IDPRCE, _IITE, _K, _MPDE, _P, _PA, _PAr, _PC, _PCLT, _PCr, _PDT, _PI, _PPS, _PPTLE, _Pr, _RA, _RDE, _RSN, _SAK, _SFWIT, _SI, _SN, _ST, _T, _TC, _TTK, _Ta, _V, _WIT, _a, _aKST, _aQE, _c$1, _cTT, _e$1, _hE$1, _m$1, _pDLT, _s$1, _tLT, n0$1, _s_registry$1, STSServiceException$, n0_registry$1, ExpiredTokenException$, IDPCommunicationErrorException$, IDPRejectedClaimException$, InvalidIdentityTokenException$, MalformedPolicyDocumentException$, PackedPolicyTooLargeException$, RegionDisabledException$, errorTypeRegistries$1, accessKeySecretType, clientTokenType, AssumedRoleUser$, AssumeRoleRequest$, AssumeRoleResponse$, AssumeRoleWithWebIdentityRequest$, AssumeRoleWithWebIdentityResponse$, Credentials$, PolicyDescriptorType$, ProvidedContext$, Tag$, policyDescriptorListType, ProvidedContextsListType, tagListType, AssumeRole$, AssumeRoleWithWebIdentity$;
+var _A, _AKI, _AR, _ARI, _ARR, _ARRs, _ARU, _ARWWI, _ARWWIR, _ARWWIRs, _Au, _C, _CA, _DS, _E, _EI, _ETE, _IDPCEE, _IDPRCE, _IITE, _K, _MPDE, _MSTS, _P, _PA, _PAr, _PC, _PCLT, _PCr, _PDT, _PI, _PPS, _PPTLE, _Pr, _RA, _RDE, _RSN, _SAK, _SFWIT, _SI, _SN, _ST, _STS, _STU, _T, _TC, _TTK, _Ta, _V, _WIT, _a, _aKST, _aQE, _c$1, _cTT, _e$1, _hE$1, _m$1, _pDLT, _s$1, _tLT, n0$1, _s_registry$1, STSServiceException$, n0_registry$1, ExpiredTokenException$, IDPCommunicationErrorException$, IDPRejectedClaimException$, InvalidIdentityTokenException$, MalformedPolicyDocumentException$, PackedPolicyTooLargeException$, RegionDisabledException$, errorTypeRegistries$1, accessKeySecretType, clientTokenType, AssumedRoleUser$, AssumeRoleRequest$, AssumeRoleResponse$, AssumeRoleWithWebIdentityRequest$, AssumeRoleWithWebIdentityResponse$, Credentials$, PolicyDescriptorType$, ProvidedContext$, Tag$, policyDescriptorListType, ProvidedContextsListType, tagListType, AssumeRole$, AssumeRoleWithWebIdentity$;
 var init_schemas_0$1 = __esmMin((() => {
 	init_schema();
 	init_errors$1();
@@ -45287,6 +45379,7 @@ var init_schemas_0$1 = __esmMin((() => {
 	_IITE = "InvalidIdentityTokenException";
 	_K = "Key";
 	_MPDE = "MalformedPolicyDocumentException";
+	_MSTS = "MinimumSessionTokenSize";
 	_P = "Policy";
 	_PA = "PolicyArns";
 	_PAr = "ProviderArn";
@@ -45306,6 +45399,8 @@ var init_schemas_0$1 = __esmMin((() => {
 	_SI = "SourceIdentity";
 	_SN = "SerialNumber";
 	_ST = "SessionToken";
+	_STS = "SessionTokenSize";
+	_STU = "SessionTokenUtilization";
 	_T = "Tags";
 	_TC = "TokenCode";
 	_TTK = "TransitiveTagKeys";
@@ -45324,7 +45419,7 @@ var init_schemas_0$1 = __esmMin((() => {
 	_s$1 = "smithy.ts.sdk.synthetic.com.amazonaws.sts";
 	_tLT = "tagListType";
 	n0$1 = "com.amazonaws.sts";
-	_s_registry$1 = TypeRegistry.for(_s$1);
+	_s_registry$1 = new TypeRegistry(_s$1);
 	STSServiceException$ = [
 		-3,
 		_s$1,
@@ -45334,7 +45429,7 @@ var init_schemas_0$1 = __esmMin((() => {
 		[]
 	];
 	_s_registry$1.registerError(STSServiceException$, STSServiceException);
-	n0_registry$1 = TypeRegistry.for(n0$1);
+	n0_registry$1 = new TypeRegistry(n0$1);
 	ExpiredTokenException$ = [
 		-3,
 		n0$1,
@@ -45467,7 +45562,8 @@ var init_schemas_0$1 = __esmMin((() => {
 			_SN,
 			_TC,
 			_SI,
-			_PC
+			_PC,
+			_MSTS
 		],
 		[
 			0,
@@ -45481,7 +45577,8 @@ var init_schemas_0$1 = __esmMin((() => {
 			0,
 			0,
 			0,
-			() => ProvidedContextsListType
+			() => ProvidedContextsListType,
+			1
 		],
 		2
 	];
@@ -45494,13 +45591,17 @@ var init_schemas_0$1 = __esmMin((() => {
 			_C,
 			_ARU,
 			_PPS,
-			_SI
+			_SI,
+			_STU,
+			_STS
 		],
 		[
 			[() => Credentials$, 0],
 			() => AssumedRoleUser$,
 			1,
-			0
+			0,
+			1,
+			1
 		]
 	];
 	AssumeRoleWithWebIdentityRequest$ = [
@@ -45515,7 +45616,8 @@ var init_schemas_0$1 = __esmMin((() => {
 			_PI,
 			_PA,
 			_P,
-			_DS
+			_DS,
+			_MSTS
 		],
 		[
 			0,
@@ -45524,6 +45626,7 @@ var init_schemas_0$1 = __esmMin((() => {
 			0,
 			() => policyDescriptorListType,
 			0,
+			1,
 			1
 		],
 		3
@@ -45540,7 +45643,9 @@ var init_schemas_0$1 = __esmMin((() => {
 			_PPS,
 			_Pr,
 			_Au,
-			_SI
+			_SI,
+			_STU,
+			_STS
 		],
 		[
 			[() => Credentials$, 0],
@@ -45549,7 +45654,9 @@ var init_schemas_0$1 = __esmMin((() => {
 			1,
 			0,
 			0,
-			0
+			0,
+			1,
+			1
 		]
 	];
 	Credentials$ = [
@@ -46611,7 +46718,7 @@ var init_schemas_0 = __esmMin((() => {
 	_tT = "tokenType";
 	_tt = "token_type";
 	n0 = "com.amazonaws.signin";
-	_s_registry = TypeRegistry.for(_s);
+	_s_registry = new TypeRegistry(_s);
 	SigninServiceException$ = [
 		-3,
 		_s,
@@ -46621,7 +46728,7 @@ var init_schemas_0 = __esmMin((() => {
 		[]
 	];
 	_s_registry.registerError(SigninServiceException$, SigninServiceException);
-	n0_registry = TypeRegistry.for(n0);
+	n0_registry = new TypeRegistry(n0);
 	AccessDeniedException$ = [
 		-3,
 		n0,
